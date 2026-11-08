@@ -1,0 +1,55 @@
+:root {
+  --color-marca: #0e6b68;
+  --color-marca-suave: #e3f1f0;
+  --color-acento: #00c3d0;
+  --color-texto: #15202b;
+  --color-texto-secundario: #55606b;
+  --color-fondo-pagina: #f5f6f8;
+  --color-superficie: #ffffff;
+  --color-borde-suave: #dde1e6;
+  --color-borde: #c9cfd6;
+  --color-exito: #1d6b3a;
+  --color-exito-suave: #e5f3ea;
+  --color-error: #a32a2a;
+  --color-error-suave: #fbe9e9;
+
+  --texto-titulo: 30px;
+  --linea-titulo: 38px;
+  --texto-portada: clamp(36px, 3.6vw, 52px);
+  --linea-portada: 1.15;
+  --texto-seccion: 20px;
+  --linea-seccion: 28px;
+  --texto-cuerpo: 15px;
+  --linea-cuerpo: 22px;
+  --texto-etiqueta: 14px;
+  --linea-etiqueta: 20px;
+  --texto-pequeno: 13px;
+  --linea-pequeno: 18px;
+  --texto-boton: 15px;
+  --linea-boton: 20px;
+
+  --transicion: 150ms ease;
+  --halo-marca: 0 0 0 3px color-mix(in srgb, var(--color-marca) 25%, transparent);
+  --halo-error: 0 0 0 3px color-mix(in srgb, var(--color-error) 25%, transparent);
+
+  font-family: 'Plus Jakarta Sans', system-ui, 'Segoe UI', Roboto, sans-serif;
+  font-size: var(--texto-cuerpo);
+  line-height: var(--linea-cuerpo);
+  color: var(--color-texto);
+  color-scheme: light;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transicion: 0ms linear;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--color-fondo-pagina);
+}
+
+main {
+  padding: 2rem;
+}

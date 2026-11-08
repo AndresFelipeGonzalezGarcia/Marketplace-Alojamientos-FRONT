@@ -1,0 +1,381 @@
+main.registro-pagina {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  min-height: 100vh;
+  padding: 0;
+}
+
+.registro-pagina__contenido {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 48px 24px;
+}
+
+.registro-portada {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  padding: 56px;
+  background: url('../../../img/inicio.jpg') 20% center / cover no-repeat;
+}
+
+/* En el 42 % superior, donde va el texto, el degradado garantiza al menos
+   8:1 con texto blanco y 3.9:1 con acento (texto grande) incluso sobre blanco. */
+.registro-portada::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-texto) 90%, transparent) 0%,
+    color-mix(in srgb, var(--color-texto) 80%, transparent) 42%,
+    color-mix(in srgb, var(--color-marca) 35%, transparent) 72%,
+    color-mix(in srgb, var(--color-marca) 10%, transparent) 100%
+  );
+}
+
+.registro-portada__eslogan {
+  position: relative;
+  max-width: 600px;
+  margin: 0;
+  color: var(--color-superficie);
+  font-size: var(--texto-portada);
+  line-height: var(--linea-portada);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.registro-portada__eslogan::before {
+  content: '';
+  display: block;
+  width: 64px;
+  height: 5px;
+  margin-bottom: 20px;
+  background: var(--color-acento);
+  border-radius: 3px;
+}
+
+.registro-portada__destacado {
+  color: var(--color-acento);
+}
+
+.registro-tarjeta {
+  width: 100%;
+  max-width: 520px;
+  padding: 40px;
+  box-sizing: border-box;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde-suave);
+  border-radius: 24px;
+  box-shadow:
+    0 1px 2px color-mix(in srgb, var(--color-texto) 6%, transparent),
+    0 16px 40px color-mix(in srgb, var(--color-texto) 10%, transparent);
+}
+
+.registro-tarjeta__titulo {
+  margin: 0 0 24px;
+  font-size: var(--texto-titulo);
+  line-height: var(--linea-titulo);
+  font-weight: 800;
+}
+
+.registro-exito {
+  margin: 0;
+  padding: 12px 16px;
+  color: var(--color-exito);
+  background: var(--color-exito-suave);
+  border-radius: 12px;
+}
+
+.registro-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.registro-roles {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.registro-roles__opciones {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.tarjeta-rol {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 14px;
+  cursor: pointer;
+  transition:
+    background-color var(--transicion),
+    border-color var(--transicion),
+    box-shadow var(--transicion);
+}
+
+.tarjeta-rol:hover {
+  border-color: var(--color-marca);
+}
+
+.tarjeta-rol:has(.tarjeta-rol__radio:focus-visible) {
+  border-color: var(--color-marca);
+  box-shadow: var(--halo-marca);
+}
+
+.tarjeta-rol--seleccionada {
+  background: var(--color-marca-suave);
+  border-color: var(--color-marca);
+}
+
+/* El radio sigue siendo el control real: invisible, pero enfocable. */
+.tarjeta-rol__radio {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.tarjeta-rol__circulo {
+  display: flex;
+  flex: none;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
+  color: var(--color-superficie);
+  background: var(--color-superficie);
+  border: 1.5px solid var(--color-texto-secundario);
+  border-radius: 50%;
+  transition:
+    background-color var(--transicion),
+    border-color var(--transicion);
+}
+
+.tarjeta-rol__verificacion {
+  width: 14px;
+  height: 14px;
+  opacity: 0;
+  transition: opacity var(--transicion);
+}
+
+.tarjeta-rol--seleccionada .tarjeta-rol__circulo {
+  background: var(--color-marca);
+  border-color: var(--color-marca);
+}
+
+.tarjeta-rol--seleccionada .tarjeta-rol__verificacion {
+  opacity: 1;
+}
+
+.tarjeta-rol__titulo {
+  display: block;
+  font-size: var(--texto-etiqueta);
+  line-height: var(--linea-etiqueta);
+  font-weight: 600;
+}
+
+.tarjeta-rol__descripcion {
+  display: block;
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+}
+
+.campo__etiqueta {
+  margin-bottom: 6px;
+  padding: 0;
+  font-size: var(--texto-etiqueta);
+  line-height: var(--linea-etiqueta);
+  font-weight: 600;
+}
+
+.campo__entrada {
+  position: relative;
+}
+
+.campo__icono {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  width: 18px;
+  height: 18px;
+  color: var(--color-texto-secundario);
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: color var(--transicion);
+}
+
+.campo__entrada:focus-within .campo__icono {
+  color: var(--color-marca);
+}
+
+.campo__control {
+  width: 100%;
+  padding: 11px 12px 11px 40px;
+  box-sizing: border-box;
+  color: var(--color-texto);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 10px;
+  font: inherit;
+  transition:
+    border-color var(--transicion),
+    box-shadow var(--transicion);
+}
+
+.campo__control--con-boton {
+  padding-right: 48px;
+}
+
+.campo__control:hover,
+.campo__control:focus-visible {
+  border-color: var(--color-marca);
+}
+
+.campo__control:focus-visible {
+  outline: none;
+  box-shadow: var(--halo-marca);
+}
+
+.campo__control[aria-invalid='true'] {
+  border-color: var(--color-error);
+}
+
+.campo__control[aria-invalid='true']:focus-visible {
+  box-shadow: var(--halo-error);
+}
+
+.campo__alternar {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  color: var(--color-texto-secundario);
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  transition:
+    color var(--transicion),
+    background-color var(--transicion),
+    box-shadow var(--transicion);
+}
+
+.campo__alternar svg {
+  width: 18px;
+  height: 18px;
+}
+
+.campo__alternar:hover {
+  color: var(--color-marca);
+  background: var(--color-marca-suave);
+}
+
+.campo__alternar:focus-visible {
+  color: var(--color-marca);
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--color-marca);
+}
+
+.campo__ayuda,
+.campo__error {
+  margin: 6px 0 0;
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+}
+
+.campo__ayuda {
+  color: var(--color-texto-secundario);
+}
+
+.campo__error {
+  color: var(--color-error);
+}
+
+.registro-alerta {
+  margin: 0;
+  padding: 12px 16px;
+  color: var(--color-error);
+  background: var(--color-error-suave);
+  border-radius: 12px;
+}
+
+.boton-principal {
+  padding: 13px 20px;
+  color: var(--color-superficie);
+  background: var(--color-marca);
+  border: 0;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: var(--texto-boton);
+  line-height: var(--linea-boton);
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color var(--transicion),
+    box-shadow var(--transicion);
+}
+
+.boton-principal:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-marca) 82%, var(--color-texto));
+}
+
+.boton-principal:focus-visible {
+  outline: 2px solid var(--color-marca);
+  outline-offset: 2px;
+  box-shadow: var(--halo-marca);
+}
+
+.boton-principal:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+@media (max-width: 960px) {
+  main.registro-pagina {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .registro-portada {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .registro-pagina__contenido {
+    align-items: flex-start;
+    padding: 16px;
+  }
+
+  .registro-tarjeta {
+    padding: 24px;
+  }
+
+  .registro-roles__opciones {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
