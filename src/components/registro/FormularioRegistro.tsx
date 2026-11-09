@@ -1,16 +1,23 @@
 import { useState, type FormEvent } from 'react'
+import { mensajeConReferencia, type ErrorApi } from '../../api/errores'
 import { registrarUsuario, type Rol } from '../../api/registro'
 import '../formulario/formulario.css'
 import CampoTexto from './CampoTexto'
 import TarjetaRol from './TarjetaRol'
 import './registro.css'
 
-const LONGITUD_MINIMA_CONTRASENA = 8
 const PATRON_CORREO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const LONGITUD_MAXIMA_NOMBRE = 120
+const LONGITUD_MAXIMA_CORREO = 160
+const LONGITUD_MAXIMA_TELEFONO = 30
+const LONGITUD_MINIMA_CONTRASENA = 8
+const LONGITUD_MAXIMA_CONTRASENA = 128
+const POLITICA_CONTRASENA = `De ${LONGITUD_MINIMA_CONTRASENA} a ${LONGITUD_MAXIMA_CONTRASENA} caracteres, con mayúscula, minúscula, número y símbolo.`
 
 interface Valores {
-  nombreCompleto: string
+  nombre: string
   correo: string
+  telefono: string
   contrasena: string
   confirmarContrasena: string
 }
@@ -20,8 +27,9 @@ type Errores = Partial<Record<Campo, string>>
 
 const ORDEN_CAMPOS: Campo[] = [
   'rol',
-  'nombreCompleto',
+  'nombre',
   'correo',
+  'telefono',
   'contrasena',
   'confirmarContrasena',
 ]
@@ -31,22 +39,43 @@ const NOMBRES_ROL: Record<Rol, string> = {
   ANFITRION: 'Anfitrión',
 }
 
+function cumplePoliticaContrasena(contrasena: string) {
+  return (
+    contrasena.length >= LONGITUD_MINIMA_CONTRASENA &&
+    contrasena.length <= LONGITUD_MAXIMA_CONTRASENA &&
+    /\p{Lu}/u.test(contrasena) &&
+    /\p{Ll}/u.test(contrasena) &&
+    /\d/.test(contrasena) &&
+    /[^\p{L}\p{N}\s]/u.test(contrasena)
+  )
+}
+
 function validar(valores: Valores, rol: Rol | null): Errores {
   const errores: Errores = {}
+  const nombre = valores.nombre.trim()
+  const correo = valores.correo.trim()
 
   if (!rol) {
     errores.rol = 'Selecciona un tipo de cuenta.'
   }
-  if (!valores.nombreCompleto.trim()) {
-    errores.nombreCompleto = 'Ingresa tu nombre completo.'
+  if (!nombre) {
+    errores.nombre = 'Ingresa tu nombre completo.'
+  } else if (nombre.length > LONGITUD_MAXIMA_NOMBRE) {
+    errores.nombre = `El nombre admite máximo ${LONGITUD_MAXIMA_NOMBRE} caracteres.`
   }
-  if (!valores.correo.trim()) {
+  if (!correo) {
     errores.correo = 'Ingresa tu correo.'
-  } else if (!PATRON_CORREO.test(valores.correo.trim())) {
+  } else if (
+    correo.length > LONGITUD_MAXIMA_CORREO ||
+    !PATRON_CORREO.test(correo)
+  ) {
     errores.correo = 'Ingresa un correo válido.'
   }
-  if (valores.contrasena.length < LONGITUD_MINIMA_CONTRASENA) {
-    errores.contrasena = `La contraseña debe tener mínimo ${LONGITUD_MINIMA_CONTRASENA} caracteres.`
+  if (valores.telefono.trim().length > LONGITUD_MAXIMA_TELEFONO) {
+    errores.telefono = `El teléfono admite máximo ${LONGITUD_MAXIMA_TELEFONO} caracteres.`
+  }
+  if (!cumplePoliticaContrasena(valores.contrasena)) {
+    errores.contrasena = `La contraseña debe tener de ${LONGITUD_MINIMA_CONTRASENA} a ${LONGITUD_MAXIMA_CONTRASENA} caracteres, con mayúscula, minúscula, número y símbolo.`
   }
   if (!valores.confirmarContrasena) {
     errores.confirmarContrasena = 'Confirma tu contraseña.'
@@ -64,11 +93,16 @@ function enfocarPrimerError(errores: Errores) {
   }
 }
 
+function esCampo(nombre: string): nombre is Campo {
+  return (ORDEN_CAMPOS as string[]).includes(nombre)
+}
+
 function FormularioRegistro() {
   const [rol, setRol] = useState<Rol | null>(null)
   const [valores, setValores] = useState<Valores>({
-    nombreCompleto: '',
+    nombre: '',
     correo: '',
+    telefono: '',
     contrasena: '',
     confirmarContrasena: '',
   })
@@ -98,6 +132,26 @@ function FormularioRegistro() {
     enfocarPrimerError(nuevos)
   }
 
+  function mostrarErrorApi(error: ErrorApi) {
+    const porCampo: Errores = {}
+    const sinCampo: string[] = []
+
+    for (const [campo, mensaje] of Object.entries(error.erroresPorCampo)) {
+      if (esCampo(campo)) {
+        porCampo[campo] = mensaje
+      } else {
+        sinCampo.push(mensaje)
+      }
+    }
+
+    mostrarErrores(porCampo)
+    if (sinCampo.length > 0) {
+      setErrorGeneral(mensajeConReferencia(error, sinCampo.join(' ')))
+    } else if (Object.keys(porCampo).length === 0) {
+      setErrorGeneral(mensajeConReferencia(error))
+    }
+  }
+
   async function enviar(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault()
     if (enviando) {
@@ -113,31 +167,20 @@ function FormularioRegistro() {
 
     setErrores({})
     setEnviando(true)
+    const telefono = valores.telefono.trim()
     const resultado = await registrarUsuario({
-      nombreCompleto: valores.nombreCompleto.trim(),
+      nombre: valores.nombre.trim(),
       correo: valores.correo.trim(),
+      ...(telefono ? { telefono } : {}),
       contrasena: valores.contrasena,
       rol,
     })
     setEnviando(false)
 
-    switch (resultado.estado) {
-      case 'ok':
-        setRolCreado(rol)
-        break
-      case 'correo_duplicado':
-        mostrarErrores({ correo: 'Este correo ya está registrado.' })
-        break
-      case 'contrasena_invalida':
-        mostrarErrores({
-          contrasena: 'La contraseña no cumple la política de seguridad.',
-        })
-        break
-      case 'error':
-        setErrorGeneral(
-          'No pudimos crear tu cuenta. Inténtalo de nuevo en unos minutos.',
-        )
-        break
+    if (resultado.estado === 'ok') {
+      setRolCreado(rol)
+    } else {
+      mostrarErrorApi(resultado.error)
     }
   }
 
@@ -194,14 +237,14 @@ function FormularioRegistro() {
         </fieldset>
 
         <CampoTexto
-          id="registro-nombreCompleto"
+          id="registro-nombre"
           etiqueta="Nombre completo"
           tipo="text"
           icono="usuario"
           autoComplete="name"
-          valor={valores.nombreCompleto}
-          error={errores.nombreCompleto}
-          onCambio={(valor) => cambiarValor('nombreCompleto', valor)}
+          valor={valores.nombre}
+          error={errores.nombre}
+          onCambio={(valor) => cambiarValor('nombre', valor)}
         />
         <CampoTexto
           id="registro-correo"
@@ -214,12 +257,22 @@ function FormularioRegistro() {
           onCambio={(valor) => cambiarValor('correo', valor)}
         />
         <CampoTexto
+          id="registro-telefono"
+          etiqueta="Teléfono (opcional)"
+          tipo="tel"
+          icono="telefono"
+          autoComplete="tel"
+          valor={valores.telefono}
+          error={errores.telefono}
+          onCambio={(valor) => cambiarValor('telefono', valor)}
+        />
+        <CampoTexto
           id="registro-contrasena"
           etiqueta="Contraseña"
           tipo="password"
           icono="candado"
           autoComplete="new-password"
-          ayuda={`Mínimo ${LONGITUD_MINIMA_CONTRASENA} caracteres.`}
+          ayuda={POLITICA_CONTRASENA}
           valor={valores.contrasena}
           error={errores.contrasena}
           onCambio={(valor) => cambiarValor('contrasena', valor)}
