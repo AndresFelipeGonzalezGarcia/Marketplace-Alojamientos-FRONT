@@ -1,38 +1,68 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router'
+import { mensajeConReferencia, type ErrorApi } from '../../api/errores'
 import {
   actualizarPublicacion,
   crearPublicacion,
   TIPOS_ALOJAMIENTO,
-  type ErroresPublicacion,
   type Publicacion,
 } from '../../api/publicaciones'
 import '../formulario/formulario.css'
 import CampoFormulario from './CampoFormulario'
-import ChipsServicios from './ChipsServicios'
 import ListaImagenes from './ListaImagenes'
 import PanelRevision from './PanelRevision'
-import SeccionDeshabilitada from './SeccionDeshabilitada'
+import SeccionCondiciones from './SeccionCondiciones'
 import './publicacion.css'
 import {
   aDatosPublicacion,
   aValoresPublicacion,
   evaluarRequisitos,
+  quitarFilasVacias,
   validarPublicacion,
   VALORES_VACIOS,
+  type ErroresFormulario,
   type ValoresPublicacion,
 } from './validacion'
 
-const ORDEN_CAMPOS: (keyof ErroresPublicacion)[] = [
+const ORDEN_CAMPOS = [
   'titulo',
   'descripcion',
   'ciudad',
-  'ubicacion',
+  'ubicacionTextual',
   'tipo',
   'capacidad',
+  'imagenes',
   'precioNoche',
+  'tarifaLimpieza',
+  'politicaCancelacionId',
+  'modoReserva',
+  'serviciosIds',
   'reglas',
+  'serviciosAdicionales',
 ]
+const PATRON_ERROR_FILA =
+  /^(imagenes\[\d+\]|serviciosAdicionales\[\d+\]\.(nombre|costo))$/
+
+function esCampoConocido(campo: string) {
+  return ORDEN_CAMPOS.includes(campo) || PATRON_ERROR_FILA.test(campo)
+}
+
+function posicionCampo(ruta: string) {
+  return ORDEN_CAMPOS.indexOf(ruta.split('[')[0])
+}
+
+function enfocarPrimerError(errores: ErroresFormulario) {
+  const rutas = Object.keys(errores).sort(
+    (a, b) => posicionCampo(a) - posicionCampo(b),
+  )
+  for (const ruta of rutas) {
+    const elemento = document.getElementById(`publicacion-${ruta}`)
+    if (elemento) {
+      elemento.focus()
+      return
+    }
+  }
+}
 
 interface FormularioPublicacionProps {
   publicacion: Publicacion | null
@@ -51,15 +81,10 @@ function FormularioPublicacion({
     publicacion ? aValoresPublicacion(publicacion) : VALORES_VACIOS,
   )
   const [estado, setEstado] = useState(publicacion?.estado)
-  const [errores, setErrores] = useState<ErroresPublicacion>({})
+  const [errores, setErrores] = useState<ErroresFormulario>({})
   const [errorGeneral, setErrorGeneral] = useState('')
   const [guardando, setGuardando] = useState(false)
   const [guardado, setGuardado] = useState(borradorRecienGuardado)
-
-  const opcionesTipo =
-    valores.tipo && !TIPOS_ALOJAMIENTO.includes(valores.tipo)
-      ? [...TIPOS_ALOJAMIENTO, valores.tipo]
-      : TIPOS_ALOJAMIENTO
 
   function cambiar<C extends keyof ValoresPublicacion>(
     campo: C,
@@ -67,27 +92,30 @@ function FormularioPublicacion({
   ) {
     setValores((actuales) => ({ ...actuales, [campo]: valor }))
     setGuardado(false)
-    setErrores((actuales) => {
-      const siguientes = { ...actuales }
-      delete siguientes[campo]
-      return siguientes
-    })
-  }
-
-  function alternarServicio(servicio: string) {
-    cambiar(
-      'servicios',
-      valores.servicios.includes(servicio)
-        ? valores.servicios.filter((actual) => actual !== servicio)
-        : [...valores.servicios, servicio],
+    setErrores((actuales) =>
+      Object.fromEntries(
+        Object.entries(actuales).filter(([ruta]) => !ruta.startsWith(campo)),
+      ),
     )
   }
 
-  function mostrarErrores(nuevos: ErroresPublicacion) {
+  function mostrarErrores(nuevos: ErroresFormulario) {
     setErrores(nuevos)
-    const campo = ORDEN_CAMPOS.find((nombre) => nuevos[nombre])
-    if (campo) {
-      document.getElementById(`publicacion-${campo}`)?.focus()
+    enfocarPrimerError(nuevos)
+  }
+
+  function mostrarErrorApi(error: ErrorApi) {
+    const entradas = Object.entries(error.erroresPorCampo)
+    const conocidos = entradas.filter(([campo]) => esCampoConocido(campo))
+    const desconocidos = entradas
+      .filter(([campo]) => !esCampoConocido(campo))
+      .map(([, mensaje]) => mensaje)
+
+    mostrarErrores(Object.fromEntries(conocidos))
+    if (desconocidos.length > 0) {
+      setErrorGeneral(mensajeConReferencia(error, desconocidos.join(' ')))
+    } else if (conocidos.length === 0) {
+      setErrorGeneral(mensajeConReferencia(error))
     }
   }
 
@@ -99,7 +127,10 @@ function FormularioPublicacion({
 
     setErrorGeneral('')
     setGuardado(false)
-    const erroresValidacion = validarPublicacion(valores)
+    // Sin filas vacías, los índices coinciden con los errores del backend.
+    const valoresCompactos = quitarFilasVacias(valores)
+    setValores(valoresCompactos)
+    const erroresValidacion = validarPublicacion(valoresCompactos)
     if (Object.keys(erroresValidacion).length > 0) {
       mostrarErrores(erroresValidacion)
       return
@@ -107,40 +138,32 @@ function FormularioPublicacion({
 
     setErrores({})
     setGuardando(true)
-    const datos = aDatosPublicacion(valores)
+    const datos = aDatosPublicacion(valoresCompactos)
     const resultado = publicacion
       ? await actualizarPublicacion(publicacion.id, datos)
       : await crearPublicacion(datos)
     setGuardando(false)
 
-    switch (resultado.estado) {
-      case 'ok':
-        if (publicacion) {
-          setEstado(resultado.publicacion.estado)
-          setGuardado(true)
-        } else {
-          onCreada(resultado.publicacion)
-        }
+    if (resultado.estado === 'ok') {
+      if (publicacion) {
+        setEstado(resultado.datos.estado)
+        setGuardado(true)
+      } else {
+        onCreada(resultado.datos)
+      }
+      return
+    }
+
+    switch (resultado.error.codigo) {
+      case 'ACCESO_DENEGADO':
+        onBloqueada('acceso_denegado')
         break
-      case 'validacion':
-        if (Object.keys(resultado.errores).length > 0) {
-          mostrarErrores(resultado.errores)
-        } else {
-          setErrorGeneral('Revisa los datos de la publicación.')
-        }
+      case 'PUBLICACION_NO_ENCONTRADA':
+      case 'RECURSO_NO_ENCONTRADO':
+        onBloqueada('no_encontrada')
         break
-      case 'sesion_invalida':
-        setErrorGeneral('Tu sesión no es válida. Inicia sesión de nuevo.')
-        break
-      case 'acceso_denegado':
-      case 'no_encontrada':
-        onBloqueada(resultado.estado)
-        break
-      case 'error':
-        setErrorGeneral(
-          'No pudimos guardar la publicación. Inténtalo de nuevo en unos minutos.',
-        )
-        break
+      default:
+        mostrarErrorApi(resultado.error)
     }
   }
 
@@ -200,23 +223,25 @@ function FormularioPublicacion({
                   onCambio={(valor) => cambiar('ciudad', valor)}
                 />
                 <CampoFormulario
-                  id="publicacion-ubicacion"
+                  id="publicacion-ubicacionTextual"
                   etiqueta="Ubicación (texto)"
                   marcador="Barrio o referencia"
-                  valor={valores.ubicacion}
-                  error={errores.ubicacion}
-                  onCambio={(valor) => cambiar('ubicacion', valor)}
+                  valor={valores.ubicacionTextual}
+                  error={errores.ubicacionTextual}
+                  onCambio={(valor) => cambiar('ubicacionTextual', valor)}
                 />
               </div>
-              <div className="publicacion-fila publicacion-fila--3">
+              <div className="publicacion-fila publicacion-fila--2">
                 <CampoFormulario
                   id="publicacion-tipo"
                   etiqueta="Tipo"
                   control="lista"
-                  opciones={opcionesTipo}
+                  opciones={TIPOS_ALOJAMIENTO}
                   valor={valores.tipo}
                   error={errores.tipo}
-                  onCambio={(valor) => cambiar('tipo', valor)}
+                  onCambio={(valor) =>
+                    cambiar('tipo', valor as ValoresPublicacion['tipo'])
+                  }
                 />
                 <CampoFormulario
                   id="publicacion-capacidad"
@@ -226,46 +251,27 @@ function FormularioPublicacion({
                   error={errores.capacidad}
                   onCambio={(valor) => cambiar('capacidad', valor)}
                 />
-                <CampoFormulario
-                  id="publicacion-precioNoche"
-                  etiqueta="Precio por noche (COP)"
-                  control="numero"
-                  valor={valores.precioNoche}
-                  error={errores.precioNoche}
-                  onCambio={(valor) => cambiar('precioNoche', valor)}
-                />
               </div>
-              <ChipsServicios
-                seleccionados={valores.servicios}
-                onAlternar={alternarServicio}
-              />
-              <CampoFormulario
-                id="publicacion-reglas"
-                etiqueta="Reglas de la casa"
-                control="area"
-                valor={valores.reglas}
-                error={errores.reglas}
-                onCambio={(valor) => cambiar('reglas', valor)}
-              />
               <ListaImagenes
                 imagenes={valores.imagenes}
+                errores={errores}
                 onCambiar={(imagenes) => cambiar('imagenes', imagenes)}
               />
             </div>
-            {errorGeneral && (
-              <p className="publicacion-alerta" role="alert">
-                {errorGeneral}
-              </p>
-            )}
           </section>
 
-          <SeccionDeshabilitada />
+          <SeccionCondiciones
+            valores={valores}
+            errores={errores}
+            onCambiar={cambiar}
+          />
         </div>
 
         <PanelRevision
           requisitos={evaluarRequisitos(valores)}
           guardando={guardando}
           guardado={guardado}
+          errorGeneral={errorGeneral}
         />
       </form>
     </>

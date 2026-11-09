@@ -122,18 +122,10 @@ main.publicacion-pagina {
   font-weight: 700;
 }
 
-.publicacion-campos,
-.publicacion-deshabilitada {
+.publicacion-campos {
   display: flex;
   flex-direction: column;
   gap: 20px;
-}
-
-.publicacion-deshabilitada {
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
 }
 
 .publicacion-fila {
@@ -150,7 +142,7 @@ main.publicacion-pagina {
 }
 
 .publicacion-alerta {
-  margin: 20px 0 0;
+  margin: 12px 0 0;
   padding: 12px 16px;
   color: var(--color-error);
   background: var(--color-error-suave);
@@ -262,56 +254,6 @@ main.publicacion-pagina {
   align-self: start;
 }
 
-.opcion-deshabilitada {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 14px;
-  color: var(--color-texto-secundario);
-  background: var(--color-fondo-pagina);
-  border: 1px solid var(--color-borde-suave);
-  border-radius: 12px;
-  cursor: not-allowed;
-}
-
-.opcion-deshabilitada input {
-  flex: none;
-  width: 18px;
-  height: 18px;
-  margin: 1px 0 0;
-}
-
-.opcion-deshabilitada__titulo {
-  display: block;
-  font-size: var(--texto-etiqueta);
-  line-height: var(--linea-etiqueta);
-  font-weight: 600;
-}
-
-.opcion-deshabilitada__descripcion {
-  display: block;
-  font-size: var(--texto-pequeno);
-  line-height: var(--linea-pequeno);
-}
-
-.servicios-costo {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.servicios-costo__fila {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 4px 16px;
-  padding: 11px 12px;
-  color: var(--color-texto-secundario);
-  background: var(--color-fondo-pagina);
-  border: 1px solid var(--color-borde-suave);
-  border-radius: 10px;
-}
-
 .panel-revision {
   position: sticky;
   top: 24px;
@@ -332,10 +274,6 @@ main.publicacion-pagina {
   gap: 10px;
   font-size: var(--texto-etiqueta);
   line-height: var(--linea-etiqueta);
-}
-
-.panel-revision__requisito--inactivo {
-  color: var(--color-texto-secundario);
 }
 
 .insignia {
@@ -361,10 +299,6 @@ main.publicacion-pagina {
 .insignia--alerta {
   color: var(--color-error);
   background: var(--color-error-suave);
-}
-
-.insignia--vacia {
-  background: var(--color-fondo-pagina);
 }
 
 .panel-revision__nota {
@@ -418,5 +352,127 @@ main.publicacion-pagina {
   .publicacion-fila--2,
   .publicacion-fila--3 {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.grupo-opciones {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+label.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+label.chip input {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  accent-color: var(--color-marca);
+}
+
+label.chip:has(input:focus-visible) {
+  outline: 2px solid var(--color-marca);
+  outline-offset: 2px;
+}
+
+.opcion-tarjeta {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    background-color var(--transicion),
+    border-color var(--transicion);
+}
+
+.opcion-tarjeta:hover,
+.opcion-tarjeta--seleccionada {
+  border-color: var(--color-marca);
+}
+
+.opcion-tarjeta--seleccionada {
+  background: var(--color-marca-suave);
+}
+
+.opcion-tarjeta input {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 1px 0 0;
+  accent-color: var(--color-marca);
+}
+
+.opcion-tarjeta input:focus-visible {
+  outline: 2px solid var(--color-marca);
+  outline-offset: 2px;
+}
+
+.opcion-tarjeta__titulo {
+  display: block;
+  font-size: var(--texto-etiqueta);
+  line-height: var(--linea-etiqueta);
+  font-weight: 600;
+}
+
+.opcion-tarjeta__descripcion {
+  display: block;
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+}
+
+.catalogo-mensaje {
+  margin: 0;
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-etiqueta);
+  line-height: var(--linea-etiqueta);
+}
+
+.catalogo-error .catalogo-mensaje {
+  color: var(--color-error);
+}
+
+.adicionales {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.adicional-fila {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 200px auto;
+  align-items: start;
+  gap: 12px;
+}
+
+.adicional-fila__quitar {
+  margin-top: 36px;
+}
+
+.adicionales__agregar {
+  align-self: flex-start;
+}
+
+.adicionales .campo__ayuda {
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .adicional-fila {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .adicional-fila__quitar {
+    justify-self: start;
+    margin-top: 0;
   }
 }

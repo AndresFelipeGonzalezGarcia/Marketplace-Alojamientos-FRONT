@@ -30,12 +30,21 @@ const MENSAJES = new Map<string, string>([
     'PERIODO_CON_RESERVAS',
     'No se puede hacer este cambio porque el periodo tiene reservas activas.',
   ],
+  ['POLITICA_CANCELACION_INVALIDA', 'La política de cancelación no existe.'],
+  ['SERVICIO_INVALIDO', 'Uno de los servicios seleccionados no existe.'],
+  [
+    'ESTADO_PUBLICACION_INVALIDO',
+    'La publicación no se puede modificar en su estado actual.',
+  ],
+  ['PUBLICACION_INCOMPLETA', 'Completa los datos de la publicación.'],
   ['ERROR_INTERNO', MENSAJE_GENERICO],
 ])
 
 const CAMPO_POR_CODIGO = new Map<string, string>([
   ['CORREO_YA_REGISTRADO', 'correo'],
   ['ROL_NO_PERMITIDO', 'rol'],
+  ['POLITICA_CANCELACION_INVALIDA', 'politicaCancelacionId'],
+  ['SERVICIO_INVALIDO', 'serviciosIds'],
   ['FECHAS_INVALIDAS', 'fechaFin'],
   ['PERIODO_EN_EL_PASADO', 'fechaInicio'],
 ])

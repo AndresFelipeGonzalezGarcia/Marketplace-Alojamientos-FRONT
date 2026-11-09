@@ -16,13 +16,17 @@ type Carga =
   | { fase: 'error' }
 
 function traducirCarga(resultado: ResultadoPublicacion): Carga {
-  switch (resultado.estado) {
-    case 'ok':
-      return { fase: 'lista', publicacion: resultado.publicacion }
-    case 'acceso_denegado':
-    case 'no_encontrada':
-    case 'sesion_invalida':
-      return { fase: resultado.estado }
+  if (resultado.estado === 'ok') {
+    return { fase: 'lista', publicacion: resultado.datos }
+  }
+  switch (resultado.error.codigo) {
+    case 'ACCESO_DENEGADO':
+      return { fase: 'acceso_denegado' }
+    case 'PUBLICACION_NO_ENCONTRADA':
+    case 'RECURSO_NO_ENCONTRADO':
+      return { fase: 'no_encontrada' }
+    case 'NO_AUTENTICADO':
+      return { fase: 'sesion_invalida' }
     default:
       return { fase: 'error' }
   }
