@@ -95,6 +95,12 @@ main.publicacion-pagina {
   gap: 24px;
 }
 
+.publicacion-enlace {
+  margin-left: auto;
+  padding: 9px 16px;
+  text-decoration: none;
+}
+
 .publicacion-columna {
   display: flex;
   flex-direction: column;

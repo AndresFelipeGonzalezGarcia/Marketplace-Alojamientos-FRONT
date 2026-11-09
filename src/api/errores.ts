@@ -26,13 +26,18 @@ const MENSAJES = new Map<string, string>([
   ['FECHAS_INVALIDAS', 'La fecha final no puede ser anterior a la inicial.'],
   ['PERIODO_CRUZADO', 'Las fechas se cruzan con otro periodo.'],
   ['PERIODO_EN_EL_PASADO', 'El periodo no puede empezar en el pasado.'],
-  ['PERIODO_CON_RESERVAS', 'El periodo tiene reservas activas.'],
+  [
+    'PERIODO_CON_RESERVAS',
+    'No se puede hacer este cambio porque el periodo tiene reservas activas.',
+  ],
   ['ERROR_INTERNO', MENSAJE_GENERICO],
 ])
 
 const CAMPO_POR_CODIGO = new Map<string, string>([
   ['CORREO_YA_REGISTRADO', 'correo'],
   ['ROL_NO_PERMITIDO', 'rol'],
+  ['FECHAS_INVALIDAS', 'fechaFin'],
+  ['PERIODO_EN_EL_PASADO', 'fechaInicio'],
 ])
 
 function esDetalleCampo(
