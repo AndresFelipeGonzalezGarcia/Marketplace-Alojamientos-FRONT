@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createMemoryRouter, RouterProvider } from 'react-router'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { routes } from './routes'
 
 function renderAt(path: string) {
@@ -10,6 +10,29 @@ function renderAt(path: string) {
 }
 
 describe('routes', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs()
+  })
+
+  it('muestra el formulario de nueva publicación', () => {
+    renderAt('/publicaciones/nueva')
+
+    expect(
+      screen.getByRole('heading', { name: 'Nueva publicación' }),
+    ).toBeInTheDocument()
+  })
+
+  it('abre la ruta de edición de una publicación', async () => {
+    vi.stubEnv('VITE_API_URL', '')
+    renderAt('/publicaciones/7/editar')
+
+    expect(
+      await screen.findByRole('heading', {
+        name: 'No pudimos cargar la publicación',
+      }),
+    ).toBeInTheDocument()
+  })
+
   it('muestra la página de inicio en /', () => {
     renderAt('/')
 
