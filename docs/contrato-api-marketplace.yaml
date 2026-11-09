@@ -1,0 +1,353 @@
+openapi: 3.0.3
+info:
+  title: Marketplace de alojamientos temporales - Contrato de API
+  version: v1
+  description: |
+    Backend REST (Spring Boot). Autenticación con JWT (HS256) en el header `Authorization: Bearer <token>`.
+    Todo endpoint no declarado aquí se deniega. Todas las respuestas de error usan el esquema `ApiError`
+    e incluyen el header `X-Correlation-Id` (puede enviarse en la petición; si es un UUID válido se reutiliza).
+    Fechas en formato ISO `yyyy-MM-dd`; instantes en ISO-8601 UTC.
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: Autenticación y cuenta
+  - name: Periodos disponibles (Anfitrión)
+  - name: Administración
+  - name: Operación
+security:
+  - bearerAuth: []
+paths:
+  /api/auth/login:
+    post:
+      tags: [Autenticación y cuenta]
+      summary: Iniciar sesión
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginRequest' }
+            example: { correo: anfitrion@marketplace.test, contrasena: "Test1234*" }
+      responses:
+        '200':
+          description: Sesión iniciada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoginResponse' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401':
+          description: "Credenciales incorrectas (código `CREDENCIALES_INVALIDAS`)"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '403':
+          description: "Cuenta no activa (código `CUENTA_RESTRINGIDA` o `CUENTA_DESACTIVADA`)"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+  /api/auth/me:
+    get:
+      tags: [Autenticación y cuenta]
+      summary: Perfil del usuario autenticado
+      responses:
+        '200':
+          description: Usuario actual
+          content: { application/json: { schema: { $ref: '#/components/schemas/Usuario' } } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403':
+          description: "Cuenta no activa (`CUENTA_RESTRINGIDA` / `CUENTA_DESACTIVADA`)"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+  /api/auth/registro:
+    post:
+      tags: [Autenticación y cuenta]
+      summary: Registrarse como huésped o anfitrión
+      description: |
+        Crea la cuenta (estado ACTIVA) con el rol elegido. El correo se normaliza a minúsculas.
+        Política de contraseña: 8 a 128 caracteres con mayúscula, minúscula, número y símbolo.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RegistroRequest' }
+            example:
+              nombre: Ana Pérez
+              correo: ana@correo.com
+              telefono: "3001234567"
+              contrasena: "Segura123*"
+              rol: ANFITRION
+      responses:
+        '201':
+          description: Cuenta creada
+          content: { application/json: { schema: { $ref: '#/components/schemas/Usuario' } } }
+        '400':
+          description: |
+            Datos inválidos (`SOLICITUD_INVALIDA`, con `detalles` por campo; incluye contraseña que no cumple la política)
+            o rol no permitido (`ROL_NO_PERMITIDO`, p. ej. ADMINISTRADOR).
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '409':
+          description: "Correo ya registrado (`CORREO_YA_REGISTRADO`)"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+  /api/auth/recuperar-contrasena:
+    post:
+      tags: [Autenticación y cuenta]
+      summary: Solicitar enlace de recuperación (simulado)
+      description: |
+        Siempre responde 202, exista o no el correo (no revela cuentas). Si existe, se genera un enlace de un solo uso
+        con vigencia de 30 minutos (configurable); se registra en log (`[CORREO SIMULADO]`), en la tabla
+        `recuperacion_contrasena` (solo hash) y en auditoría. Una nueva solicitud invalida los enlaces anteriores.
+        `enlaceSimulado` solo se devuelve con `app.recuperacion.exponer-enlace=true` (perfil dev).
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RecuperarContrasenaRequest' }
+      responses:
+        '202':
+          description: Solicitud recibida
+          content: { application/json: { schema: { $ref: '#/components/schemas/RecuperacionResponse' } } }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+  /api/auth/restablecer-contrasena:
+    post:
+      tags: [Autenticación y cuenta]
+      summary: Definir nueva contraseña con el enlace
+      description: "`token` es el valor del parámetro `?token=` del enlace. Tras el éxito el enlace deja de servir."
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RestablecerContrasenaRequest' }
+      responses:
+        '204': { description: Contraseña actualizada }
+        '400':
+          description: |
+            Contraseña fuera de política (`SOLICITUD_INVALIDA`) o enlace inexistente, vencido o ya usado (`ENLACE_INVALIDO`).
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+  /api/anfitrion/publicaciones/{publicacionId}/periodos:
+    parameters:
+      - $ref: '#/components/parameters/PublicacionId'
+    get:
+      tags: [Periodos disponibles (Anfitrión)]
+      summary: Listar periodos de una publicación (ordenados por fecha de inicio)
+      description: Rol ANFITRION y dueño de la publicación.
+      responses:
+        '200':
+          description: Periodos
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/Periodo' } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+        '404': { $ref: '#/components/responses/PublicacionNoEncontrada' }
+    post:
+      tags: [Periodos disponibles (Anfitrión)]
+      summary: Registrar periodo disponible
+      description: Rango inclusivo en ambos extremos. No puede empezar en el pasado (zona America/Bogota) ni cruzarse con otro periodo.
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/PeriodoRequest' } } }
+      responses:
+        '201':
+          description: Periodo creado
+          content: { application/json: { schema: { $ref: '#/components/schemas/Periodo' } } }
+        '400':
+          description: "Campos faltantes (`SOLICITUD_INVALIDA`) o fin anterior al inicio (`FECHAS_INVALIDAS`)"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+        '404': { $ref: '#/components/responses/PublicacionNoEncontrada' }
+        '409':
+          description: "Se cruza con otro periodo (`PERIODO_CRUZADO`)"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '422':
+          description: "Empieza en el pasado (`PERIODO_EN_EL_PASADO`)"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+  /api/anfitrion/publicaciones/{publicacionId}/periodos/{periodoId}:
+    parameters:
+      - $ref: '#/components/parameters/PublicacionId'
+      - $ref: '#/components/parameters/PeriodoId'
+    put:
+      tags: [Periodos disponibles (Anfitrión)]
+      summary: Editar periodo
+      description: No se puede encoger el periodo dejando reservas activas fuera de él.
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/PeriodoRequest' } } }
+      responses:
+        '200':
+          description: Periodo actualizado
+          content: { application/json: { schema: { $ref: '#/components/schemas/Periodo' } } }
+        '400':
+          description: "`SOLICITUD_INVALIDA` o `FECHAS_INVALIDAS`"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+        '404':
+          description: "`PUBLICACION_NO_ENCONTRADA` o `PERIODO_NO_ENCONTRADO`"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '409':
+          description: "`PERIODO_CRUZADO`, o `PERIODO_CON_RESERVAS` (en `detalles` viene la lista de reservas afectadas)"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '422':
+          description: "`PERIODO_EN_EL_PASADO`"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+    delete:
+      tags: [Periodos disponibles (Anfitrión)]
+      summary: Eliminar periodo
+      description: No se elimina si tiene reservas activas (estados PENDIENTE_PAGO, PENDIENTE_APROBACION, CONFIRMADA, EN_REVISION, COMPLETADA).
+      responses:
+        '204': { description: Eliminado }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+        '404':
+          description: "`PUBLICACION_NO_ENCONTRADA` o `PERIODO_NO_ENCONTRADO`"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '409':
+          description: "`PERIODO_CON_RESERVAS`; `detalles` es un arreglo de `ReservaResumen`"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiError' }
+  /api/admin/estado:
+    get:
+      tags: [Administración]
+      summary: Verificación temporal de rol ADMINISTRADOR
+      description: Endpoint temporal para probar 403 + auditoría `ACCESO_DENEGADO`.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { type: object, properties: { estado: { type: string, example: ok } } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+  /actuator/health:
+    get:
+      tags: [Operación]
+      summary: Salud del servicio
+      security: []
+      responses:
+        '200': { description: UP }
+        '503': { description: DOWN }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    PublicacionId:
+      name: publicacionId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    PeriodoId:
+      name: periodoId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+  responses:
+    SolicitudInvalida:
+      description: "Cuerpo inválido (`SOLICITUD_INVALIDA`; `detalles` lista campo y mensaje)"
+      content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+    NoAutenticado:
+      description: "Falta token o es inválido/vencido (`NO_AUTENTICADO`)"
+      content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+    Prohibido:
+      description: "Rol insuficiente o la publicación no es del usuario (`ACCESO_DENEGADO`); queda en auditoría"
+      content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+    PublicacionNoEncontrada:
+      description: "`PUBLICACION_NO_ENCONTRADA`"
+      content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+  schemas:
+    ApiError:
+      type: object
+      description: |
+        Formato único de error. Otros códigos genéricos: `RECURSO_NO_ENCONTRADO` (404), `METODO_NO_PERMITIDO` (405),
+        `TIPO_CONTENIDO_NO_SOPORTADO` (415), `ERROR_INTERNO` (500).
+      properties:
+        codigo: { type: string, example: CORREO_YA_REGISTRADO }
+        mensaje: { type: string }
+        detalles:
+          description: Lista de `DetalleCampo` en validaciones, lista de `ReservaResumen` en `PERIODO_CON_RESERVAS`; omitido si no aplica.
+        correlationId: { type: string, format: uuid }
+      required: [codigo, mensaje]
+    DetalleCampo:
+      type: object
+      properties:
+        campo: { type: string, example: contrasena }
+        mensaje: { type: string }
+    ReservaResumen:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        fechaLlegada: { type: string, format: date }
+        fechaSalida: { type: string, format: date }
+        numeroHuespedes: { type: integer }
+        estado: { type: string, enum: [PENDIENTE_PAGO, PENDIENTE_APROBACION, CONFIRMADA, EN_REVISION, COMPLETADA, CANCELADA, PAGO_FALLIDO] }
+    Rol:
+      type: string
+      enum: [HUESPED, ANFITRION, ADMINISTRADOR]
+    Usuario:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        nombre: { type: string }
+        correo: { type: string, format: email }
+        rol: { $ref: '#/components/schemas/Rol' }
+    LoginRequest:
+      type: object
+      required: [correo, contrasena]
+      properties:
+        correo: { type: string, format: email, maxLength: 160 }
+        contrasena: { type: string, maxLength: 128 }
+    LoginResponse:
+      type: object
+      properties:
+        token: { type: string }
+        tipo: { type: string, example: Bearer }
+        expiraEn: { type: string, format: date-time }
+        usuario: { $ref: '#/components/schemas/Usuario' }
+    RegistroRequest:
+      type: object
+      required: [nombre, correo, contrasena, rol]
+      properties:
+        nombre: { type: string, maxLength: 120 }
+        correo: { type: string, format: email, maxLength: 160 }
+        telefono: { type: string, maxLength: 30 }
+        contrasena:
+          type: string
+          minLength: 8
+          maxLength: 128
+          description: Debe incluir mayúscula, minúscula, número y símbolo.
+        rol: { type: string, enum: [HUESPED, ANFITRION] }
+    RecuperarContrasenaRequest:
+      type: object
+      required: [correo]
+      properties:
+        correo: { type: string, format: email, maxLength: 160 }
+    RecuperacionResponse:
+      type: object
+      properties:
+        mensaje: { type: string }
+        enlaceSimulado: { type: string, description: Solo en perfil dev. }
+    RestablecerContrasenaRequest:
+      type: object
+      required: [token, nuevaContrasena]
+      properties:
+        token: { type: string, maxLength: 200 }
+        nuevaContrasena:
+          type: string
+          minLength: 8
+          maxLength: 128
+          description: Misma política que el registro.
+    PeriodoRequest:
+      type: object
+      required: [fechaInicio, fechaFin]
+      properties:
+        fechaInicio: { type: string, format: date }
+        fechaFin: { type: string, format: date, description: Inclusiva. }
+    Periodo:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        publicacionId: { type: string, format: uuid }
+        fechaInicio: { type: string, format: date }
+        fechaFin: { type: string, format: date }

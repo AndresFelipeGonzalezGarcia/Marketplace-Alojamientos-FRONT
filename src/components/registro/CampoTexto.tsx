@@ -4,7 +4,7 @@ import Icono, { type NombreIcono } from './Icono'
 interface CampoTextoProps {
   id: string
   etiqueta: string
-  tipo: 'text' | 'email' | 'password'
+  tipo: 'text' | 'email' | 'tel' | 'password'
   icono: NombreIcono
   valor: string
   autoComplete: string
