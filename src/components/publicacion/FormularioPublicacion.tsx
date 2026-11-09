@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { Link } from 'react-router'
 import {
   actualizarPublicacion,
   crearPublicacion,
@@ -151,6 +152,14 @@ function FormularioPublicacion({
       <div className="publicacion-cabecera">
         <h1 className="publicacion-cabecera__titulo">{titulo}</h1>
         {estado && <span className="publicacion-estado">{estado}</span>}
+        {publicacion && (
+          <Link
+            className="boton-secundario publicacion-enlace"
+            to={`/publicaciones/${encodeURIComponent(publicacion.id)}/disponibilidad`}
+          >
+            Gestionar disponibilidad
+          </Link>
+        )}
       </div>
 
       <form className="publicacion-layout" noValidate onSubmit={guardar}>

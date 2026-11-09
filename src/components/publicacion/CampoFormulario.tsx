@@ -7,7 +7,7 @@ interface CampoFormularioProps {
   etiqueta: string
   valor: string
   onCambio: (valor: string) => void
-  control?: 'texto' | 'numero' | 'area' | 'lista'
+  control?: 'texto' | 'numero' | 'area' | 'lista' | 'fecha'
   opciones?: string[]
   marcador?: string
   error?: string
@@ -51,10 +51,10 @@ function CampoFormulario({
           ))}
         </select>
       )}
-      {(control === 'texto' || control === 'numero') && (
+      {(control === 'texto' || control === 'numero' || control === 'fecha') && (
         <input
           {...comunes}
-          type="text"
+          type={control === 'fecha' ? 'date' : 'text'}
           inputMode={control === 'numero' ? 'numeric' : undefined}
           placeholder={marcador}
         />

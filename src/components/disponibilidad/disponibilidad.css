@@ -1,0 +1,129 @@
+.disponibilidad-volver {
+  display: inline-block;
+  color: var(--color-marca);
+  font-weight: 600;
+}
+
+.disponibilidad-exito {
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  color: var(--color-exito);
+  background: var(--color-exito-suave);
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.disponibilidad-vacio {
+  margin: 0;
+  padding: 24px 16px;
+  color: var(--color-texto-secundario);
+  background: var(--color-fondo-pagina);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.lista-periodos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fila-periodo {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-borde-suave);
+  border-radius: 12px;
+}
+
+.fila-periodo__rango {
+  font-weight: 600;
+}
+
+.fila-periodo__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.fila-periodo__pregunta {
+  color: var(--color-error);
+  font-size: var(--texto-etiqueta);
+  line-height: var(--linea-etiqueta);
+  font-weight: 600;
+}
+
+.boton-compacto {
+  padding: 7px 14px;
+  color: var(--color-marca);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-marca);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: var(--texto-etiqueta);
+  line-height: var(--linea-etiqueta);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transicion);
+}
+
+.boton-compacto:hover:not(:disabled) {
+  background: var(--color-marca-suave);
+}
+
+.boton-compacto--peligro {
+  color: var(--color-error);
+  border-color: var(--color-error);
+}
+
+.boton-compacto--peligro:hover:not(:disabled) {
+  background: var(--color-error-suave);
+}
+
+.boton-compacto:focus-visible {
+  outline: 2px solid var(--color-marca);
+  outline-offset: 2px;
+}
+
+.boton-compacto:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.periodo-acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.aviso-error {
+  margin-bottom: 12px;
+  padding: 12px 16px;
+  color: var(--color-error);
+  background: var(--color-error-suave);
+  border-radius: 12px;
+}
+
+.aviso-error__mensaje,
+.aviso-error__subtitulo {
+  margin: 0;
+}
+
+.aviso-error__subtitulo {
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+.aviso-error__reservas {
+  margin: 4px 0 0;
+  padding-left: 20px;
+  font-size: var(--texto-etiqueta);
+  line-height: var(--linea-etiqueta);
+}

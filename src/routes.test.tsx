@@ -22,6 +22,17 @@ describe('routes', () => {
     ).toBeInTheDocument()
   })
 
+  it('abre la ruta de disponibilidad de una publicación', async () => {
+    vi.stubEnv('VITE_API_URL', '')
+    renderAt('/publicaciones/7/disponibilidad')
+
+    expect(
+      await screen.findByRole('heading', {
+        name: 'No pudimos cargar la disponibilidad',
+      }),
+    ).toBeInTheDocument()
+  })
+
   it('abre la ruta de edición de una publicación', async () => {
     vi.stubEnv('VITE_API_URL', '')
     renderAt('/publicaciones/7/editar')

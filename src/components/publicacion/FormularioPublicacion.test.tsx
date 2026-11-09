@@ -335,6 +335,23 @@ describe('editar publicación', () => {
     expect(screen.queryByText('Borrador guardado')).not.toBeInTheDocument()
   })
 
+  it('enlaza a la disponibilidad solo en modo editar', async () => {
+    obtener.mockResolvedValue({ estado: 'ok', publicacion: existente })
+    renderEn('/publicaciones/7/editar')
+
+    expect(
+      await screen.findByRole('link', { name: 'Gestionar disponibilidad' }),
+    ).toHaveAttribute('href', '/publicaciones/7/disponibilidad')
+  })
+
+  it('no muestra el enlace a disponibilidad al crear', () => {
+    renderEn('/publicaciones/nueva')
+
+    expect(
+      screen.queryByRole('link', { name: 'Gestionar disponibilidad' }),
+    ).not.toBeInTheDocument()
+  })
+
   it('actualiza la publicación existente sin crear otra', async () => {
     obtener.mockResolvedValue({ estado: 'ok', publicacion: existente })
     actualizar.mockResolvedValue({ estado: 'ok', publicacion: existente })
