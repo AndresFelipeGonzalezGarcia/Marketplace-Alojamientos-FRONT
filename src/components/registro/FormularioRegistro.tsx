@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { registrarUsuario, type Rol } from '../../api/registro'
+import '../formulario/formulario.css'
 import CampoTexto from './CampoTexto'
 import TarjetaRol from './TarjetaRol'
 import './registro.css'
