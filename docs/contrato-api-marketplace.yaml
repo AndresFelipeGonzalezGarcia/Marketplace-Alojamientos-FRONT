@@ -11,6 +11,7 @@ servers:
   - url: http://localhost:8080
 tags:
   - name: Autenticación y cuenta
+  - name: Publicaciones (Anfitrión)
   - name: Periodos disponibles (Anfitrión)
   - name: Administración
   - name: Operación
@@ -120,6 +121,137 @@ paths:
         '400':
           description: |
             Contraseña fuera de política (`SOLICITUD_INVALIDA`) o enlace inexistente, vencido o ya usado (`ENLACE_INVALIDO`).
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+  /api/anfitrion/servicios:
+    get:
+      tags: [Publicaciones (Anfitrión)]
+      summary: Catálogo de servicios que se pueden marcar (ordenado por nombre)
+      description: Rol ANFITRION. Los `id` se envían en `serviciosIds` al crear o editar una publicación.
+      responses:
+        '200':
+          description: Servicios
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/Servicio' } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+  /api/anfitrion/politicas-cancelacion:
+    get:
+      tags: [Publicaciones (Anfitrión)]
+      summary: Políticas de cancelación disponibles (ordenadas por nombre)
+      description: Rol ANFITRION. El `id` se envía en `politicaCancelacionId`.
+      responses:
+        '200':
+          description: Políticas
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/PoliticaCancelacion' } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+  /api/anfitrion/publicaciones:
+    get:
+      tags: [Publicaciones (Anfitrión)]
+      summary: Listar mis publicaciones (la más recientemente actualizada primero)
+      description: Rol ANFITRION. Solo devuelve las publicaciones del usuario autenticado.
+      responses:
+        '200':
+          description: Publicaciones propias
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/PublicacionResumen' } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+    post:
+      tags: [Publicaciones (Anfitrión)]
+      summary: Crear publicación
+      description: Queda en estado BORRADOR y se audita (`PUBLICACION_CREADA`).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PublicacionRequest' }
+            example:
+              politicaCancelacionId: 3f2b8c1e-5a4d-4e7a-9c3b-1d2e3f4a5b6c
+              titulo: Apartamento con vista en Chapinero
+              descripcion: Apartamento amplio y luminoso cerca de transporte.
+              ciudad: Bogotá
+              ubicacionTextual: Calle 60 # 10-20, Chapinero
+              tipo: APARTAMENTO
+              capacidad: 4
+              precioNoche: 180000.00
+              tarifaLimpieza: 30000.00
+              reglas: No fumar. No fiestas.
+              modoReserva: INMEDIATA
+              serviciosIds: []
+              serviciosAdicionales:
+                - { nombre: Desayuno, costo: 15000.00 }
+              imagenes: [ "https://ejemplo.com/foto1.jpg" ]
+      responses:
+        '201':
+          description: Publicación creada en BORRADOR
+          content: { application/json: { schema: { $ref: '#/components/schemas/PublicacionDetalle' } } }
+        '400':
+          description: |
+            `SOLICITUD_INVALIDA` (con `detalles` por campo), `POLITICA_CANCELACION_INVALIDA` o `SERVICIO_INVALIDO`
+            (el id enviado no existe).
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+  /api/anfitrion/publicaciones/{publicacionId}:
+    parameters:
+      - $ref: '#/components/parameters/PublicacionId'
+    get:
+      tags: [Publicaciones (Anfitrión)]
+      summary: Consultar una publicación propia
+      description: Rol ANFITRION y dueño de la publicación.
+      responses:
+        '200':
+          description: Detalle
+          content: { application/json: { schema: { $ref: '#/components/schemas/PublicacionDetalle' } } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+        '404': { $ref: '#/components/responses/PublicacionNoEncontrada' }
+    put:
+      tags: [Publicaciones (Anfitrión)]
+      summary: Editar publicación
+      description: |
+        Solo en estado BORRADOR, ACTIVA o PAUSADA. Los servicios adicionales y las imágenes se reemplazan completos
+        en cada edición; el orden de las imágenes es el de la lista (la primera es la portada).
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/PublicacionRequest' } } }
+      responses:
+        '200':
+          description: Publicación actualizada
+          content: { application/json: { schema: { $ref: '#/components/schemas/PublicacionDetalle' } } }
+        '400':
+          description: "`SOLICITUD_INVALIDA`, `POLITICA_CANCELACION_INVALIDA` o `SERVICIO_INVALIDO`"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+        '404': { $ref: '#/components/responses/PublicacionNoEncontrada' }
+        '409':
+          description: "Estado que no permite editar (`ESTADO_PUBLICACION_INVALIDO`)"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+  /api/anfitrion/publicaciones/{publicacionId}/enviar:
+    parameters:
+      - $ref: '#/components/parameters/PublicacionId'
+    post:
+      tags: [Publicaciones (Anfitrión)]
+      summary: Enviar a revisión (BORRADOR a PENDIENTE_REVISION)
+      description: Revalida los datos guardados antes de cambiar el estado. Se audita (`PUBLICACION_ENVIADA_REVISION`).
+      responses:
+        '200':
+          description: Publicación en PENDIENTE_REVISION
+          content: { application/json: { schema: { $ref: '#/components/schemas/PublicacionDetalle' } } }
+        '400':
+          description: "Datos incompletos (`PUBLICACION_INCOMPLETA`, con `detalles` por campo)"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+        '404': { $ref: '#/components/responses/PublicacionNoEncontrada' }
+        '409':
+          description: "La publicación no está en BORRADOR (`ESTADO_PUBLICACION_INVALIDO`)"
           content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
   /api/anfitrion/publicaciones/{publicacionId}/periodos:
     parameters:
@@ -338,6 +470,91 @@ components:
           minLength: 8
           maxLength: 128
           description: Misma política que el registro.
+    TipoAlojamiento:
+      type: string
+      enum: [APARTAMENTO, CASA, HABITACION, CABANA]
+    ModoReserva:
+      type: string
+      enum: [INMEDIATA, CON_APROBACION]
+    EstadoPublicacion:
+      type: string
+      enum: [BORRADOR, PENDIENTE_REVISION, ACTIVA, PAUSADA, BLOQUEADA]
+    Servicio:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        nombre: { type: string }
+    PoliticaCancelacion:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        nombre: { type: string }
+        horasAntesLlegada: { type: integer }
+        porcentajeDevolucion: { type: number }
+    ServicioAdicional:
+      type: object
+      required: [nombre, costo]
+      properties:
+        nombre: { type: string, maxLength: 80 }
+        costo: { type: number, minimum: 0, description: "Hasta 10 enteros y 2 decimales." }
+    PublicacionRequest:
+      type: object
+      required: [politicaCancelacionId, titulo, descripcion, ciudad, ubicacionTextual, tipo, capacidad, precioNoche, modoReserva]
+      properties:
+        politicaCancelacionId: { type: string, format: uuid }
+        titulo: { type: string, maxLength: 150 }
+        descripcion: { type: string }
+        ciudad: { type: string, maxLength: 80 }
+        ubicacionTextual: { type: string, maxLength: 255 }
+        tipo: { $ref: '#/components/schemas/TipoAlojamiento' }
+        capacidad: { type: integer, minimum: 1 }
+        precioNoche: { type: number, exclusiveMinimum: true, minimum: 0, description: "Mayor que 0; hasta 2 decimales." }
+        tarifaLimpieza: { type: number, minimum: 0, description: "Opcional; si se omite se toma 0." }
+        reglas: { type: string, maxLength: 4000 }
+        modoReserva: { $ref: '#/components/schemas/ModoReserva' }
+        serviciosIds:
+          type: array
+          uniqueItems: true
+          items: { type: string, format: uuid }
+        serviciosAdicionales:
+          type: array
+          maxItems: 20
+          items: { $ref: '#/components/schemas/ServicioAdicional' }
+        imagenes:
+          type: array
+          maxItems: 15
+          description: Rutas o URLs en texto (no se suben archivos). La primera es la portada.
+          items: { type: string, maxLength: 500 }
+    PublicacionResumen:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        titulo: { type: string }
+        ciudad: { type: string }
+        estado: { $ref: '#/components/schemas/EstadoPublicacion' }
+        capacidad: { type: integer }
+        precioNoche: { type: number }
+    PublicacionDetalle:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        anfitrionId: { type: string, format: uuid }
+        politicaCancelacionId: { type: string, format: uuid }
+        titulo: { type: string }
+        descripcion: { type: string }
+        ciudad: { type: string }
+        ubicacionTextual: { type: string }
+        tipo: { $ref: '#/components/schemas/TipoAlojamiento' }
+        capacidad: { type: integer }
+        precioNoche: { type: number }
+        tarifaLimpieza: { type: number }
+        reglas: { type: string }
+        modoReserva: { $ref: '#/components/schemas/ModoReserva' }
+        estado: { $ref: '#/components/schemas/EstadoPublicacion' }
+        motivoEstado: { type: string, nullable: true }
+        serviciosIds: { type: array, items: { type: string, format: uuid } }
+        serviciosAdicionales: { type: array, items: { $ref: '#/components/schemas/ServicioAdicional' } }
+        imagenes: { type: array, items: { type: string } }
     PeriodoRequest:
       type: object
       required: [fechaInicio, fechaFin]

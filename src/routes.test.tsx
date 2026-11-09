@@ -15,6 +15,7 @@ describe('routes', () => {
   })
 
   it('muestra el formulario de nueva publicación', () => {
+    vi.stubEnv('VITE_API_URL', '')
     renderAt('/publicaciones/nueva')
 
     expect(

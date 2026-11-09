@@ -7,9 +7,15 @@ interface PanelRevisionProps {
   requisitos: Requisito[]
   guardando: boolean
   guardado: boolean
+  errorGeneral: string
 }
 
-function PanelRevision({ requisitos, guardando, guardado }: PanelRevisionProps) {
+function PanelRevision({
+  requisitos,
+  guardando,
+  guardado,
+  errorGeneral,
+}: PanelRevisionProps) {
   return (
     <aside className="publicacion-tarjeta panel-revision">
       <h2 className="publicacion-tarjeta__titulo">
@@ -29,10 +35,6 @@ function PanelRevision({ requisitos, guardando, guardado }: PanelRevisionProps) 
             {texto}
           </li>
         ))}
-        <li className="panel-revision__requisito panel-revision__requisito--inactivo">
-          <span className="insignia insignia--vacia" aria-hidden="true" />
-          Condiciones comerciales
-        </li>
       </ul>
       <p className="panel-revision__nota">
         Al enviarla pasa a PENDIENTE_REVISION y un administrador la revisa.
@@ -48,6 +50,11 @@ function PanelRevision({ requisitos, guardando, guardado }: PanelRevisionProps) 
       {guardado && (
         <p className="panel-revision__exito" role="status">
           Borrador guardado
+        </p>
+      )}
+      {errorGeneral && (
+        <p className="publicacion-alerta" role="alert">
+          {errorGeneral}
         </p>
       )}
     </aside>

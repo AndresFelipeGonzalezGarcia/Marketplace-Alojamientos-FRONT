@@ -3,6 +3,8 @@ import { obtenerTokenSesion } from '../auth/sesion'
 import {
   actualizarPublicacion,
   crearPublicacion,
+  enviarPublicacion,
+  listarPublicaciones,
   obtenerPublicacion,
   type DatosPublicacion,
 } from './publicaciones'
@@ -11,15 +13,19 @@ vi.mock('../auth/sesion', () => ({ obtenerTokenSesion: vi.fn() }))
 
 const datos: DatosPublicacion = {
   titulo: 'Casa de campo',
-  descripcion: '',
+  descripcion: 'Con vista',
   ciudad: 'Medellín',
-  ubicacion: '',
-  tipo: 'Casa',
+  ubicacionTextual: 'El Poblado',
+  tipo: 'CABANA',
   capacidad: 4,
-  precioNoche: 200000,
-  servicios: ['Wi-Fi'],
-  reglas: '',
   imagenes: ['/fotos/1.jpg'],
+  precioNoche: 200000.5,
+  tarifaLimpieza: 0,
+  politicaCancelacionId: 'pol-1',
+  modoReserva: 'INMEDIATA',
+  reglas: '',
+  serviciosIds: ['s1'],
+  serviciosAdicionales: [{ nombre: 'Desayuno', costo: 15000 }],
 }
 
 const publicacion = { ...datos, id: '7', estado: 'BORRADOR' }
@@ -43,15 +49,15 @@ describe('API de publicaciones', () => {
     vi.unstubAllEnvs()
   })
 
-  it('crea con POST, token y cuerpo', async () => {
+  it('crea con POST, token y las condiciones comerciales', async () => {
     fetchSimulado.mockResolvedValue(respuestaJson(publicacion, 201))
 
     await expect(crearPublicacion(datos)).resolves.toEqual({
       estado: 'ok',
-      publicacion,
+      datos: publicacion,
     })
     expect(fetchSimulado).toHaveBeenCalledWith(
-      'http://api.prueba/api/publicaciones',
+      'http://api.prueba/api/anfitrion/publicaciones',
       {
         method: 'POST',
         headers: {
@@ -68,11 +74,46 @@ describe('API de publicaciones', () => {
 
     await expect(obtenerPublicacion('7')).resolves.toEqual({
       estado: 'ok',
-      publicacion,
+      datos: publicacion,
     })
     expect(fetchSimulado).toHaveBeenCalledWith(
-      'http://api.prueba/api/publicaciones/7',
+      'http://api.prueba/api/anfitrion/publicaciones/7',
       { method: 'GET', headers: { Authorization: 'Bearer token-123' } },
+    )
+  })
+
+  it('lista con GET', async () => {
+    const resumen = {
+      id: '7',
+      titulo: 'Casa de campo',
+      ciudad: 'Medellín',
+      estado: 'BORRADOR',
+      capacidad: 4,
+      precioNoche: 200000.5,
+    }
+    fetchSimulado.mockResolvedValue(respuestaJson([resumen], 200))
+
+    await expect(listarPublicaciones()).resolves.toEqual({
+      estado: 'ok',
+      datos: [resumen],
+    })
+    expect(fetchSimulado).toHaveBeenCalledWith(
+      'http://api.prueba/api/anfitrion/publicaciones',
+      { method: 'GET', headers: { Authorization: 'Bearer token-123' } },
+    )
+  })
+
+  it('envía a revisión con POST y sin cuerpo', async () => {
+    const enviada = { ...publicacion, estado: 'PENDIENTE_REVISION' }
+    fetchSimulado.mockResolvedValue(respuestaJson(enviada, 200))
+
+    await expect(enviarPublicacion('7')).resolves.toEqual({
+      estado: 'ok',
+      datos: enviada,
+    })
+    expect(fetchSimulado).toHaveBeenCalledWith(
+      'http://api.prueba/api/anfitrion/publicaciones/7/enviar',
+      { method: 'POST', headers: { Authorization: 'Bearer token-123' } },
     )
   })
 
@@ -82,52 +123,53 @@ describe('API de publicaciones', () => {
     await actualizarPublicacion('7', datos)
 
     expect(fetchSimulado.mock.calls[0][0]).toBe(
-      'http://api.prueba/api/publicaciones/7',
+      'http://api.prueba/api/anfitrion/publicaciones/7',
     )
     expect(fetchSimulado.mock.calls[0][1]?.method).toBe('PUT')
   })
 
-  it('no envía Authorization si no hay token', async () => {
-    vi.mocked(obtenerTokenSesion).mockReturnValue(null)
-    fetchSimulado.mockResolvedValue(respuestaJson(publicacion, 200))
-
-    await obtenerPublicacion('7')
-
-    expect(fetchSimulado.mock.calls[0][1]?.headers).toEqual({})
-  })
-
-  it.each([
-    [401, 'sesion_invalida'],
-    [403, 'acceso_denegado'],
-    [404, 'no_encontrada'],
-    [500, 'error'],
-  ])('traduce la respuesta %i a %s', async (status, estado) => {
-    fetchSimulado.mockResolvedValue(new Response(null, { status }))
-
-    await expect(actualizarPublicacion('7', datos)).resolves.toEqual({ estado })
-  })
-
-  it.each([400, 422])('devuelve los errores por campo con %i', async (status) => {
+  it('devuelve los detalles por campo con el manejador único', async () => {
     fetchSimulado.mockResolvedValue(
-      respuestaJson({ errores: { titulo: 'Título repetido', otro: 'x' } }, status),
+      respuestaJson(
+        {
+          codigo: 'SOLICITUD_INVALIDA',
+          mensaje: 'Inválido',
+          detalles: [
+            { campo: 'precioNoche', mensaje: 'Debe ser positivo.' },
+            { campo: 'serviciosAdicionales[0].nombre', mensaje: 'Muy largo.' },
+          ],
+        },
+        400,
+      ),
     )
 
-    await expect(crearPublicacion(datos)).resolves.toEqual({
-      estado: 'validacion',
-      errores: { titulo: 'Título repetido' },
+    const resultado = await crearPublicacion(datos)
+
+    expect(resultado.estado === 'error' && resultado.error.erroresPorCampo).toEqual({
+      precioNoche: 'Debe ser positivo.',
+      'serviciosAdicionales[0].nombre': 'Muy largo.',
     })
   })
 
-  it('devuelve error si falla la red', async () => {
-    fetchSimulado.mockRejectedValue(new TypeError('Failed to fetch'))
+  it('devuelve el código del backend', async () => {
+    fetchSimulado.mockResolvedValue(
+      respuestaJson({ codigo: 'ACCESO_DENEGADO', mensaje: 'x' }, 403),
+    )
 
-    await expect(crearPublicacion(datos)).resolves.toEqual({ estado: 'error' })
+    const resultado = await actualizarPublicacion('7', datos)
+
+    expect(resultado.estado === 'error' && resultado.error.codigo).toBe(
+      'ACCESO_DENEGADO',
+    )
   })
 
-  it('devuelve error si falta VITE_API_URL', async () => {
-    vi.stubEnv('VITE_API_URL', '')
+  it('devuelve error de conexión si falla la red', async () => {
+    fetchSimulado.mockRejectedValue(new TypeError('Failed to fetch'))
 
-    await expect(crearPublicacion(datos)).resolves.toEqual({ estado: 'error' })
-    expect(fetchSimulado).not.toHaveBeenCalled()
+    const resultado = await crearPublicacion(datos)
+
+    expect(resultado.estado === 'error' && resultado.error.codigo).toBe(
+      'ERROR_CONEXION',
+    )
   })
 })

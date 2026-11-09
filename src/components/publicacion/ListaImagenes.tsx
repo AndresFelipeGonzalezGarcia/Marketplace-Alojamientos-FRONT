@@ -1,16 +1,26 @@
+import {
+  MAXIMO_IMAGENES,
+  rutaErrorImagen,
+  type ErroresFormulario,
+} from './validacion'
+
 interface ListaImagenesProps {
   imagenes: string[]
+  errores: ErroresFormulario
   onCambiar: (imagenes: string[]) => void
 }
 
-function ListaImagenes({ imagenes, onCambiar }: ListaImagenesProps) {
+function ListaImagenes({ imagenes, errores, onCambiar }: ListaImagenesProps) {
   return (
     <div className="campo">
-      <span className="campo__etiqueta">Imágenes</span>
+      <span className="campo__etiqueta">Imágenes (opcional)</span>
       <div className="imagenes">
         {imagenes.map((imagen, indice) => {
           const numero = indice + 1
-          const id = `publicacion-imagen-${numero}`
+          const ruta = rutaErrorImagen(indice)
+          const id = `publicacion-${ruta}`
+          const error = errores[ruta]
+          const idError = error ? `${id}-error` : undefined
           return (
             <div className="imagen-fila" key={indice}>
               <div className="imagen-fila__recuadro" aria-hidden="true">
@@ -24,6 +34,8 @@ function ListaImagenes({ imagenes, onCambiar }: ListaImagenesProps) {
                 className="campo__control"
                 type="text"
                 value={imagen}
+                aria-invalid={error ? true : undefined}
+                aria-describedby={idError}
                 onChange={(evento) =>
                   onCambiar(
                     imagenes.map((actual, posicion) =>
@@ -32,6 +44,11 @@ function ListaImagenes({ imagenes, onCambiar }: ListaImagenesProps) {
                   )
                 }
               />
+              {error && (
+                <p id={idError} className="campo__error">
+                  {error}
+                </p>
+              )}
               <button
                 className="imagen-fila__quitar"
                 type="button"
@@ -50,11 +67,16 @@ function ListaImagenes({ imagenes, onCambiar }: ListaImagenesProps) {
         <button
           className="boton-secundario imagenes__agregar"
           type="button"
+          disabled={imagenes.length >= MAXIMO_IMAGENES}
           onClick={() => onCambiar([...imagenes, ''])}
         >
           + Agregar foto
         </button>
       </div>
+      <p className="campo__ayuda">
+        Hasta {MAXIMO_IMAGENES} imágenes. La primera es la portada.
+      </p>
+      {errores.imagenes && <p className="campo__error">{errores.imagenes}</p>}
     </div>
   )
 }
