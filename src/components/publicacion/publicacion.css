@@ -1,53 +1,3 @@
-.publicacion-encabezado {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px 32px;
-  padding: 16px 48px;
-  background: var(--color-superficie);
-  border-bottom: 1px solid var(--color-borde-suave);
-}
-
-.publicacion-encabezado__marca {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.publicacion-encabezado__logo {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 34px;
-  height: 34px;
-  color: var(--color-superficie);
-  background: var(--color-marca);
-  border-radius: 8px;
-  font-size: var(--texto-pequeno);
-  font-weight: 800;
-}
-
-.publicacion-encabezado__nombre {
-  font-weight: 700;
-}
-
-.publicacion-encabezado__menu {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 24px;
-  margin: 0;
-  padding: 0;
-  color: var(--color-texto-secundario);
-  font-size: var(--texto-etiqueta);
-  line-height: var(--linea-etiqueta);
-  list-style: none;
-}
-
-.publicacion-encabezado__activo {
-  color: var(--color-marca);
-  font-weight: 700;
-}
-
 main.publicacion-pagina {
   max-width: 1440px;
   margin: 0 auto;
@@ -327,10 +277,6 @@ main.publicacion-pagina {
 }
 
 @media (max-width: 960px) {
-  .publicacion-encabezado {
-    padding: 12px 16px;
-  }
-
   main.publicacion-pagina {
     padding: 24px 16px 32px;
   }

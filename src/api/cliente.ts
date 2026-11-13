@@ -1,3 +1,4 @@
+import { invalidarSesion } from '../auth/sesion'
 import {
   errorDeConexion,
   interpretarRespuestaError,
@@ -45,10 +46,17 @@ export async function solicitarApi<T>({
     })
 
     if (respuesta.status !== estadoExito) {
-      return {
-        estado: 'error',
-        error: await interpretarRespuestaError(respuesta),
+      const error = await interpretarRespuestaError(respuesta)
+      // El token caducó o fue rechazado: se cierra la sesión y las rutas
+      // protegidas llevan al login recordando a dónde se iba.
+      if (
+        respuesta.status === 401 &&
+        error.codigo === 'NO_AUTENTICADO' &&
+        token
+      ) {
+        invalidarSesion(token)
       }
+      return { estado: 'error', error }
     }
 
     const datos = (

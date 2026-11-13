@@ -12,6 +12,7 @@ import {
   type Periodo,
 } from '../../api/periodos'
 import { routes } from '../../routes'
+import { iniciarSesionDePrueba } from '../../test/sesion'
 
 vi.mock('../../api/periodos', async (importarOriginal) => ({
   ...(await importarOriginal<typeof import('../../api/periodos')>()),
@@ -90,6 +91,7 @@ async function esperarLista() {
 
 describe('disponibilidad', () => {
   beforeEach(() => {
+    iniciarSesionDePrueba('ANFITRION')
     vi.useFakeTimers({
       toFake: ['Date'],
       now: new Date('2026-11-10T15:00:00Z'),
