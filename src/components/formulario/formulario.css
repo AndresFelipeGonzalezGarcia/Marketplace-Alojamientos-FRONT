@@ -4,21 +4,22 @@
 }
 
 .campo__etiqueta {
-  margin-bottom: 6px;
+  margin-bottom: var(--espacio-2);
   padding: 0;
   font-size: var(--texto-etiqueta);
   line-height: var(--linea-etiqueta);
-  font-weight: 600;
+  font-weight: var(--peso-etiqueta);
 }
 
+/* El borde del campo sí informa: delimita dónde se escribe. */
 .campo__control {
   width: 100%;
-  padding: 11px 12px;
+  padding: var(--espacio-3);
   box-sizing: border-box;
   color: var(--color-texto);
   background: var(--color-superficie);
   border: 1px solid var(--color-borde);
-  border-radius: 10px;
+  border-radius: var(--radio-pequeno);
   font: inherit;
   transition:
     border-color var(--transicion),
@@ -55,7 +56,7 @@
 
 .campo__ayuda,
 .campo__error {
-  margin: 6px 0 0;
+  margin: var(--espacio-2) 0 0;
   font-size: var(--texto-pequeno);
   line-height: var(--linea-pequeno);
 }
@@ -66,16 +67,17 @@
 
 .campo__error {
   color: var(--color-error);
+  font-weight: var(--peso-etiqueta);
 }
 
 .boton-principal,
 .boton-secundario {
-  padding: 13px 20px;
-  border-radius: 10px;
+  padding: var(--espacio-3) var(--espacio-5);
+  border-radius: var(--radio-pequeno);
   font-family: inherit;
   font-size: var(--texto-boton);
   line-height: var(--linea-boton);
-  font-weight: 700;
+  font-weight: var(--peso-fuerte);
   cursor: pointer;
   transition:
     background-color var(--transicion),

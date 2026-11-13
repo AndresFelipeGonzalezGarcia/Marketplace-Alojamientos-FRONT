@@ -78,7 +78,7 @@ describe('routes', () => {
         desde: '/publicaciones/7/editar',
       })
       expect(
-        screen.getByText(/Necesitas iniciar sesión para ver esa página/),
+        screen.getByText('Inicia sesión para continuar donde ibas.'),
       ).toBeInTheDocument()
     })
 
@@ -96,11 +96,10 @@ describe('routes', () => {
       iniciarSesionDePrueba('ANFITRION')
       const { router } = renderizarApp('/publicaciones/7/editar')
 
-      expect(
-        await screen.findByText(
-          'Tu sesión expiró. Inicia sesión de nuevo para continuar.',
-        ),
-      ).toBeInTheDocument()
+      const aviso = await screen.findByText('Tu sesión expiró.')
+      expect(aviso.closest('[role="status"]')).toHaveTextContent(
+        'Tu sesión expiró. Inicia sesión de nuevo para continuar.',
+      )
       expect(router.state.location.pathname).toBe('/login')
       expect(router.state.location.state).toEqual({
         desde: '/publicaciones/7/editar',
@@ -143,9 +142,10 @@ describe('routes', () => {
       expect(
         accesos().getByRole('link', { name: 'Registrarme' }),
       ).toHaveAttribute('href', '/registro')
-      expect(
-        accesos().getByRole('heading', { name: 'Iniciar sesión' }),
-      ).toBeInTheDocument()
+      expect(accesos().getByRole('link', { name: 'Entrar' })).toHaveAttribute(
+        'href',
+        '/login',
+      )
     })
 
     it('al anfitrión le ofrece crear una publicación', () => {
@@ -190,7 +190,38 @@ describe('routes', () => {
     })
   })
 
-  it('muestra el marcador de posición de /login', () => {
+  it.each<[RolUsuario | null, RegExp, string]>([
+    [
+      null,
+      /inicio\.jpg/,
+      'Cabaña de madera con techo alto junto a una piscina',
+    ],
+    [
+      'HUESPED',
+      /portada-huesped\.jpg/,
+      'Piscina de un hotel entre palmeras al atardecer',
+    ],
+    [
+      'ANFITRION',
+      /portada-anfitrion\.jpg/,
+      'Terraza con mesa y sillas frente a cabañas de techo de paja en el desierto',
+    ],
+    [
+      'ADMINISTRADOR',
+      /portada-administrador\.jpg/,
+      'Campamento de cabañas de paja junto a un lago',
+    ],
+  ])('el inicio de %s usa su propia foto de portada', (rol, archivo, alt) => {
+    if (rol) iniciarSesionDePrueba(rol)
+    renderizarApp('/')
+
+    expect(screen.getByRole('img', { name: alt })).toHaveAttribute(
+      'src',
+      expect.stringMatching(archivo),
+    )
+  })
+
+  it('muestra la pantalla de inicio de sesión en /login', () => {
     renderizarApp('/login')
 
     expect(

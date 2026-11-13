@@ -52,7 +52,9 @@ describe('EncabezadoApp', () => {
       expect(
         encabezado().getByRole('link', { name: 'Crear cuenta' }),
       ).toHaveAttribute('href', '/registro')
-      deshabilitado('Iniciar sesión')
+      expect(
+        encabezado().getByRole('link', { name: 'Iniciar sesión' }),
+      ).toHaveAttribute('href', '/login')
       expect(textosDelMenu()).toEqual(['Inicio'])
       expect(
         encabezado().queryByRole('button', { name: 'Cerrar sesión' }),

@@ -1,0 +1,556 @@
+/* Pantallas de acceso (login y registro).
+   La audacia está en un solo sitio: la foto con el eslogan. El formulario
+   es sobrio: superficie blanca elevada, campos claros y un botón sólido. */
+
+.acceso {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  min-height: calc(100dvh - var(--alto-encabezado));
+}
+
+main.acceso {
+  padding: 0;
+}
+
+/* ---------- Lado del formulario ---------- */
+
+.acceso__lado-formulario {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--espacio-8) var(--espacio-6);
+}
+
+.acceso__tarjeta {
+  width: 100%;
+  max-width: 440px;
+  padding: var(--espacio-7);
+  box-sizing: border-box;
+  background: var(--color-superficie);
+  border-radius: var(--radio-mediano);
+  box-shadow: var(--elevacion-elevada);
+}
+
+.acceso__tarjeta--ancha {
+  max-width: 520px;
+}
+
+.acceso__titulo {
+  margin: 0 0 var(--espacio-2);
+  font-size: var(--texto-titulo);
+  line-height: var(--linea-titulo);
+  font-weight: var(--peso-titulo);
+  letter-spacing: var(--tracking-titulo);
+}
+
+.acceso__subtitulo {
+  margin: 0 0 var(--espacio-6);
+  color: var(--color-texto-secundario);
+  line-height: var(--linea-parrafo);
+}
+
+.acceso__formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+}
+
+.acceso__pie {
+  margin: var(--espacio-5) 0 0;
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-etiqueta);
+  line-height: var(--linea-etiqueta);
+  text-align: center;
+}
+
+.acceso__enlace {
+  color: var(--color-marca);
+  border-radius: var(--radio-pequeno);
+  font-weight: var(--peso-fuerte);
+  text-underline-offset: 3px;
+}
+
+.acceso__enlace:focus-visible {
+  outline: 2px solid var(--color-marca);
+  outline-offset: 2px;
+}
+
+/* ---------- Avisos ---------- */
+
+.acceso__alerta,
+.acceso__aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-3);
+  margin: 0;
+  padding: var(--espacio-3) var(--espacio-4);
+  border-radius: var(--radio-pequeno);
+  font-size: var(--texto-etiqueta);
+  line-height: var(--linea-etiqueta);
+}
+
+.acceso__alerta {
+  color: var(--color-error);
+  background: var(--color-error-suave);
+}
+
+.acceso__aviso {
+  margin-bottom: var(--espacio-5);
+  color: var(--color-texto);
+  background: var(--color-marca-suave);
+}
+
+.acceso__aviso strong {
+  display: block;
+  color: var(--color-marca);
+}
+
+.acceso__alerta-icono,
+.acceso__aviso-icono {
+  flex: none;
+  width: 20px;
+  height: 20px;
+}
+
+.acceso__aviso-icono {
+  color: var(--color-marca);
+}
+
+.acceso__exito {
+  margin: 0 0 var(--espacio-5);
+  padding: var(--espacio-3) var(--espacio-4);
+  color: var(--color-exito);
+  background: var(--color-exito-suave);
+  border-radius: var(--radio-pequeno);
+}
+
+/* ---------- Campo con etiqueta flotante ---------- */
+
+/* El borde delimita dónde se escribe; el foco lo refuerza con un halo. */
+.campo-flotante__caja {
+  position: relative;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-pequeno);
+  transition:
+    border-color var(--transicion),
+    box-shadow var(--transicion);
+}
+
+.campo-flotante__caja:hover {
+  border-color: var(--color-texto-secundario);
+}
+
+.campo-flotante__caja:focus-within {
+  border-color: var(--color-marca);
+  box-shadow: var(--halo-marca);
+}
+
+.campo-flotante--error .campo-flotante__caja,
+.campo-flotante--error .campo-flotante__caja:hover {
+  border-color: var(--color-error);
+}
+
+.campo-flotante--error .campo-flotante__caja:focus-within {
+  border-color: var(--color-error);
+  box-shadow: var(--halo-error);
+}
+
+.campo-flotante__control {
+  display: block;
+  width: 100%;
+  padding: var(--espacio-5) var(--espacio-4) var(--espacio-2) var(--espacio-7);
+  box-sizing: border-box;
+  color: var(--color-texto);
+  background: transparent;
+  border: 0;
+  border-radius: inherit;
+  font-family: inherit;
+  font-size: var(--texto-cuerpo);
+  line-height: var(--linea-cuerpo);
+}
+
+/* El foco se dibuja en la caja (borde de marca y halo), siempre visible. */
+.campo-flotante__control:focus {
+  outline: none;
+}
+
+.campo-flotante__control:autofill {
+  box-shadow: inset 0 0 0 100px var(--color-marca-suave);
+}
+
+.campo-flotante__control--con-boton {
+  padding-right: var(--espacio-8);
+}
+
+.campo-flotante__etiqueta {
+  position: absolute;
+  top: 50%;
+  left: var(--espacio-7);
+  max-width: calc(100% - var(--espacio-8));
+  overflow: hidden;
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-cuerpo);
+  line-height: var(--linea-cuerpo);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition:
+    top var(--transicion),
+    font-size var(--transicion),
+    color var(--transicion);
+}
+
+.campo-flotante__control:focus + .campo-flotante__etiqueta,
+.campo-flotante__control:not(:placeholder-shown) + .campo-flotante__etiqueta,
+.campo-flotante__control:autofill + .campo-flotante__etiqueta {
+  top: var(--espacio-4);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+  font-weight: var(--peso-etiqueta);
+}
+
+.campo-flotante__control:focus + .campo-flotante__etiqueta {
+  color: var(--color-marca);
+}
+
+.campo-flotante--error .campo-flotante__etiqueta,
+.campo-flotante--error .campo-flotante__control:focus + .campo-flotante__etiqueta {
+  color: var(--color-error);
+}
+
+.campo-flotante__icono {
+  position: absolute;
+  top: 50%;
+  left: var(--espacio-4);
+  width: 20px;
+  height: 20px;
+  color: var(--color-texto-secundario);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.campo-flotante__caja:focus-within .campo-flotante__icono {
+  color: var(--color-marca);
+}
+
+.campo-flotante--error .campo-flotante__icono {
+  color: var(--color-error);
+}
+
+.campo-flotante__alternar {
+  position: absolute;
+  top: 50%;
+  right: var(--espacio-2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: var(--color-texto-secundario);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radio-pequeno);
+  transform: translateY(-50%);
+  cursor: pointer;
+  transition:
+    color var(--transicion),
+    background-color var(--transicion);
+}
+
+.campo-flotante__alternar svg {
+  width: 20px;
+  height: 20px;
+}
+
+.campo-flotante__alternar:hover {
+  color: var(--color-marca);
+  background: var(--color-marca-suave);
+}
+
+.campo-flotante__alternar:focus-visible {
+  color: var(--color-marca);
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--color-marca);
+}
+
+.campo-flotante__ayuda,
+.campo-flotante__error {
+  margin: var(--espacio-2) 0 0;
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+}
+
+.campo-flotante__ayuda {
+  color: var(--color-texto-secundario);
+}
+
+.campo-flotante__error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-2);
+  color: var(--color-error);
+  font-weight: var(--peso-etiqueta);
+}
+
+/* Mismo alto que la línea: el icono queda centrado en la primera línea. */
+.campo-flotante__error-icono {
+  flex: none;
+  width: 16px;
+  height: var(--linea-pequeno);
+}
+
+/* ---------- Botón principal con carga ---------- */
+
+.boton-acceso {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--espacio-3);
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: var(--espacio-2);
+  padding: var(--espacio-4) var(--espacio-5);
+  color: var(--color-superficie);
+  background: var(--color-marca);
+  border: 0;
+  border-radius: var(--radio-pequeno);
+  font-family: inherit;
+  font-size: var(--texto-boton);
+  line-height: var(--linea-boton);
+  font-weight: var(--peso-fuerte);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--transicion);
+}
+
+.boton-acceso:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-marca) 82%, var(--color-texto));
+}
+
+.boton-acceso:focus-visible {
+  outline: 2px solid var(--color-marca);
+  outline-offset: 3px;
+}
+
+.boton-acceso:disabled {
+  cursor: progress;
+}
+
+/* Único movimiento continuo: confirma que el envío está en curso. */
+.boton-acceso__indicador {
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+  border: 2.5px solid color-mix(in srgb, var(--color-superficie) 35%, transparent);
+  border-top-color: var(--color-superficie);
+  border-radius: var(--radio-completo);
+  animation: boton-acceso-girar 700ms linear infinite;
+}
+
+@keyframes boton-acceso-girar {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* ---------- Botón secundario ---------- */
+
+.boton-acceso-secundario {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: var(--espacio-3) var(--espacio-4);
+  color: var(--color-marca);
+  background: var(--color-superficie);
+  border: 1.5px solid var(--color-marca);
+  border-radius: var(--radio-pequeno);
+  font-family: inherit;
+  font-size: var(--texto-etiqueta);
+  line-height: var(--linea-etiqueta);
+  font-weight: var(--peso-fuerte);
+  cursor: pointer;
+  transition: background-color var(--transicion);
+}
+
+.boton-acceso-secundario:hover {
+  background: var(--color-marca-suave);
+}
+
+.boton-acceso-secundario:focus-visible {
+  outline: 2px solid var(--color-marca);
+  outline-offset: 2px;
+  box-shadow: var(--halo-marca);
+}
+
+/* ---------- Acceso de prueba (solo desarrollo) ---------- */
+
+.acceso-demo {
+  display: grid;
+  gap: var(--espacio-3);
+  margin-top: var(--espacio-5);
+  padding: var(--espacio-4);
+  background: var(--color-fondo-pagina);
+  border-radius: var(--radio-mediano);
+}
+
+.acceso-demo__titulo {
+  margin: 0;
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+  font-weight: var(--peso-etiqueta);
+}
+
+.acceso-demo__opciones {
+  display: grid;
+  gap: var(--espacio-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.acceso-demo__opcion {
+  display: grid;
+  width: 100%;
+  padding: var(--espacio-3) var(--espacio-4);
+  color: var(--color-texto);
+  background: var(--color-superficie);
+  border: 0;
+  border-radius: var(--radio-pequeno);
+  box-shadow: var(--elevacion-reposo);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow var(--transicion);
+}
+
+.acceso-demo__opcion:hover {
+  box-shadow: var(--elevacion-interactiva);
+}
+
+.acceso-demo__opcion:focus-visible {
+  outline: 2px solid var(--color-marca);
+  outline-offset: 2px;
+}
+
+.acceso-demo__rol {
+  font-size: var(--texto-etiqueta);
+  line-height: var(--linea-etiqueta);
+  font-weight: var(--peso-fuerte);
+}
+
+.acceso-demo__descripcion {
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+}
+
+/* ---------- Panel de marca: la foto manda ---------- */
+
+/* Fijo junto al formulario: en el registro, que es largo, la foto y el
+   eslogan siguen a la vista mientras se baja por los campos. */
+.panel-marca {
+  position: sticky;
+  top: var(--alto-encabezado);
+  align-self: start;
+  display: flex;
+  align-items: flex-end;
+  box-sizing: border-box;
+  height: calc(100dvh - var(--alto-encabezado));
+  min-height: 560px;
+  padding: var(--espacio-8);
+  overflow: hidden;
+  isolation: isolate;
+  color: var(--color-superficie);
+  background: url('../../../img/inicio.jpg') 30% center / cover no-repeat;
+}
+
+/* Velo solo donde va el texto: la mitad superior de la foto queda limpia.
+   Hasta el 45 % el velo no baja del 82 %, lo que garantiza más de 9:1 con
+   el blanco y más de 4.4:1 con el acento sobre cualquier zona de la foto. */
+.panel-marca::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--color-texto) 90%, transparent) 0%,
+    color-mix(in srgb, var(--color-texto) 82%, transparent) 45%,
+    transparent 75%
+  );
+}
+
+.panel-marca__eslogan {
+  max-width: 11ch;
+  margin: 0;
+  font-size: var(--texto-display);
+  line-height: var(--linea-display);
+  font-weight: var(--peso-titulo);
+  letter-spacing: var(--tracking-display);
+  text-wrap: balance;
+}
+
+.panel-marca__destacado {
+  color: var(--color-acento);
+}
+
+/* ---------- Adaptación ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .boton-acceso__indicador {
+    animation-duration: 1.8s;
+  }
+}
+
+@media (max-width: 960px) {
+  .acceso {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    min-height: 0;
+  }
+
+  /* En móvil la foto se apila arriba, a todo el ancho. */
+  .panel-marca {
+    position: relative;
+    top: auto;
+    order: -1;
+    height: auto;
+    min-height: 280px;
+    padding: var(--espacio-6) var(--espacio-5) var(--espacio-7);
+  }
+
+  .panel-marca__eslogan {
+    max-width: 14ch;
+  }
+
+  .acceso__lado-formulario {
+    align-items: flex-start;
+    padding: 0 var(--espacio-5) var(--espacio-7);
+  }
+
+  /* La tarjeta sube sobre la foto para unir ambas partes. */
+  .acceso__tarjeta {
+    position: relative;
+    z-index: 1;
+    margin-top: calc(-1 * var(--espacio-5));
+  }
+}
+
+@media (max-width: 480px) {
+  .panel-marca {
+    padding: var(--espacio-5) var(--espacio-4) var(--espacio-7);
+  }
+
+  .acceso__lado-formulario {
+    padding: 0 var(--espacio-4) var(--espacio-6);
+  }
+
+  .acceso__tarjeta {
+    padding: var(--espacio-5);
+  }
+}

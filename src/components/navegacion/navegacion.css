@@ -1,4 +1,8 @@
 .app {
+  /* Alto del encabezado en escritorio; lo usan las vistas que se ajustan
+     a la ventana o se fijan bajo él (panel de acceso, panel de revisión). */
+  --alto-encabezado: 64px;
+
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -23,14 +27,15 @@
 
 .saltar-contenido {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: var(--espacio-2);
+  left: var(--espacio-2);
   z-index: 20;
-  padding: 10px 16px;
+  padding: var(--espacio-3) var(--espacio-4);
   color: var(--color-superficie);
   background: var(--color-marca);
-  border-radius: 8px;
-  font-weight: 700;
+  border-radius: var(--radio-pequeno);
+  box-shadow: var(--elevacion-elevada);
+  font-weight: var(--peso-fuerte);
   text-decoration: none;
   transform: translateY(-200%);
 }
@@ -41,6 +46,8 @@
   transform: none;
 }
 
+/* ---------- Encabezado: disciplinado, sin línea divisoria ---------- */
+
 .encabezado-app {
   position: sticky;
   top: 0;
@@ -48,18 +55,20 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px 32px;
-  padding: 14px 48px;
+  gap: var(--espacio-3) var(--espacio-6);
+  box-sizing: border-box;
+  min-height: var(--alto-encabezado);
+  padding: var(--espacio-3) var(--espacio-7);
   background: var(--color-superficie);
-  border-bottom: 1px solid var(--color-borde-suave);
+  box-shadow: var(--elevacion-reposo);
 }
 
 .encabezado-app__marca {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--espacio-3);
   color: var(--color-texto);
-  border-radius: 10px;
+  border-radius: var(--radio-pequeno);
   text-decoration: none;
 }
 
@@ -67,18 +76,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   flex-shrink: 0;
   color: var(--color-superficie);
   background: var(--color-marca);
-  border-radius: 8px;
+  border-radius: var(--radio-pequeno);
   font-size: var(--texto-pequeno);
-  font-weight: 800;
+  font-weight: var(--peso-titulo);
 }
 
 .encabezado-app__nombre {
-  font-weight: 700;
+  font-weight: var(--peso-fuerte);
   white-space: nowrap;
 }
 
@@ -89,7 +98,7 @@
 .encabezado-app__lista {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 8px;
+  gap: var(--espacio-1) var(--espacio-2);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -98,13 +107,13 @@
 .navegacion-enlace {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-3);
   color: var(--color-texto-secundario);
-  border-radius: 8px;
+  border-radius: var(--radio-pequeno);
   font-size: var(--texto-etiqueta);
   line-height: var(--linea-etiqueta);
-  font-weight: 600;
+  font-weight: var(--peso-etiqueta);
   text-decoration: none;
   transition:
     background-color var(--transicion),
@@ -120,7 +129,7 @@ a.navegacion-enlace:hover {
 a.navegacion-enlace--activo:hover {
   color: var(--color-marca);
   background: var(--color-marca-suave);
-  font-weight: 700;
+  font-weight: var(--peso-fuerte);
 }
 
 .navegacion-enlace--deshabilitado {
@@ -128,15 +137,15 @@ a.navegacion-enlace--activo:hover {
 }
 
 .navegacion-enlace--cuenta:not(.navegacion-enlace--deshabilitado) {
-  padding: 7px 14px;
+  padding: var(--espacio-2) var(--espacio-4);
   color: var(--color-marca);
   background: var(--color-superficie);
-  border: 1.5px solid var(--color-marca);
-  border-radius: 10px;
-  font-weight: 700;
+  box-shadow: inset 0 0 0 1.5px var(--color-marca);
+  font-weight: var(--peso-fuerte);
 }
 
-a.navegacion-enlace--cuenta:hover {
+a.navegacion-enlace--cuenta:hover,
+.navegacion-enlace--cuenta.navegacion-enlace--activo {
   color: var(--color-marca);
   background: var(--color-marca-suave);
 }
@@ -146,14 +155,13 @@ a.navegacion-enlace--cuenta:hover {
 .encabezado-app__salir:focus-visible {
   outline: 2px solid var(--color-marca);
   outline-offset: 2px;
-  box-shadow: var(--halo-marca);
 }
 
 .encabezado-app__cuenta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px 16px;
+  gap: var(--espacio-2) var(--espacio-4);
   margin-left: auto;
 }
 
@@ -170,7 +178,7 @@ a.navegacion-enlace--cuenta:hover {
   overflow: hidden;
   font-size: var(--texto-etiqueta);
   line-height: var(--linea-etiqueta);
-  font-weight: 700;
+  font-weight: var(--peso-fuerte);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -182,15 +190,16 @@ a.navegacion-enlace--cuenta:hover {
 }
 
 .encabezado-app__salir {
-  padding: 7px 14px;
+  padding: var(--espacio-2) var(--espacio-4);
   color: var(--color-marca);
   background: var(--color-superficie);
-  border: 1.5px solid var(--color-marca);
-  border-radius: 10px;
+  border: 0;
+  border-radius: var(--radio-pequeno);
+  box-shadow: inset 0 0 0 1.5px var(--color-marca);
   font-family: inherit;
   font-size: var(--texto-etiqueta);
   line-height: var(--linea-etiqueta);
-  font-weight: 700;
+  font-weight: var(--peso-fuerte);
   cursor: pointer;
   transition: background-color var(--transicion);
 }
@@ -199,14 +208,47 @@ a.navegacion-enlace--cuenta:hover {
   background: var(--color-marca-suave);
 }
 
+/* Aviso discreto mientras está activo VITE_SESION_DEMO. */
+.aviso-modo-demo {
+  position: fixed;
+  bottom: var(--espacio-4);
+  left: var(--espacio-4);
+  z-index: 30;
+  margin: 0;
+  padding: var(--espacio-1) var(--espacio-3);
+  color: var(--color-superficie);
+  background: color-mix(in srgb, var(--color-texto) 88%, transparent);
+  border-radius: var(--radio-completo);
+  box-shadow: var(--elevacion-elevada);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+  font-weight: var(--peso-etiqueta);
+  pointer-events: none;
+}
+
 @media (max-width: 960px) {
   .encabezado-app {
-    padding: 12px 16px;
+    padding: var(--espacio-3) var(--espacio-4);
   }
 
+  /* El menú ocupa su propia fila y se desliza en horizontal dentro de
+     ella: no se apila ni desplaza la página. */
   .encabezado-app__menu {
     flex-basis: 100%;
     order: 3;
+    min-width: 0;
+    margin: 0 calc(-1 * var(--espacio-4));
+  }
+
+  .encabezado-app__lista {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: var(--espacio-1) var(--espacio-4);
+    scrollbar-width: none;
+  }
+
+  .encabezado-app__lista > li {
+    flex: none;
   }
 }
 
@@ -217,9 +259,5 @@ a.navegacion-enlace--cuenta:hover {
 
   .encabezado-app__usuario-nombre {
     max-width: 120px;
-  }
-
-  .navegacion-enlace {
-    padding: 8px 10px;
   }
 }

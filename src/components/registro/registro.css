@@ -1,97 +1,5 @@
-main.registro-pagina {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  padding: 0;
-}
-
-.registro-pagina__contenido {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 48px 24px;
-}
-
-.registro-portada {
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  padding: 56px;
-  background: url('../../../img/inicio.jpg') 20% center / cover no-repeat;
-}
-
-/* En el 42 % superior, donde va el texto, el degradado garantiza al menos
-   8:1 con texto blanco y 3.9:1 con acento (texto grande) incluso sobre blanco. */
-.registro-portada::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--color-texto) 90%, transparent) 0%,
-    color-mix(in srgb, var(--color-texto) 80%, transparent) 42%,
-    color-mix(in srgb, var(--color-marca) 35%, transparent) 72%,
-    color-mix(in srgb, var(--color-marca) 10%, transparent) 100%
-  );
-}
-
-.registro-portada__eslogan {
-  position: relative;
-  max-width: 600px;
-  margin: 0;
-  color: var(--color-superficie);
-  font-size: var(--texto-portada);
-  line-height: var(--linea-portada);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-
-.registro-portada__eslogan::before {
-  content: '';
-  display: block;
-  width: 64px;
-  height: 5px;
-  margin-bottom: 20px;
-  background: var(--color-acento);
-  border-radius: 3px;
-}
-
-.registro-portada__destacado {
-  color: var(--color-acento);
-}
-
-.registro-tarjeta {
-  width: 100%;
-  max-width: 520px;
-  padding: 40px;
-  box-sizing: border-box;
-  background: var(--color-superficie);
-  border: 1px solid var(--color-borde-suave);
-  border-radius: 24px;
-  box-shadow:
-    0 1px 2px color-mix(in srgb, var(--color-texto) 6%, transparent),
-    0 16px 40px color-mix(in srgb, var(--color-texto) 10%, transparent);
-}
-
-.registro-tarjeta__titulo {
-  margin: 0 0 24px;
-  font-size: var(--texto-titulo);
-  line-height: var(--linea-titulo);
-  font-weight: 800;
-}
-
-.registro-exito {
-  margin: 0;
-  padding: 12px 16px;
-  color: var(--color-exito);
-  background: var(--color-exito-suave);
-  border-radius: 12px;
-}
-
-.registro-formulario {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
+/* Tarjetas de tipo de cuenta. Sin borde en reposo: el borde de marca
+   aparece solo para decir cuál está elegida. */
 
 .registro-roles {
   min-width: 0;
@@ -100,21 +8,29 @@ main.registro-pagina {
   border: 0;
 }
 
+.registro-roles__leyenda {
+  margin-bottom: var(--espacio-2);
+  padding: 0;
+  font-size: var(--texto-etiqueta);
+  line-height: var(--linea-etiqueta);
+  font-weight: var(--peso-etiqueta);
+}
+
 .registro-roles__opciones {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: var(--espacio-3);
 }
 
 .tarjeta-rol {
   position: relative;
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  padding: 14px;
-  background: var(--color-superficie);
-  border: 1px solid var(--color-borde);
-  border-radius: 14px;
+  gap: var(--espacio-3);
+  padding: var(--espacio-4);
+  background: var(--color-fondo-pagina);
+  border: 1.5px solid transparent;
+  border-radius: var(--radio-mediano);
   cursor: pointer;
   transition:
     background-color var(--transicion),
@@ -123,7 +39,8 @@ main.registro-pagina {
 }
 
 .tarjeta-rol:hover {
-  border-color: var(--color-marca);
+  background: var(--color-superficie);
+  box-shadow: var(--elevacion-interactiva);
 }
 
 .tarjeta-rol:has(.tarjeta-rol__radio:focus-visible) {
@@ -131,9 +48,11 @@ main.registro-pagina {
   box-shadow: var(--halo-marca);
 }
 
-.tarjeta-rol--seleccionada {
+.tarjeta-rol--seleccionada,
+.tarjeta-rol--seleccionada:hover {
   background: var(--color-marca-suave);
   border-color: var(--color-marca);
+  box-shadow: none;
 }
 
 /* El radio sigue siendo el control real: invisible, pero enfocable. */
@@ -157,7 +76,7 @@ main.registro-pagina {
   color: var(--color-superficie);
   background: var(--color-superficie);
   border: 1.5px solid var(--color-texto-secundario);
-  border-radius: 50%;
+  border-radius: var(--radio-completo);
   transition:
     background-color var(--transicion),
     border-color var(--transicion);
@@ -167,7 +86,6 @@ main.registro-pagina {
   width: 14px;
   height: 14px;
   opacity: 0;
-  transition: opacity var(--transicion);
 }
 
 .tarjeta-rol--seleccionada .tarjeta-rol__circulo {
@@ -183,7 +101,7 @@ main.registro-pagina {
   display: block;
   font-size: var(--texto-etiqueta);
   line-height: var(--linea-etiqueta);
-  font-weight: 600;
+  font-weight: var(--peso-fuerte);
 }
 
 .tarjeta-rol__descripcion {
@@ -193,100 +111,7 @@ main.registro-pagina {
   line-height: var(--linea-pequeno);
 }
 
-.campo__entrada {
-  position: relative;
-}
-
-.campo__icono {
-  position: absolute;
-  top: 50%;
-  left: 12px;
-  width: 18px;
-  height: 18px;
-  color: var(--color-texto-secundario);
-  transform: translateY(-50%);
-  pointer-events: none;
-  transition: color var(--transicion);
-}
-
-.campo__entrada:focus-within .campo__icono {
-  color: var(--color-marca);
-}
-
-.campo__entrada .campo__control {
-  padding-left: 40px;
-}
-
-.campo__control--con-boton {
-  padding-right: 48px;
-}
-
-.campo__alternar {
-  position: absolute;
-  top: 50%;
-  right: 4px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  color: var(--color-texto-secundario);
-  background: transparent;
-  border: 0;
-  border-radius: 8px;
-  transform: translateY(-50%);
-  cursor: pointer;
-  transition:
-    color var(--transicion),
-    background-color var(--transicion),
-    box-shadow var(--transicion);
-}
-
-.campo__alternar svg {
-  width: 18px;
-  height: 18px;
-}
-
-.campo__alternar:hover {
-  color: var(--color-marca);
-  background: var(--color-marca-suave);
-}
-
-.campo__alternar:focus-visible {
-  color: var(--color-marca);
-  outline: none;
-  box-shadow: inset 0 0 0 2px var(--color-marca);
-}
-
-.registro-alerta {
-  margin: 0;
-  padding: 12px 16px;
-  color: var(--color-error);
-  background: var(--color-error-suave);
-  border-radius: 12px;
-}
-
-@media (max-width: 960px) {
-  main.registro-pagina {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .registro-portada {
-    display: none;
-  }
-}
-
 @media (max-width: 480px) {
-  .registro-pagina__contenido {
-    align-items: flex-start;
-    padding: 16px;
-  }
-
-  .registro-tarjeta {
-    padding: 24px;
-  }
-
   .registro-roles__opciones {
     grid-template-columns: minmax(0, 1fr);
   }

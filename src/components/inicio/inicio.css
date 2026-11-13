@@ -1,43 +1,83 @@
 main.inicio {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 48px 48px 64px;
+  padding: 0;
 }
+
+/* ---------- Portada: la foto manda, a todo el ancho ---------- */
 
 .inicio__portada {
-  max-width: 720px;
-  margin-bottom: 32px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: clamp(420px, 64vh, 680px);
+  overflow: hidden;
+  isolation: isolate;
+  color: var(--color-superficie);
 }
 
-.inicio__rol {
-  display: inline-block;
-  margin: 0 0 12px;
-  padding: 3px 12px;
-  color: var(--color-marca);
-  background: var(--color-marca-suave);
-  border-radius: 999px;
-  font-size: var(--texto-pequeno);
-  line-height: var(--linea-pequeno);
-  font-weight: 700;
+.inicio__foto {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Velo solo bajo el texto (82 % o más hasta la mitad): más de 9:1 con el
+   blanco sobre cualquier zona de la foto. La parte alta queda limpia. */
+.inicio__portada::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--color-texto) 90%, transparent) 0%,
+    color-mix(in srgb, var(--color-texto) 82%, transparent) 40%,
+    transparent 72%
+  );
+}
+
+.inicio__portada-texto {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: var(--espacio-8) var(--espacio-7);
+  box-sizing: border-box;
 }
 
 .inicio__titulo {
+  max-width: 14ch;
   margin: 0;
-  font-size: var(--texto-titulo);
-  line-height: var(--linea-titulo);
-  font-weight: 800;
+  font-size: var(--texto-display);
+  line-height: var(--linea-display);
+  font-weight: var(--peso-titulo);
+  letter-spacing: var(--tracking-display);
   overflow-wrap: anywhere;
+  text-wrap: balance;
 }
 
 .inicio__introduccion {
-  margin: 8px 0 0;
-  color: var(--color-texto-secundario);
+  max-width: 52ch;
+  margin: var(--espacio-4) 0 0;
+  color: color-mix(in srgb, var(--color-superficie) 92%, transparent);
+  font-size: var(--texto-entrada);
+  line-height: var(--linea-entrada);
+}
+
+/* ---------- Accesos: disciplinados bajo la foto ---------- */
+
+.inicio__contenido {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: var(--espacio-7) var(--espacio-7) var(--espacio-8);
+  box-sizing: border-box;
 }
 
 .inicio__accesos {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: var(--espacio-5);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -48,11 +88,11 @@ main.inicio {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 8px;
-  padding: 24px;
+  gap: var(--espacio-2);
+  padding: var(--espacio-5);
   background: var(--color-superficie);
-  border: 1px solid var(--color-borde-suave);
-  border-radius: 16px;
+  border-radius: var(--radio-mediano);
+  box-shadow: var(--elevacion-reposo);
 }
 
 .inicio__vacio {
@@ -63,34 +103,49 @@ main.inicio {
   margin: 0;
   font-size: var(--texto-seccion);
   line-height: var(--linea-seccion);
-  font-weight: 700;
+  font-weight: var(--peso-fuerte);
 }
 
 .tarjeta-acceso__texto {
   flex: 1 0 auto;
-  margin: 0 0 12px;
+  margin: 0 0 var(--espacio-3);
   color: var(--color-texto-secundario);
+  line-height: var(--linea-parrafo);
 }
 
 .tarjeta-acceso__pendiente {
   margin: 0;
-  padding: 13px 0;
+  padding: var(--espacio-3) 0;
 }
 
 .inicio__nota {
-  margin: 24px 0 0;
+  max-width: 64ch;
+  margin: var(--espacio-5) 0 0;
   color: var(--color-texto-secundario);
   font-size: var(--texto-pequeno);
   line-height: var(--linea-pequeno);
 }
 
 @media (max-width: 640px) {
-  main.inicio {
-    padding: 24px 16px 32px;
+  .inicio__portada {
+    min-height: 360px;
+  }
+
+  .inicio__portada-texto {
+    padding: var(--espacio-6) var(--espacio-4);
+  }
+
+  .inicio__introduccion {
+    font-size: var(--texto-cuerpo);
+    line-height: var(--linea-parrafo);
+  }
+
+  .inicio__contenido {
+    padding: var(--espacio-5) var(--espacio-4) var(--espacio-7);
   }
 
   .tarjeta-acceso,
   .inicio__vacio {
-    padding: 16px;
+    padding: var(--espacio-4);
   }
 }
