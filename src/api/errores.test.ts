@@ -73,6 +73,23 @@ describe('interpretarRespuestaError', () => {
     expect(error.detalles).toEqual(reservas)
   })
 
+  it.each([
+    [401, 'CREDENCIALES_INVALIDAS', 'El correo o la contraseña no son correctos.'],
+    [403, 'CUENTA_RESTRINGIDA', 'Tu cuenta está restringida'],
+    [403, 'CUENTA_DESACTIVADA', 'Tu cuenta está desactivada.'],
+  ])(
+    'traduce el %i %s del login sin marcar campos',
+    async (status, codigo, inicio) => {
+      const error = await interpretarRespuestaError(
+        respuesta({ codigo, mensaje: 'Bad credentials' }, status),
+      )
+
+      expect(error.mensaje.startsWith(inicio)).toBe(true)
+      expect(error.mensaje).not.toContain('Bad credentials')
+      expect(error.erroresPorCampo).toEqual({})
+    },
+  )
+
   it('usa el mensaje del servidor con un código desconocido', async () => {
     const error = await interpretarRespuestaError(
       respuesta({ codigo: 'NUEVO_CODIGO', mensaje: 'Algo nuevo' }, 400),

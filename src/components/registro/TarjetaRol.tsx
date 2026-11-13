@@ -1,5 +1,5 @@
 import type { Rol } from '../../api/registro'
-import Icono from './Icono'
+import Icono from '../acceso/Icono'
 
 interface TarjetaRolProps {
   id: string

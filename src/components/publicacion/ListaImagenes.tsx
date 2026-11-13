@@ -3,6 +3,7 @@ import {
   rutaErrorImagen,
   type ErroresFormulario,
 } from './validacion'
+import VistaFoto from './VistaFoto'
 
 interface ListaImagenesProps {
   imagenes: string[]
@@ -22,10 +23,16 @@ function ListaImagenes({ imagenes, errores, onCambiar }: ListaImagenesProps) {
           const error = errores[ruta]
           const idError = error ? `${id}-error` : undefined
           return (
-            <div className="imagen-fila" key={indice}>
-              <div className="imagen-fila__recuadro" aria-hidden="true">
-                Foto {numero}
-              </div>
+            <div
+              className={`imagen-fila${indice === 0 ? ' imagen-fila--portada' : ''}`}
+              key={indice}
+            >
+              <VistaFoto
+                key={imagen.trim()}
+                url={imagen}
+                numero={numero}
+                portada={indice === 0}
+              />
               <label className="imagen-fila__etiqueta" htmlFor={id}>
                 Ruta o URL de la foto {numero}
               </label>

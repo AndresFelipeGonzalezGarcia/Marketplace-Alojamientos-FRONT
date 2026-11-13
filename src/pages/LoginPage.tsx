@@ -1,41 +1,60 @@
-import { Link, useLocation } from 'react-router'
+import { Navigate, useLocation } from 'react-router'
 import { leerEstadoRedireccion } from '../auth/roles'
-import MensajePantalla from '../components/publicacion/MensajePantalla'
+import { modoDemoActivo } from '../auth/sesionDemo'
+import { useSesion } from '../auth/useSesion'
+import Icono from '../components/acceso/Icono'
+import PantallaAcceso from '../components/acceso/PantallaAcceso'
+import AccesoDemo from '../components/login/AccesoDemo'
+import FormularioLogin from '../components/login/FormularioLogin'
+import { inicioDelRol } from '../components/navegacion/destinos'
 
-// Marcador de posición: la pantalla real de inicio de sesión llega en su
-// propia historia. Ya recibe `desde` y `motivo` de RutaProtegida.
+// `desde` llega del estado de navegación, que también puede escribirse a
+// mano: solo se aceptan rutas internas (no "//otro-sitio") y nunca /login.
+function destinoSeguro(desde: string | undefined): string | undefined {
+  if (!desde || desde.startsWith('//') || desde.startsWith('/\\')) {
+    return undefined
+  }
+  const ruta = desde.split(/[?#]/)[0]
+  return ruta === '/login' ? undefined : desde
+}
+
 function LoginPage() {
+  const sesion = useSesion()
   const location = useLocation()
   const { desde, motivo } = leerEstadoRedireccion(location.state)
+  const destino = destinoSeguro(desde)
+
+  // Al iniciar sesión (o si ya había una) se sale del login.
+  if (sesion) {
+    return (
+      <Navigate to={destino ?? inicioDelRol(sesion.usuario.rol)} replace />
+    )
+  }
 
   return (
-    <main className="publicacion-pagina">
-      {motivo === 'expirada' && (
-        <p className="aviso-sesion" role="alert">
-          Tu sesión expiró. Inicia sesión de nuevo para continuar.
+    <PantallaAcceso>
+      <section className="acceso__tarjeta">
+        <h1 className="acceso__titulo">Iniciar sesión</h1>
+        <p className="acceso__subtitulo">
+          {destino
+            ? 'Inicia sesión para continuar donde ibas.'
+            : 'Entra para gestionar tus alojamientos y reservas.'}
         </p>
-      )}
-      <MensajePantalla
-        titulo="Iniciar sesión"
-        mensaje={
-          desde
-            ? 'Necesitas iniciar sesión para ver esa página. La pantalla de inicio de sesión estará disponible muy pronto.'
-            : 'La pantalla de inicio de sesión estará disponible muy pronto.'
-        }
-      >
-        <p>
-          <span className="etiqueta-proximamente">Próximamente</span>
-        </p>
-        <div className="acciones-mensaje">
-          <Link className="boton-enlace" to="/registro">
-            Crear cuenta
-          </Link>
-          <Link className="boton-enlace boton-enlace--secundario" to="/">
-            Volver al inicio
-          </Link>
-        </div>
-      </MensajePantalla>
-    </main>
+
+        {motivo === 'expirada' && (
+          <p className="acceso__aviso" role="status">
+            <Icono nombre="reloj" className="acceso__aviso-icono" />
+            <span>
+              <strong>Tu sesión expiró.</strong> Inicia sesión de nuevo para
+              continuar.
+            </span>
+          </p>
+        )}
+
+        <FormularioLogin />
+        {modoDemoActivo() && <AccesoDemo />}
+      </section>
+    </PantallaAcceso>
   )
 }
 

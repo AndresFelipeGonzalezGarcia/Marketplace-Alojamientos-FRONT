@@ -1,8 +1,10 @@
 import { useState, type FormEvent } from 'react'
+import { Link } from 'react-router'
 import { mensajeConReferencia, type ErrorApi } from '../../api/errores'
 import { registrarUsuario, type Rol } from '../../api/registro'
-import '../formulario/formulario.css'
-import CampoTexto from './CampoTexto'
+import BotonCarga from '../acceso/BotonCarga'
+import CampoTexto from '../acceso/CampoTexto'
+import Icono from '../acceso/Icono'
 import TarjetaRol from './TarjetaRol'
 import './registro.css'
 
@@ -186,25 +188,31 @@ function FormularioRegistro() {
 
   if (rolCreado) {
     return (
-      <section className="registro-tarjeta" role="status">
-        <h1 className="registro-tarjeta__titulo">Cuenta creada</h1>
-        <p className="registro-exito">
+      <section className="acceso__tarjeta" role="status">
+        <h1 className="acceso__titulo">Cuenta creada</h1>
+        <p className="acceso__exito">
           Tu cuenta de {NOMBRES_ROL[rolCreado]} quedó creada.
         </p>
+        <Link className="boton-acceso" to="/login">
+          Iniciar sesión
+        </Link>
       </section>
     )
   }
 
   return (
-    <section className="registro-tarjeta">
-      <h1 className="registro-tarjeta__titulo">Crear cuenta</h1>
+    <section className="acceso__tarjeta acceso__tarjeta--ancha">
+      <h1 className="acceso__titulo">Crear cuenta</h1>
+      <p className="acceso__subtitulo">
+        Elige cómo quieres usar el marketplace. Te toma un minuto.
+      </p>
 
-      <form className="registro-formulario" noValidate onSubmit={enviar}>
+      <form className="acceso__formulario" noValidate onSubmit={enviar}>
         <fieldset
           className="registro-roles"
           aria-describedby={errores.rol ? 'registro-rol-error' : undefined}
         >
-          <legend className="campo__etiqueta">Tipo de cuenta</legend>
+          <legend className="registro-roles__leyenda">Tipo de cuenta</legend>
           <div className="registro-roles__opciones">
             <TarjetaRol
               id="registro-rol"
@@ -230,7 +238,8 @@ function FormularioRegistro() {
             />
           </div>
           {errores.rol && (
-            <p id="registro-rol-error" className="campo__error">
+            <p id="registro-rol-error" className="campo-flotante__error">
+              <Icono nombre="alerta" className="campo-flotante__error-icono" />
               {errores.rol}
             </p>
           )}
@@ -289,14 +298,22 @@ function FormularioRegistro() {
         />
 
         {errorGeneral && (
-          <p className="registro-alerta" role="alert">
-            {errorGeneral}
+          <p className="acceso__alerta" role="alert">
+            <Icono nombre="alerta" className="acceso__alerta-icono" />
+            <span>{errorGeneral}</span>
           </p>
         )}
 
-        <button className="boton-principal" type="submit" disabled={enviando}>
-          {enviando ? 'Creando cuenta…' : 'Crear cuenta'}
-        </button>
+        <BotonCarga cargando={enviando} textoCargando="Creando cuenta…">
+          Crear cuenta
+        </BotonCarga>
+
+        <p className="acceso__pie">
+          ¿Ya tienes cuenta?{' '}
+          <Link className="acceso__enlace" to="/login">
+            Inicia sesión
+          </Link>
+        </p>
       </form>
     </section>
   )

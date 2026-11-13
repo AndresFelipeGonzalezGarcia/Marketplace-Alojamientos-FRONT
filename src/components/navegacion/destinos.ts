@@ -37,7 +37,7 @@ export const INICIAR_SESION: Destino = {
   ruta: '/login',
   descripcion: '¿Ya tienes cuenta? Entra con tu correo y contraseña.',
   accion: 'Entrar',
-  disponible: false,
+  disponible: true,
   activaEn: ['/login'],
 }
 
@@ -89,4 +89,17 @@ export function estaActivo(destino: Destino, ruta: string): boolean {
   return destino.activaEn.some(
     (patron) => matchPath({ path: patron, end: true }, ruta) !== null,
   )
+}
+
+// Pantalla principal de cada rol. Mientras esa pantalla no exista,
+// el rol aterriza en el inicio, que ya muestra sus accesos.
+const PRINCIPAL_POR_ROL: Record<RolUsuario, Destino> = {
+  HUESPED: INICIO,
+  ANFITRION: MIS_PUBLICACIONES,
+  ADMINISTRADOR: PUBLICACIONES_PENDIENTES,
+}
+
+export function inicioDelRol(rol: RolUsuario): string {
+  const principal = PRINCIPAL_POR_ROL[rol]
+  return principal.disponible ? principal.ruta : INICIO.ruta
 }

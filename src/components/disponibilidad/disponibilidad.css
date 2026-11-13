@@ -1,75 +1,77 @@
 .disponibilidad-volver {
   display: inline-block;
   color: var(--color-marca);
-  font-weight: 600;
+  font-weight: var(--peso-etiqueta);
 }
 
 .disponibilidad-exito {
-  margin: 0 0 16px;
-  padding: 12px 16px;
+  margin: 0 0 var(--espacio-4);
+  padding: var(--espacio-3) var(--espacio-4);
   color: var(--color-exito);
   background: var(--color-exito-suave);
-  border-radius: 12px;
-  font-weight: 600;
+  border-radius: var(--radio-pequeno);
+  font-weight: var(--peso-etiqueta);
 }
 
 .disponibilidad-vacio {
   margin: 0;
-  padding: 24px 16px;
+  padding: var(--espacio-5) var(--espacio-4);
   color: var(--color-texto-secundario);
   background: var(--color-fondo-pagina);
-  border-radius: 12px;
+  border-radius: var(--radio-pequeno);
+  line-height: var(--linea-parrafo);
   text-align: center;
 }
 
 .lista-periodos {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--espacio-2);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+/* Cada periodo se separa por el fondo, sin borde. */
 .fila-periodo {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 10px 16px;
-  padding: 12px 14px;
-  border: 1px solid var(--color-borde-suave);
-  border-radius: 12px;
+  gap: var(--espacio-2) var(--espacio-4);
+  padding: var(--espacio-3) var(--espacio-4);
+  background: var(--color-fondo-pagina);
+  border-radius: var(--radio-pequeno);
 }
 
 .fila-periodo__rango {
-  font-weight: 600;
+  font-weight: var(--peso-etiqueta);
 }
 
 .fila-periodo__acciones {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: var(--espacio-2);
 }
 
 .fila-periodo__pregunta {
   color: var(--color-error);
   font-size: var(--texto-etiqueta);
   line-height: var(--linea-etiqueta);
-  font-weight: 600;
+  font-weight: var(--peso-etiqueta);
 }
 
 .boton-compacto {
-  padding: 7px 14px;
+  padding: var(--espacio-2) var(--espacio-3);
   color: var(--color-marca);
   background: var(--color-superficie);
   border: 1px solid var(--color-marca);
-  border-radius: 8px;
+  border-radius: var(--radio-pequeno);
   font-family: inherit;
   font-size: var(--texto-etiqueta);
   line-height: var(--linea-etiqueta);
-  font-weight: 600;
+  font-weight: var(--peso-etiqueta);
   cursor: pointer;
   transition: background-color var(--transicion);
 }
@@ -100,15 +102,15 @@
 .periodo-acciones {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--espacio-3);
 }
 
 .aviso-error {
-  margin-bottom: 12px;
-  padding: 12px 16px;
+  margin-bottom: var(--espacio-3);
+  padding: var(--espacio-3) var(--espacio-4);
   color: var(--color-error);
   background: var(--color-error-suave);
-  border-radius: 12px;
+  border-radius: var(--radio-pequeno);
 }
 
 .aviso-error__mensaje,
@@ -117,13 +119,13 @@
 }
 
 .aviso-error__subtitulo {
-  margin-top: 8px;
-  font-weight: 600;
+  margin-top: var(--espacio-2);
+  font-weight: var(--peso-etiqueta);
 }
 
 .aviso-error__reservas {
-  margin: 4px 0 0;
-  padding-left: 20px;
+  margin: var(--espacio-1) 0 0;
+  padding-left: var(--espacio-5);
   font-size: var(--texto-etiqueta);
   line-height: var(--linea-etiqueta);
 }

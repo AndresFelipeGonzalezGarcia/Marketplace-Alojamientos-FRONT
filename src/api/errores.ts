@@ -18,6 +18,18 @@ const MENSAJES = new Map<string, string>([
     'Este correo ya está registrado. Usa otro correo o inicia sesión.',
   ],
   ['ROL_NO_PERMITIDO', 'Ese tipo de cuenta no está permitido.'],
+  [
+    'CREDENCIALES_INVALIDAS',
+    'El correo o la contraseña no son correctos. Revísalos e inténtalo de nuevo.',
+  ],
+  [
+    'CUENTA_RESTRINGIDA',
+    'Tu cuenta está restringida y por ahora no puede iniciar sesión. Comunícate con soporte para revisarla.',
+  ],
+  [
+    'CUENTA_DESACTIVADA',
+    'Tu cuenta está desactivada. Comunícate con soporte si quieres volver a activarla.',
+  ],
   ['SOLICITUD_INVALIDA', 'Revisa los datos ingresados.'],
   ['NO_AUTENTICADO', 'Tu sesión no es válida. Inicia sesión de nuevo.'],
   ['ACCESO_DENEGADO', 'No tienes permiso para realizar esta acción.'],

@@ -1,4 +1,10 @@
+/* Sistema visual de Inversiones LR.
+   Los colores y la familia tipográfica son los del prototipo (skill
+   diseno-ui). Espaciado, radios, elevación y escala tipográfica se definen
+   aquí una sola vez: ningún componente usa valores sueltos. */
+
 :root {
+  /* ---------- Color (prototipo) ---------- */
   --color-marca: #0e6b68;
   --color-marca-suave: #e3f1f0;
   --color-acento: #00c3d0;
@@ -13,14 +19,58 @@
   --color-error: #a32a2a;
   --color-error-suave: #fbe9e9;
 
+  /* ---------- Espaciado: 8 pasos, múltiplos de 4 ---------- */
+  --espacio-1: 4px;
+  --espacio-2: 8px;
+  --espacio-3: 12px;
+  --espacio-4: 16px;
+  --espacio-5: 24px;
+  --espacio-6: 32px;
+  --espacio-7: 48px;
+  --espacio-8: 64px;
+
+  /* ---------- Radios: solo tres ---------- */
+  /* Campos, botones, etiquetas y controles. */
+  --radio-pequeno: 8px;
+  /* Tarjetas, paneles, avisos y fotos. */
+  --radio-mediano: 16px;
+  /* Píldoras, avatares e indicadores circulares. */
+  --radio-completo: 999px;
+
+  /* ---------- Elevación ---------- */
+  /* Sombra teñida con el texto y la marca, nunca gris neutro. */
+  --sombra-tinte: color-mix(in srgb, var(--color-texto) 75%, var(--color-marca));
+  /* Superficies apoyadas en la página: tarjetas, encabezado. */
+  --elevacion-reposo:
+    0 1px 2px color-mix(in srgb, var(--sombra-tinte) 6%, transparent),
+    0 2px 8px -4px color-mix(in srgb, var(--sombra-tinte) 8%, transparent);
+  /* Lo que flota sobre el resto: el formulario de acceso, avisos fijos. */
+  --elevacion-elevada:
+    0 2px 4px -2px color-mix(in srgb, var(--sombra-tinte) 6%, transparent),
+    0 16px 40px -16px color-mix(in srgb, var(--sombra-tinte) 16%, transparent);
+  /* Respuesta al cursor sobre algo que se puede elegir. */
+  --elevacion-interactiva:
+    0 4px 8px -4px color-mix(in srgb, var(--sombra-tinte) 8%, transparent),
+    0 20px 44px -16px color-mix(in srgb, var(--sombra-tinte) 22%, transparent);
+
+  /* ---------- Tipografía ---------- */
+  /* Portada: el único texto con presencia de cartel en cada pantalla. */
+  --texto-display: clamp(34px, 4.6vw, 68px);
+  --linea-display: 1.02;
+  --tracking-display: -0.035em;
+  /* Título de pantalla (prototipo: 30/38 extrabold). */
   --texto-titulo: 30px;
   --linea-titulo: 38px;
-  --texto-portada: clamp(36px, 3.6vw, 52px);
-  --linea-portada: 1.15;
+  --tracking-titulo: -0.02em;
+  /* Entrada: primer párrafo bajo un título de portada. */
+  --texto-entrada: 18px;
+  --linea-entrada: 30px;
   --texto-seccion: 20px;
   --linea-seccion: 28px;
   --texto-cuerpo: 15px;
   --linea-cuerpo: 22px;
+  /* Párrafos largos: interlineado abierto para leer de corrido. */
+  --linea-parrafo: 26px;
   --texto-etiqueta: 14px;
   --linea-etiqueta: 20px;
   --texto-pequeno: 13px;
@@ -28,6 +78,13 @@
   --texto-boton: 15px;
   --linea-boton: 20px;
 
+  --peso-cuerpo: 400;
+  --peso-etiqueta: 600;
+  --peso-fuerte: 700;
+  --peso-titulo: 800;
+
+  /* ---------- Movimiento y foco ---------- */
+  /* Solo responde a lo que hace la persona (foco, abrir, enviar). */
   --transicion: 150ms ease;
   --halo-marca: 0 0 0 3px color-mix(in srgb, var(--color-marca) 25%, transparent);
   --halo-error: 0 0 0 3px color-mix(in srgb, var(--color-error) 25%, transparent);
@@ -35,8 +92,11 @@
   font-family: 'Plus Jakarta Sans', system-ui, 'Segoe UI', Roboto, sans-serif;
   font-size: var(--texto-cuerpo);
   line-height: var(--linea-cuerpo);
+  font-weight: var(--peso-cuerpo);
   color: var(--color-texto);
   color-scheme: light;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -51,7 +111,7 @@ body {
 }
 
 main {
-  padding: 2rem;
+  padding: var(--espacio-6);
 }
 
 .solo-lector {
@@ -68,19 +128,17 @@ main {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
-  padding: 13px 20px;
+  gap: var(--espacio-2);
+  padding: var(--espacio-3) var(--espacio-5);
   color: var(--color-superficie);
   background: var(--color-marca);
   border: 1.5px solid var(--color-marca);
-  border-radius: 10px;
+  border-radius: var(--radio-pequeno);
   font-size: var(--texto-boton);
   line-height: var(--linea-boton);
-  font-weight: 700;
+  font-weight: var(--peso-fuerte);
   text-decoration: none;
-  transition:
-    background-color var(--transicion),
-    box-shadow var(--transicion);
+  transition: background-color var(--transicion);
 }
 
 .boton-enlace:hover {
@@ -102,32 +160,15 @@ main {
   box-shadow: var(--halo-marca);
 }
 
+/* Informa que la pantalla todavía no existe. */
 .etiqueta-proximamente {
   display: inline-block;
-  padding: 0 8px;
+  padding: 0 var(--espacio-2);
   color: var(--color-texto-secundario);
   background: var(--color-fondo-pagina);
-  border: 1px solid var(--color-borde-suave);
-  border-radius: 999px;
+  border-radius: var(--radio-completo);
   font-size: var(--texto-pequeno);
   line-height: var(--linea-pequeno);
-  font-weight: 600;
+  font-weight: var(--peso-etiqueta);
   white-space: nowrap;
-}
-
-.aviso-sesion {
-  max-width: 560px;
-  margin: 0 auto;
-  padding: 12px 16px;
-  color: var(--color-error);
-  background: var(--color-error-suave);
-  border-radius: 10px;
-  font-weight: 600;
-}
-
-.acciones-mensaje {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
 }

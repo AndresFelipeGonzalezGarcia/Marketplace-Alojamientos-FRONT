@@ -8,6 +8,8 @@ export type NombreIcono =
   | 'ojo-tachado'
   | 'verificacion'
   | 'telefono'
+  | 'alerta'
+  | 'reloj'
 
 const OJO = (
   <>
@@ -46,6 +48,19 @@ const TRAZOS: Record<NombreIcono, ReactNode> = {
     </>
   ),
   verificacion: <path d="m5 13 4 4L19 7" />,
+  alerta: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7.5v5" />
+      <path d="M12 16.5h.01" />
+    </>
+  ),
+  reloj: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </>
+  ),
 }
 
 interface IconoProps {

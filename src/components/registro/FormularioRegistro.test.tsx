@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent, { type UserEvent } from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { ErrorApi } from '../../api/errores'
 import { registrarUsuario, type ResultadoRegistro } from '../../api/registro'
@@ -69,7 +70,11 @@ function botonCrear() {
 describe('FormularioRegistro', () => {
   beforeEach(() => {
     registrar.mockReset()
-    render(<FormularioRegistro />)
+    render(
+      <MemoryRouter>
+        <FormularioRegistro />
+      </MemoryRouter>,
+    )
   })
 
   it('muestra los errores de los campos vacíos y no llama a la API', async () => {
@@ -134,6 +139,9 @@ describe('FormularioRegistro', () => {
     await usuario.click(botonCrear())
 
     expect(await screen.findByText('Cuenta creada')).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', { name: 'Iniciar sesión' }),
+    ).toHaveAttribute('href', '/login')
   })
 
   it('muestra junto a cada campo los detalles que devuelve la API', async () => {
