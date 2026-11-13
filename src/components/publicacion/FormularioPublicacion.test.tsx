@@ -15,6 +15,7 @@ import {
   type ResultadoPublicacion,
 } from '../../api/publicaciones'
 import { routes } from '../../routes'
+import { iniciarSesionDePrueba } from '../../test/sesion'
 
 vi.mock('../../api/publicaciones', async (importarOriginal) => ({
   ...(await importarOriginal<typeof import('../../api/publicaciones')>()),
@@ -154,6 +155,7 @@ function requisito(texto: string) {
 }
 
 beforeEach(() => {
+  iniciarSesionDePrueba('ANFITRION')
   crear.mockReset()
   obtener.mockReset()
   actualizar.mockReset()

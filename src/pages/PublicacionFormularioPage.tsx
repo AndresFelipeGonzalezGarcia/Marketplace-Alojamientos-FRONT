@@ -1,7 +1,6 @@
 import { useLocation, useNavigate, useParams } from 'react-router'
 import type { Publicacion } from '../api/publicaciones'
 import EditorPublicacion from '../components/publicacion/EditorPublicacion'
-import EncabezadoAnfitrion from '../components/publicacion/EncabezadoAnfitrion'
 import '../components/formulario/formulario.css'
 
 function PublicacionFormularioPage() {
@@ -20,17 +19,14 @@ function PublicacionFormularioPage() {
   }
 
   return (
-    <>
-      <EncabezadoAnfitrion />
-      <main className="publicacion-pagina">
-        <EditorPublicacion
-          key={id ?? 'nueva'}
-          id={id}
-          borradorRecienGuardado={estadoNavegacion?.borradorGuardado === true}
-          onCreada={irAEdicion}
-        />
-      </main>
-    </>
+    <main className="publicacion-pagina">
+      <EditorPublicacion
+        key={id ?? 'nueva'}
+        id={id}
+        borradorRecienGuardado={estadoNavegacion?.borradorGuardado === true}
+        onCreada={irAEdicion}
+      />
+    </main>
   )
 }
 

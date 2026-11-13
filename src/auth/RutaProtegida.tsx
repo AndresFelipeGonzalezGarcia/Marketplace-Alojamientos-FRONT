@@ -1,23 +1,47 @@
-import { Outlet } from 'react-router'
-import type { Rol } from '../api/registro'
+import { useState } from 'react'
+import { Link, Navigate, Outlet, useLocation } from 'react-router'
 import MensajePantalla from '../components/publicacion/MensajePantalla'
-import { obtenerRolSesion } from './sesion'
+import { ETIQUETA_ROL, type EstadoRedireccionLogin } from './roles'
+import { obtenerMotivoUltimoCierre, type RolUsuario } from './sesion'
+import { useSesion } from './useSesion'
 
 interface RutaProtegidaProps {
-  rolesPermitidos: Rol[]
+  rolesPermitidos: RolUsuario[]
 }
 
 function RutaProtegida({ rolesPermitidos }: RutaProtegidaProps) {
-  const rol = obtenerRolSesion()
+  const sesion = useSesion()
+  const location = useLocation()
+  // Distingue "llegó sin sesión" de "la sesión terminó estando aquí".
+  const [entroConSesion] = useState(() => sesion !== null)
 
-  // Mientras no exista login (rol null) no se bloquea el acceso.
-  if (rol && !rolesPermitidos.includes(rol)) {
+  if (!sesion) {
+    const motivo = obtenerMotivoUltimoCierre()
+
+    // Quien cierra sesión a propósito va al inicio, no al login.
+    if (entroConSesion && motivo === 'manual') {
+      return <Navigate to="/" replace />
+    }
+
+    const estado: EstadoRedireccionLogin = {
+      desde: `${location.pathname}${location.search}${location.hash}`,
+      ...(motivo === 'expirada' ? { motivo } : {}),
+    }
+    return <Navigate to="/login" replace state={estado} />
+  }
+
+  if (!rolesPermitidos.includes(sesion.usuario.rol)) {
+    const requeridos = rolesPermitidos.map((rol) => ETIQUETA_ROL[rol])
     return (
       <main className="publicacion-pagina">
         <MensajePantalla
           titulo="Acceso denegado"
-          mensaje="Tu cuenta no tiene permiso para ver esta página."
-        />
+          mensaje={`Esta página es solo para cuentas de tipo ${requeridos.join(' o ')}. Entraste como ${ETIQUETA_ROL[sesion.usuario.rol]}.`}
+        >
+          <Link className="boton-enlace" to="/">
+            Volver al inicio
+          </Link>
+        </MensajePantalla>
       </main>
     )
   }

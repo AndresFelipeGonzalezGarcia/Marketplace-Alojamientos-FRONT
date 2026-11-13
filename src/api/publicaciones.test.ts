@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { obtenerTokenSesion } from '../auth/sesion'
+import { iniciarSesionDePrueba } from '../test/sesion'
 import {
   actualizarPublicacion,
   crearPublicacion,
@@ -8,8 +8,6 @@ import {
   obtenerPublicacion,
   type DatosPublicacion,
 } from './publicaciones'
-
-vi.mock('../auth/sesion', () => ({ obtenerTokenSesion: vi.fn() }))
 
 const datos: DatosPublicacion = {
   titulo: 'Casa de campo',
@@ -41,7 +39,7 @@ describe('API de publicaciones', () => {
     fetchSimulado.mockReset()
     vi.stubGlobal('fetch', fetchSimulado)
     vi.stubEnv('VITE_API_URL', 'http://api.prueba/')
-    vi.mocked(obtenerTokenSesion).mockReturnValue('token-123')
+    iniciarSesionDePrueba('ANFITRION', { token: 'token-123' })
   })
 
   afterEach(() => {

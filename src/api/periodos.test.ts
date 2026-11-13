@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { obtenerTokenSesion } from '../auth/sesion'
+import { iniciarSesionDePrueba } from '../test/sesion'
 import {
   actualizarPeriodo,
   crearPeriodo,
@@ -7,8 +7,6 @@ import {
   listarPeriodos,
   reservasAfectadas,
 } from './periodos'
-
-vi.mock('../auth/sesion', () => ({ obtenerTokenSesion: vi.fn() }))
 
 const BASE = 'http://api.prueba/api/anfitrion/publicaciones/p1/periodos'
 const datos = { fechaInicio: '2026-12-01', fechaFin: '2026-12-10' }
@@ -29,7 +27,7 @@ describe('API de periodos', () => {
     fetchSimulado.mockReset()
     vi.stubGlobal('fetch', fetchSimulado)
     vi.stubEnv('VITE_API_URL', 'http://api.prueba')
-    vi.mocked(obtenerTokenSesion).mockReturnValue('token-123')
+    iniciarSesionDePrueba('ANFITRION', { token: 'token-123' })
   })
 
   afterEach(() => {

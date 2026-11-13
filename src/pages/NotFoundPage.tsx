@@ -1,10 +1,17 @@
 import { Link } from 'react-router'
+import MensajePantalla from '../components/publicacion/MensajePantalla'
 
 function NotFoundPage() {
   return (
-    <main>
-      <h1>Página no encontrada</h1>
-      <Link to="/">Volver al inicio</Link>
+    <main className="publicacion-pagina">
+      <MensajePantalla
+        titulo="Página no encontrada"
+        mensaje="La dirección que abriste no existe o cambió de lugar."
+      >
+        <Link className="boton-enlace" to="/">
+          Volver al inicio
+        </Link>
+      </MensajePantalla>
     </main>
   )
 }
