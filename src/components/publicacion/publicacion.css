@@ -29,14 +29,105 @@ main.publicacion-pagina {
   letter-spacing: var(--tracking-titulo);
 }
 
-.publicacion-estado {
+/* ---------- Estado de la publicación ---------- */
+
+/* El punto refuerza el tono; el texto es lo que informa. */
+.insignia-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
   padding: var(--espacio-1) var(--espacio-3);
+  border-radius: var(--radio-completo);
+  font-size: var(--texto-etiqueta);
+  line-height: var(--linea-etiqueta);
+  font-weight: var(--peso-fuerte);
+}
+
+.insignia-estado::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: currentColor;
+  border-radius: var(--radio-completo);
+}
+
+.insignia-estado--neutro {
+  color: var(--color-texto);
+  background: var(--color-borde-suave);
+}
+
+.insignia-estado--marca {
   color: var(--color-marca);
   background: var(--color-marca-suave);
-  border-radius: var(--radio-completo);
-  font-size: var(--texto-pequeno);
-  line-height: var(--linea-pequeno);
+}
+
+.insignia-estado--exito {
+  color: var(--color-exito);
+  background: var(--color-exito-suave);
+}
+
+.insignia-estado--error {
+  color: var(--color-error);
+  background: var(--color-error-suave);
+}
+
+.aviso-estado {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-4);
+  max-width: 960px;
+  margin-bottom: var(--espacio-5);
+  padding: var(--espacio-4) var(--espacio-5);
+  box-sizing: border-box;
+  border-radius: var(--radio-mediano);
+}
+
+.aviso-estado:focus-visible {
+  outline: 2px solid var(--color-marca);
+  outline-offset: 2px;
+}
+
+.aviso-estado:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.aviso-estado--marca,
+.aviso-estado--neutro {
+  color: var(--color-texto);
+  background: var(--color-marca-suave);
+}
+
+.aviso-estado--error {
+  color: var(--color-texto);
+  background: var(--color-error-suave);
+}
+
+.aviso-estado__icono {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  color: var(--color-marca);
+}
+
+.aviso-estado--error .aviso-estado__icono {
+  color: var(--color-error);
+}
+
+.aviso-estado__titulo {
+  margin: 0;
+  font-size: var(--texto-seccion);
+  line-height: var(--linea-seccion);
   font-weight: var(--peso-fuerte);
+}
+
+.aviso-estado__texto {
+  margin: 0;
+  line-height: var(--linea-parrafo);
+}
+
+.aviso-estado__titulo + .aviso-estado__texto,
+.aviso-estado__texto + .aviso-estado__texto {
+  margin-top: var(--espacio-1);
 }
 
 .publicacion-layout {
@@ -57,6 +148,31 @@ main.publicacion-pagina {
   flex-direction: column;
   gap: var(--espacio-5);
   min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* Solo lectura: una sola columna y sin controles para añadir o quitar. */
+.publicacion-layout--lectura {
+  grid-template-columns: minmax(0, 960px);
+}
+
+.publicacion-columna:disabled .imagenes__agregar,
+.publicacion-columna:disabled .imagen-fila__quitar,
+.publicacion-columna:disabled .adicionales__agregar,
+.publicacion-columna:disabled .adicional-fila__quitar {
+  display: none;
+}
+
+/* En solo lectura los valores son el contenido: color pleno, sin la
+   atenuación que el navegador aplica a los controles deshabilitados.
+   El fondo gris basta para indicar que no se editan. */
+.publicacion-columna:disabled .campo__control {
+  color: var(--color-texto);
+  -webkit-text-fill-color: var(--color-texto);
+  opacity: 1;
+  cursor: default;
 }
 
 /* Sin borde: la elevación de reposo basta para separarla de la página. */
@@ -385,6 +501,13 @@ label.chip:has(input:focus-visible) {
   display: flex;
   flex-direction: column;
   gap: var(--espacio-3);
+}
+
+.panel-revision__impedimento {
+  margin: var(--espacio-3) 0 0;
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
 }
 
 .panel-revision__exito {

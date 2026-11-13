@@ -14,6 +14,13 @@ export const TIPOS_ALOJAMIENTO: { valor: TipoAlojamiento; etiqueta: string }[] =
 
 export type ModoReserva = 'INMEDIATA' | 'CON_APROBACION'
 
+export type EstadoPublicacion =
+  | 'BORRADOR'
+  | 'PENDIENTE_REVISION'
+  | 'ACTIVA'
+  | 'PAUSADA'
+  | 'BLOQUEADA'
+
 export interface ServicioAdicional {
   nombre: string
   costo: number
@@ -38,14 +45,15 @@ export interface DatosPublicacion {
 
 export interface Publicacion extends DatosPublicacion {
   id: string
-  estado: string
+  estado: EstadoPublicacion
+  motivoEstado?: string | null
 }
 
 export interface PublicacionResumen {
   id: string
   titulo: string
   ciudad: string
-  estado: string
+  estado: EstadoPublicacion
   capacidad: number
   precioNoche: number
 }

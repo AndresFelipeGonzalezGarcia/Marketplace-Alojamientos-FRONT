@@ -211,7 +211,7 @@ describe('crear publicación', { timeout: 15_000 }, () => {
     expect(
       await screen.findByRole('heading', { name: 'Editar publicación' }),
     ).toBeInTheDocument()
-    expect(screen.getByText('BORRADOR')).toBeInTheDocument()
+    expect(screen.getByText('Borrador')).toHaveClass('insignia-estado')
     expect(screen.getByText('Borrador guardado')).toBeInTheDocument()
   })
 
@@ -357,12 +357,14 @@ describe('crear publicación', { timeout: 15_000 }, () => {
     expect(campo.titulo()).toHaveValue('Casa')
   })
 
-  it('mantiene deshabilitado Enviar a revisión', () => {
+  it('no permite enviar a revisión antes de guardar el borrador', () => {
     renderEn('/publicaciones/nueva')
 
-    expect(
-      screen.getByRole('button', { name: 'Enviar a revisión' }),
-    ).toBeDisabled()
+    const enviar = screen.getByRole('button', { name: 'Enviar a revisión' })
+    expect(enviar).toBeDisabled()
+    expect(enviar).toHaveAccessibleDescription(
+      'Guarda el borrador para poder enviarlo a revisión.',
+    )
   })
 })
 
