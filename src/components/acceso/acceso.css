@@ -554,3 +554,55 @@ main.acceso {
     padding: var(--espacio-5);
   }
 }
+
+/* ---------- Recuperación de contraseña ---------- */
+
+/* «¿Olvidaste tu contraseña?» queda pegado al campo de contraseña. */
+.acceso__olvido {
+  margin: calc(-1 * var(--espacio-2)) 0 0;
+  font-size: var(--texto-etiqueta);
+  line-height: var(--linea-etiqueta);
+  text-align: right;
+}
+
+.acceso__acciones {
+  display: grid;
+  gap: var(--espacio-3);
+}
+
+/* Enlace simulado: solo aparece con el backend en perfil de desarrollo. */
+.acceso-dev {
+  display: grid;
+  gap: var(--espacio-2);
+  margin-bottom: var(--espacio-5);
+  padding: var(--espacio-4);
+  background: var(--color-fondo-pagina);
+  border: 1px dashed var(--color-borde);
+  border-radius: var(--radio-mediano);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+}
+
+.acceso-dev__titulo {
+  margin: 0;
+  color: var(--color-texto-secundario);
+  font-weight: var(--peso-etiqueta);
+}
+
+.acceso-dev__texto {
+  margin: 0;
+  color: var(--color-texto-secundario);
+}
+
+.acceso-dev__enlace {
+  overflow-wrap: anywhere;
+}
+
+.acceso__acciones--separadas {
+  margin-top: var(--espacio-5);
+}
+
+/* El botón secundario también se usa como enlace. */
+a.boton-acceso-secundario {
+  text-decoration: none;
+}

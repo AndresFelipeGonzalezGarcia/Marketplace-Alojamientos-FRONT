@@ -2,6 +2,11 @@ import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router'
 import { mensajeConReferencia, type ErrorApi } from '../../api/errores'
 import { registrarUsuario, type Rol } from '../../api/registro'
+import {
+  cumplePoliticaContrasena,
+  ERROR_POLITICA_CONTRASENA,
+  TEXTO_POLITICA_CONTRASENA,
+} from '../../auth/politicaContrasena'
 import BotonCarga from '../acceso/BotonCarga'
 import CampoTexto from '../acceso/CampoTexto'
 import Icono from '../acceso/Icono'
@@ -12,9 +17,6 @@ const PATRON_CORREO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const LONGITUD_MAXIMA_NOMBRE = 120
 const LONGITUD_MAXIMA_CORREO = 160
 const LONGITUD_MAXIMA_TELEFONO = 30
-const LONGITUD_MINIMA_CONTRASENA = 8
-const LONGITUD_MAXIMA_CONTRASENA = 128
-const POLITICA_CONTRASENA = `De ${LONGITUD_MINIMA_CONTRASENA} a ${LONGITUD_MAXIMA_CONTRASENA} caracteres, con mayúscula, minúscula, número y símbolo.`
 
 interface Valores {
   nombre: string
@@ -39,17 +41,6 @@ const ORDEN_CAMPOS: Campo[] = [
 const NOMBRES_ROL: Record<Rol, string> = {
   HUESPED: 'Huésped',
   ANFITRION: 'Anfitrión',
-}
-
-function cumplePoliticaContrasena(contrasena: string) {
-  return (
-    contrasena.length >= LONGITUD_MINIMA_CONTRASENA &&
-    contrasena.length <= LONGITUD_MAXIMA_CONTRASENA &&
-    /\p{Lu}/u.test(contrasena) &&
-    /\p{Ll}/u.test(contrasena) &&
-    /\d/.test(contrasena) &&
-    /[^\p{L}\p{N}\s]/u.test(contrasena)
-  )
 }
 
 function validar(valores: Valores, rol: Rol | null): Errores {
@@ -77,7 +68,7 @@ function validar(valores: Valores, rol: Rol | null): Errores {
     errores.telefono = `El teléfono admite máximo ${LONGITUD_MAXIMA_TELEFONO} caracteres.`
   }
   if (!cumplePoliticaContrasena(valores.contrasena)) {
-    errores.contrasena = `La contraseña debe tener de ${LONGITUD_MINIMA_CONTRASENA} a ${LONGITUD_MAXIMA_CONTRASENA} caracteres, con mayúscula, minúscula, número y símbolo.`
+    errores.contrasena = ERROR_POLITICA_CONTRASENA
   }
   if (!valores.confirmarContrasena) {
     errores.confirmarContrasena = 'Confirma tu contraseña.'
@@ -281,7 +272,7 @@ function FormularioRegistro() {
           tipo="password"
           icono="candado"
           autoComplete="new-password"
-          ayuda={POLITICA_CONTRASENA}
+          ayuda={TEXTO_POLITICA_CONTRASENA}
           valor={valores.contrasena}
           error={errores.contrasena}
           onCambio={(valor) => cambiarValor('contrasena', valor)}

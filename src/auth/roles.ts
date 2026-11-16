@@ -10,11 +10,15 @@ export const ETIQUETA_ROL: Record<RolUsuario, string> = {
 export interface EstadoRedireccionLogin {
   desde?: string
   motivo?: MotivoCierre
+  // Aviso que deja /restablecer-contrasena al terminar bien.
+  aviso?: 'contrasena-restablecida'
 }
 
 export function leerEstadoRedireccion(estado: unknown): EstadoRedireccionLogin {
   const posible = estado as EstadoRedireccionLogin | null
   return {
+    aviso:
+      posible?.aviso === 'contrasena-restablecida' ? posible.aviso : undefined,
     desde:
       typeof posible?.desde === 'string' && posible.desde.startsWith('/')
         ? posible.desde

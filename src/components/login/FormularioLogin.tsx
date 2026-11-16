@@ -6,6 +6,7 @@ import { guardarSesion } from '../../auth/sesion'
 import BotonCarga from '../acceso/BotonCarga'
 import CampoTexto from '../acceso/CampoTexto'
 import Icono from '../acceso/Icono'
+import { RECUPERAR_CONTRASENA } from '../navegacion/destinos'
 
 const PATRON_CORREO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const LONGITUD_MAXIMA_CORREO = 160
@@ -145,6 +146,13 @@ function FormularioLogin() {
         error={errores.contrasena}
         onCambio={(valor) => cambiar('contrasena', valor)}
       />
+      {RECUPERAR_CONTRASENA.disponible && (
+        <p className="acceso__olvido">
+          <Link className="acceso__enlace" to={RECUPERAR_CONTRASENA.ruta}>
+            {RECUPERAR_CONTRASENA.etiqueta}
+          </Link>
+        </p>
+      )}
 
       {errorGeneral && (
         <p className="acceso__alerta" role="alert">

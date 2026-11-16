@@ -30,6 +30,10 @@ const MENSAJES = new Map<string, string>([
     'CUENTA_DESACTIVADA',
     'Tu cuenta está desactivada. Comunícate con soporte si quieres volver a activarla.',
   ],
+  [
+    'ENLACE_INVALIDO',
+    'Este enlace para restablecer la contraseña venció, ya se usó o no existe. Pide uno nuevo para continuar.',
+  ],
   ['SOLICITUD_INVALIDA', 'Revisa los datos ingresados.'],
   ['NO_AUTENTICADO', 'Tu sesión no es válida. Inicia sesión de nuevo.'],
   ['ACCESO_DENEGADO', 'No tienes permiso para realizar esta acción.'],

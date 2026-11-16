@@ -21,7 +21,7 @@ function destinoSeguro(desde: string | undefined): string | undefined {
 function LoginPage() {
   const sesion = useSesion()
   const location = useLocation()
-  const { desde, motivo } = leerEstadoRedireccion(location.state)
+  const { desde, motivo, aviso } = leerEstadoRedireccion(location.state)
   const destino = destinoSeguro(desde)
 
   // Al iniciar sesión (o si ya había una) se sale del login.
@@ -40,6 +40,16 @@ function LoginPage() {
             ? 'Inicia sesión para continuar donde ibas.'
             : 'Entra para gestionar tus alojamientos y reservas.'}
         </p>
+
+        {aviso === 'contrasena-restablecida' && (
+          <p className="acceso__aviso" role="status">
+            <Icono nombre="verificacion" className="acceso__aviso-icono" />
+            <span>
+              <strong>Tu contraseña quedó actualizada.</strong> Ya puedes
+              iniciar sesión con la nueva.
+            </span>
+          </p>
+        )}
 
         {motivo === 'expirada' && (
           <p className="acceso__aviso" role="status">
