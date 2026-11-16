@@ -41,6 +41,15 @@ export const INICIAR_SESION: Destino = {
   activaEn: ['/login'],
 }
 
+export const RECUPERAR_CONTRASENA: Destino = {
+  etiqueta: '¿Olvidaste tu contraseña?',
+  ruta: '/recuperar-contrasena',
+  descripcion: 'Pide un enlace a tu correo para definir una contraseña nueva.',
+  accion: 'Recuperar contraseña',
+  disponible: true,
+  activaEn: ['/recuperar-contrasena', '/restablecer-contrasena'],
+}
+
 export const MIS_PUBLICACIONES: Destino = {
   etiqueta: 'Mis publicaciones',
   ruta: '/publicaciones',

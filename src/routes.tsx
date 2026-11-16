@@ -7,7 +7,9 @@ import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
 import ProximamentePage from './pages/ProximamentePage'
 import PublicacionFormularioPage from './pages/PublicacionFormularioPage'
+import RecuperarContrasenaPage from './pages/RecuperarContrasenaPage'
 import RegistroPage from './pages/RegistroPage'
+import RestablecerContrasenaPage from './pages/RestablecerContrasenaPage'
 
 export const routes: RouteObject[] = [
   {
@@ -17,6 +19,11 @@ export const routes: RouteObject[] = [
       { path: '/registro', element: <RegistroPage /> },
       // Marcador de posición hasta la historia de inicio de sesión.
       { path: '/login', element: <LoginPage /> },
+      { path: '/recuperar-contrasena', element: <RecuperarContrasenaPage /> },
+      {
+        path: '/restablecer-contrasena',
+        element: <RestablecerContrasenaPage />,
+      },
       {
         element: <RutaProtegida rolesPermitidos={['ANFITRION']} />,
         children: [

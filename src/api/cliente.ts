@@ -59,9 +59,9 @@ export async function solicitarApi<T>({
       return { estado: 'error', error }
     }
 
-    const datos = (
-      respuesta.status === 204 ? undefined : await respuesta.json()
-    ) as T
+    // 204, o un 2xx sin cuerpo (p. ej. un 202), no trae JSON que leer.
+    const texto = respuesta.status === 204 ? '' : await respuesta.text()
+    const datos = (texto ? JSON.parse(texto) : undefined) as T
     return { estado: 'ok', datos }
   } catch {
     return { estado: 'error', error: errorDeConexion() }
