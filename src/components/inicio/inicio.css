@@ -83,8 +83,7 @@ main.inicio {
   list-style: none;
 }
 
-.tarjeta-acceso,
-.inicio__vacio {
+.tarjeta-acceso {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -93,10 +92,6 @@ main.inicio {
   background: var(--color-superficie);
   border-radius: var(--radio-mediano);
   box-shadow: var(--elevacion-reposo);
-}
-
-.inicio__vacio {
-  max-width: 560px;
 }
 
 .tarjeta-acceso__titulo {
@@ -144,8 +139,7 @@ main.inicio {
     padding: var(--espacio-5) var(--espacio-4) var(--espacio-7);
   }
 
-  .tarjeta-acceso,
-  .inicio__vacio {
+  .tarjeta-acceso {
     padding: var(--espacio-4);
   }
 }

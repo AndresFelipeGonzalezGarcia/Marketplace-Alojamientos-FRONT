@@ -13,6 +13,8 @@ tags:
   - name: Autenticación y cuenta
   - name: Publicaciones (Anfitrión)
   - name: Periodos disponibles (Anfitrión)
+  - name: Búsqueda (público)
+  - name: Reservas (Huésped)
   - name: Administración
   - name: Operación
 security:
@@ -337,6 +339,284 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/ApiError' }
+  /api/servicios:
+    get:
+      tags: [Búsqueda (público)]
+      summary: "PROPUESTA. Catálogo público de servicios (ordenado por nombre)"
+      description: |
+        Propuesta del frontend, pendiente de implementar y confirmar por backend.
+        Público, sin autenticación. Mismo catálogo que `GET /api/anfitrion/servicios`, que se
+        mantiene igual para el formulario del anfitrión; este existe para que la búsqueda pueda
+        mostrar los nombres del filtro `serviciosIds` a visitantes y huéspedes.
+      security: []
+      responses:
+        '200':
+          description: Servicios
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/Servicio' } }
+  /api/alojamientos:
+    get:
+      tags: [Búsqueda (público)]
+      summary: "PROPUESTA. Buscar alojamientos activos con filtros"
+      description: |
+        Propuesta del frontend, pendiente de implementar y confirmar por backend.
+        Público, sin autenticación. Solo publicaciones en ACTIVA. Todos los filtros son
+        opcionales y se combinan con Y. Con `fechaLlegada` y `fechaSalida` devuelve solo
+        las que tengan un periodo disponible que cubra todo el rango y sin reservas activas encima.
+      security: []
+      parameters:
+        - { name: ciudad, in: query, schema: { type: string, maxLength: 80 } }
+        - { name: fechaLlegada, in: query, schema: { type: string, format: date } }
+        - { name: fechaSalida, in: query, schema: { type: string, format: date, description: Exclusiva, es el día de salida. } }
+        - { name: huespedes, in: query, schema: { type: integer, minimum: 1 } }
+        - { name: precioMin, in: query, schema: { type: number, minimum: 0 } }
+        - { name: precioMax, in: query, schema: { type: number, minimum: 0 } }
+        - { name: tipo, in: query, schema: { $ref: '#/components/schemas/TipoAlojamiento' } }
+        - { name: serviciosIds, in: query, style: form, explode: false, schema: { type: array, items: { type: string, format: uuid } } }
+        - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
+        - { name: tamano, in: query, schema: { type: integer, minimum: 1, maximum: 50, default: 12 } }
+      responses:
+        '200':
+          description: Resultados paginados
+          content: { application/json: { schema: { $ref: '#/components/schemas/PaginaAlojamientos' } } }
+        '400':
+          description: "`FECHAS_INVALIDAS` si la salida no es posterior a la llegada, o `SOLICITUD_INVALIDA`"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+  /api/alojamientos/{alojamientoId}:
+    parameters:
+      - $ref: '#/components/parameters/AlojamientoId'
+    get:
+      tags: [Búsqueda (público)]
+      summary: "PROPUESTA. Detalle de un alojamiento activo"
+      description: |
+        Propuesta del frontend, pendiente de implementar y confirmar por backend.
+        Público. Solo devuelve publicaciones en ACTIVA; en cualquier otro estado responde 404,
+        para no revelar que existe.
+      security: []
+      responses:
+        '200':
+          description: Detalle público
+          content: { application/json: { schema: { $ref: '#/components/schemas/AlojamientoDetalle' } } }
+        '404':
+          description: "`ALOJAMIENTO_NO_ENCONTRADO`"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+  /api/alojamientos/{alojamientoId}/calendario:
+    parameters:
+      - $ref: '#/components/parameters/AlojamientoId'
+    get:
+      tags: [Búsqueda (público)]
+      summary: "PROPUESTA. Calendario de disponibilidad"
+      description: |
+        Propuesta del frontend, pendiente de implementar y confirmar por backend.
+        Público. Un elemento por día del rango pedido. Un día está disponible si cae dentro
+        de un periodo del anfitrión y no lo ocupa una reserva activa. Máximo 365 días por consulta.
+      security: []
+      parameters:
+        - { name: desde, in: query, required: true, schema: { type: string, format: date } }
+        - { name: hasta, in: query, required: true, schema: { type: string, format: date } }
+      responses:
+        '200':
+          description: Días del rango
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/DiaCalendario' } }
+        '400':
+          description: "`FECHAS_INVALIDAS` o rango mayor de 365 días (`RANGO_EXCESIVO`)"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '404':
+          description: "`ALOJAMIENTO_NO_ENCONTRADO`"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+  /api/huesped/cotizaciones:
+    post:
+      tags: [Reservas (Huésped)]
+      summary: "PROPUESTA. Cotizar una estadía"
+      description: |
+        Propuesta del frontend, pendiente de implementar y confirmar por backend.
+        Rol HUESPED. No reserva ni bloquea nada: solo calcula. El desglose lo calcula el
+        backend, nunca el frontend, para que el total que se muestra sea el que se cobra.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CotizacionRequest' }
+            example:
+              alojamientoId: 11111111-1111-4111-8111-111111111111
+              fechaLlegada: '2026-12-10'
+              fechaSalida: '2026-12-14'
+              numeroHuespedes: 3
+      responses:
+        '200':
+          description: Desglose del precio
+          content: { application/json: { schema: { $ref: '#/components/schemas/Cotizacion' } } }
+        '400':
+          description: "`SOLICITUD_INVALIDA` o `FECHAS_INVALIDAS`"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+        '404':
+          description: "`ALOJAMIENTO_NO_ENCONTRADO`"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '409':
+          description: "Las fechas no están libres (`PERIODO_NO_DISPONIBLE`)"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '422':
+          description: "Más huéspedes que la capacidad (`CAPACIDAD_EXCEDIDA`)"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+  /api/huesped/reservas:
+    get:
+      tags: [Reservas (Huésped)]
+      summary: "PROPUESTA. Mis reservas"
+      description: |
+        Propuesta del frontend, pendiente de implementar y confirmar por backend.
+        Rol HUESPED. Solo las del usuario autenticado, de la llegada más reciente a la más antigua.
+      parameters:
+        - { name: estado, in: query, required: false, schema: { $ref: '#/components/schemas/EstadoReserva' } }
+      responses:
+        '200':
+          description: Reservas propias
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/ReservaResumen' } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+    post:
+      tags: [Reservas (Huésped)]
+      summary: "PROPUESTA. Crear una reserva"
+      description: |
+        Propuesta del frontend, pendiente de implementar y confirmar por backend.
+        Rol HUESPED. La cabecera `Idempotency-Key` evita que un doble clic o un reintento
+        creen dos reservas: con la misma clave y el mismo cuerpo devuelve la reserva ya creada,
+        con 200 en vez de 201. En modo INMEDIATA queda PENDIENTE_PAGO; en CON_APROBACION,
+        PENDIENTE_APROBACION. El backend recalcula el precio, no se fía del que mande el cliente.
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/ReservaRequest' } } }
+      responses:
+        '201':
+          description: Reserva creada
+          content: { application/json: { schema: { $ref: '#/components/schemas/Reserva' } } }
+        '200':
+          description: Ya existía con esa clave de idempotencia
+          content: { application/json: { schema: { $ref: '#/components/schemas/Reserva' } } }
+        '400':
+          description: "`SOLICITUD_INVALIDA`, `FECHAS_INVALIDAS` o falta la cabecera (`IDEMPOTENCIA_REQUERIDA`)"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+        '404':
+          description: "`ALOJAMIENTO_NO_ENCONTRADO`"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '409':
+          description: "Alguien reservó antes (`PERIODO_NO_DISPONIBLE`), o misma clave con distinto cuerpo (`IDEMPOTENCIA_CONFLICTO`)"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '422':
+          description: "`CAPACIDAD_EXCEDIDA`"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+  /api/huesped/reservas/{reservaId}:
+    parameters:
+      - $ref: '#/components/parameters/ReservaId'
+    get:
+      tags: [Reservas (Huésped)]
+      summary: "PROPUESTA. Detalle de una reserva propia"
+      description: Propuesta del frontend, pendiente de implementar y confirmar por backend. Rol HUESPED y dueño de la reserva.
+      responses:
+        '200':
+          description: Detalle
+          content: { application/json: { schema: { $ref: '#/components/schemas/Reserva' } } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+        '404':
+          description: "`RESERVA_NO_ENCONTRADA`"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+  /api/huesped/reservas/{reservaId}/pago:
+    parameters:
+      - $ref: '#/components/parameters/ReservaId'
+    post:
+      tags: [Reservas (Huésped)]
+      summary: "PROPUESTA. Pagar la reserva (saga del ADR-004)"
+      description: |
+        Propuesta del frontend, pendiente de implementar y confirmar por backend.
+        Sigue el ADR-004: el backend ejecuta el cobro contra Stripe en modo de prueba con
+        timeout de 10 s y circuit breaker (Resilience4j, ADR-015), y responde dentro de los 12 s.
+        El frontend no habla con Stripe ni maneja datos de tarjeta: solo dispara el pago y
+        muestra el desenlace.
+
+        Cuatro desenlaces, cada uno con su código:
+        200 el cobro se aprobó y la reserva queda CONFIRMADA;
+        402 el cobro falló o expiró, se ejecutó la compensación, la reserva queda PAGO_FALLIDO
+        y el periodo vuelve a estar libre, así que la pantalla debe invitar a buscar de nuevo;
+        202 el resultado es incierto (PAGO_INCIERTO) y lo resolverá la conciliación, así que la
+        pantalla pide esperar y consultar la reserva más tarde, sin reintentar el cobro;
+        503 el circuit breaker está abierto y Stripe no está disponible, se puede reintentar luego.
+
+        La cabecera `Idempotency-Key` es la misma clave con la que la conciliación consulta el
+        pago, así que un reintento no cobra dos veces.
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: false
+        description: Solo para la demostración y las pruebas con WireMock, para forzar cada desenlace.
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PagoRequest' }
+      responses:
+        '200':
+          description: Pago aprobado, reserva CONFIRMADA
+          content: { application/json: { schema: { $ref: '#/components/schemas/ResultadoPago' } } }
+        '202':
+          description: "Resultado incierto (`PAGO_INCIERTO`); la conciliación lo resolverá"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ResultadoPago' } } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '402':
+          description: "Cobro rechazado o expirado (`PAGO_RECHAZADO`). La reserva pasó a PAGO_FALLIDO y el periodo quedó libre."
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '403': { $ref: '#/components/responses/Prohibido' }
+        '404':
+          description: "`RESERVA_NO_ENCONTRADA`"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '409':
+          description: "La reserva no está en PENDIENTE_PAGO (`ESTADO_RESERVA_INVALIDO`)"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '503':
+          description: "Circuit breaker abierto (`SERVICIO_PAGOS_NO_DISPONIBLE`); se puede reintentar más tarde"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+  /api/admin/configuracion/tarifa-servicio:
+    get:
+      tags: [Administración]
+      summary: "PROPUESTA. Consultar la tarifa de servicio"
+      description: Propuesta del frontend, pendiente de implementar y confirmar por backend. Rol ADMINISTRADOR.
+      responses:
+        '200':
+          description: Tarifa vigente
+          content: { application/json: { schema: { $ref: '#/components/schemas/TarifaServicio' } } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+    put:
+      tags: [Administración]
+      summary: "PROPUESTA. Cambiar la tarifa de servicio"
+      description: |
+        Propuesta del frontend, pendiente de implementar y confirmar por backend.
+        Rol ADMINISTRADOR. Afecta solo a las cotizaciones y reservas nuevas; las ya creadas
+        conservan la tarifa con la que se calcularon. Se audita (`TARIFA_SERVICIO_CAMBIADA`).
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/TarifaServicio' } } }
+      responses:
+        '200':
+          description: Tarifa actualizada
+          content: { application/json: { schema: { $ref: '#/components/schemas/TarifaServicio' } } }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
   /api/admin/publicaciones:
     get:
       tags: [Administración]
@@ -455,6 +735,16 @@ components:
       in: path
       required: true
       schema: { type: string, format: uuid }
+    AlojamientoId:
+      name: alojamientoId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    ReservaId:
+      name: reservaId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
     PeriodoId:
       name: periodoId
       in: path
@@ -491,14 +781,23 @@ components:
       properties:
         campo: { type: string, example: contrasena }
         mensaje: { type: string }
+    EstadoReserva:
+      type: string
+      enum: [PENDIENTE_PAGO, PENDIENTE_APROBACION, CONFIRMADA, EN_REVISION, COMPLETADA, CANCELADA, PAGO_FALLIDO]
     ReservaResumen:
       type: object
+      description: "En `PERIODO_CON_RESERVAS` va sin los campos de alojamiento; en el listado de mis reservas, con ellos."
       properties:
         id: { type: string, format: uuid }
         fechaLlegada: { type: string, format: date }
         fechaSalida: { type: string, format: date }
         numeroHuespedes: { type: integer }
-        estado: { type: string, enum: [PENDIENTE_PAGO, PENDIENTE_APROBACION, CONFIRMADA, EN_REVISION, COMPLETADA, CANCELADA, PAGO_FALLIDO] }
+        estado: { $ref: '#/components/schemas/EstadoReserva' }
+        alojamientoId: { type: string, format: uuid }
+        alojamientoTitulo: { type: string }
+        alojamientoCiudad: { type: string }
+        imagenPortada: { type: string, nullable: true }
+        total: { type: number }
     Rol:
       type: string
       enum: [HUESPED, ANFITRION, ADMINISTRADOR]
@@ -661,6 +960,128 @@ components:
       required: [motivo]
       properties:
         motivo: { type: string, minLength: 10, maxLength: 500, description: Se muestra al anfitrión en motivoEstado. }
+    AlojamientoResumen:
+      type: object
+      description: PROPUESTA. Tarjeta de resultado en la búsqueda.
+      properties:
+        id: { type: string, format: uuid }
+        titulo: { type: string }
+        ciudad: { type: string }
+        tipo: { $ref: '#/components/schemas/TipoAlojamiento' }
+        capacidad: { type: integer }
+        precioNoche: { type: number }
+        imagenPortada: { type: string, nullable: true }
+        modoReserva: { $ref: '#/components/schemas/ModoReserva' }
+    PaginaAlojamientos:
+      type: object
+      description: PROPUESTA.
+      properties:
+        contenido: { type: array, items: { $ref: '#/components/schemas/AlojamientoResumen' } }
+        pagina: { type: integer }
+        tamano: { type: integer }
+        total: { type: integer, description: Total de resultados, no de páginas. }
+        totalPaginas: { type: integer }
+    AlojamientoDetalle:
+      type: object
+      description: "PROPUESTA. Vista pública: como PublicacionDetalle pero sin datos internos del anfitrión ni estado."
+      properties:
+        id: { type: string, format: uuid }
+        titulo: { type: string }
+        descripcion: { type: string }
+        ciudad: { type: string }
+        ubicacionTextual: { type: string }
+        tipo: { $ref: '#/components/schemas/TipoAlojamiento' }
+        capacidad: { type: integer }
+        precioNoche: { type: number }
+        tarifaLimpieza: { type: number }
+        reglas: { type: string }
+        modoReserva: { $ref: '#/components/schemas/ModoReserva' }
+        anfitrionNombre: { type: string }
+        servicios: { type: array, items: { $ref: '#/components/schemas/Servicio' } }
+        serviciosAdicionales: { type: array, items: { $ref: '#/components/schemas/ServicioAdicional' } }
+        politicaCancelacion: { $ref: '#/components/schemas/PoliticaCancelacion' }
+        imagenes: { type: array, items: { type: string } }
+    DiaCalendario:
+      type: object
+      description: PROPUESTA.
+      properties:
+        fecha: { type: string, format: date }
+        disponible: { type: boolean }
+    CotizacionRequest:
+      type: object
+      description: PROPUESTA.
+      required: [alojamientoId, fechaLlegada, fechaSalida, numeroHuespedes]
+      properties:
+        alojamientoId: { type: string, format: uuid }
+        fechaLlegada: { type: string, format: date }
+        fechaSalida: { type: string, format: date, description: Exclusiva. }
+        numeroHuespedes: { type: integer, minimum: 1 }
+    Cotizacion:
+      type: object
+      description: PROPUESTA. Lo calcula el backend; el frontend solo lo muestra.
+      properties:
+        noches: { type: integer }
+        precioNoche: { type: number }
+        subtotal: { type: number, description: noches por precioNoche. }
+        tarifaLimpieza: { type: number }
+        tarifaServicio: { type: number }
+        porcentajeTarifaServicio: { type: number }
+        total: { type: number }
+        moneda: { type: string, example: COP }
+    ReservaRequest:
+      type: object
+      description: PROPUESTA.
+      required: [alojamientoId, fechaLlegada, fechaSalida, numeroHuespedes]
+      properties:
+        alojamientoId: { type: string, format: uuid }
+        fechaLlegada: { type: string, format: date }
+        fechaSalida: { type: string, format: date, description: Exclusiva. }
+        numeroHuespedes: { type: integer, minimum: 1 }
+    Reserva:
+      type: object
+      description: PROPUESTA.
+      properties:
+        id: { type: string, format: uuid }
+        alojamientoId: { type: string, format: uuid }
+        alojamientoTitulo: { type: string }
+        alojamientoCiudad: { type: string }
+        imagenPortada: { type: string, nullable: true }
+        huespedId: { type: string, format: uuid }
+        fechaLlegada: { type: string, format: date }
+        fechaSalida: { type: string, format: date }
+        numeroHuespedes: { type: integer }
+        estado: { $ref: '#/components/schemas/EstadoReserva' }
+        cotizacion: { $ref: '#/components/schemas/Cotizacion' }
+        creadaEn: { type: string, format: date-time }
+    EstadoPago:
+      type: string
+      description: Estados del Pago como entidad propia, separada de la Reserva (ADR-004).
+      enum: [PENDIENTE, APROBADO, FALLIDO, PAGO_INCIERTO, REEMBOLSADO]
+    PagoRequest:
+      type: object
+      description: "PROPUESTA. Solo para demostración y pruebas: fuerza el desenlace del proveedor simulado."
+      properties:
+        escenarioPrueba:
+          type: string
+          enum: [APROBAR, RECHAZAR, DEMORAR, CAER]
+          description: Omitido en uso normal. DEMORAR provoca el timeout de 10 s y CAER abre el circuit breaker.
+    ResultadoPago:
+      type: object
+      description: PROPUESTA.
+      properties:
+        pagoId: { type: string, format: uuid }
+        reservaId: { type: string, format: uuid }
+        estadoPago: { $ref: '#/components/schemas/EstadoPago' }
+        estadoReserva: { $ref: '#/components/schemas/EstadoReserva' }
+        total: { type: number }
+        moneda: { type: string, example: COP }
+        procesadoEn: { type: string, format: date-time }
+    TarifaServicio:
+      type: object
+      description: PROPUESTA.
+      required: [porcentaje]
+      properties:
+        porcentaje: { type: number, minimum: 0, maximum: 100, description: "Porcentaje sobre el subtotal, por ejemplo 8.5." }
     PeriodoRequest:
       type: object
       required: [fechaInicio, fechaFin]

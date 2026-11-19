@@ -175,18 +175,21 @@ describe('routes', () => {
       ).not.toBeInTheDocument()
     })
 
-    it('al huésped le muestra que pronto podrá buscar', () => {
+    it('al huésped le ofrece buscar alojamientos', () => {
       iniciarSesionDePrueba('HUESPED')
       renderizarApp('/')
 
       expect(
-        screen.getByRole('heading', {
-          name: 'Muy pronto podrás buscar alojamientos',
-        }),
-      ).toBeInTheDocument()
-      expect(
-        screen.queryByRole('list', { name: 'Accesos rápidos' }),
-      ).not.toBeInTheDocument()
+        accesos().getByRole('link', { name: 'Buscar alojamientos' }),
+      ).toHaveAttribute('href', '/alojamientos')
+    })
+
+    it('al visitante también le ofrece buscar, antes que crear cuenta', () => {
+      renderizarApp('/')
+
+      const enlaces = accesos().getAllByRole('link')
+      expect(enlaces[0]).toHaveAccessibleName('Buscar alojamientos')
+      expect(enlaces[0]).toHaveAttribute('href', '/alojamientos')
     })
   })
 

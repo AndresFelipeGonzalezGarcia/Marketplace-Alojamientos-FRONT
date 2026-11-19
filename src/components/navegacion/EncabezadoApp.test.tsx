@@ -55,7 +55,7 @@ describe('EncabezadoApp', () => {
       expect(
         encabezado().getByRole('link', { name: 'Iniciar sesión' }),
       ).toHaveAttribute('href', '/login')
-      expect(textosDelMenu()).toEqual(['Inicio'])
+      expect(textosDelMenu()).toEqual(['Inicio', 'Buscar alojamientos'])
       expect(
         encabezado().queryByRole('button', { name: 'Cerrar sesión' }),
       ).not.toBeInTheDocument()
@@ -69,6 +69,7 @@ describe('EncabezadoApp', () => {
 
       expect(textosDelMenu()).toEqual([
         'Inicio',
+        'Buscar alojamientos',
         'Mis publicaciones',
         'Nueva publicación',
       ])
@@ -95,7 +96,11 @@ describe('EncabezadoApp', () => {
       iniciarSesionDePrueba('ADMINISTRADOR')
       renderizarApp('/')
 
-      expect(textosDelMenu()).toEqual(['Inicio', 'Publicaciones pendientes'])
+      expect(textosDelMenu()).toEqual([
+        'Inicio',
+        'Buscar alojamientos',
+        'Publicaciones pendientes',
+      ])
       expect(
         menu().getByRole('link', { name: 'Publicaciones pendientes' }),
       ).toHaveAttribute('href', '/admin')
@@ -106,11 +111,11 @@ describe('EncabezadoApp', () => {
   })
 
   describe('con sesión de HUESPED', () => {
-    it('solo muestra el inicio', () => {
+    it('muestra el inicio y la búsqueda', () => {
       iniciarSesionDePrueba('HUESPED')
       renderizarApp('/')
 
-      expect(textosDelMenu()).toEqual(['Inicio'])
+      expect(textosDelMenu()).toEqual(['Inicio', 'Buscar alojamientos'])
       expect(encabezado().getByText('Huésped')).toBeInTheDocument()
     })
   })
@@ -176,7 +181,7 @@ describe('EncabezadoApp', () => {
 
   it('reacciona al iniciar y cerrar sesión sin recargar', () => {
     renderizarApp('/')
-    expect(textosDelMenu()).toEqual(['Inicio'])
+    expect(textosDelMenu()).toEqual(['Inicio', 'Buscar alojamientos'])
 
     act(() => {
       iniciarSesionDePrueba('ANFITRION', { usuario: { nombre: 'Laura Ríos' } })
@@ -188,6 +193,6 @@ describe('EncabezadoApp', () => {
       limpiarSesion()
     })
     expect(encabezado().queryByText('Laura Ríos')).not.toBeInTheDocument()
-    expect(textosDelMenu()).toEqual(['Inicio'])
+    expect(textosDelMenu()).toEqual(['Inicio', 'Buscar alojamientos'])
   })
 })

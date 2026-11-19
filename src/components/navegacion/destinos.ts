@@ -22,6 +22,16 @@ export const INICIO: Destino = {
   activaEn: ['/'],
 }
 
+export const BUSCAR_ALOJAMIENTOS: Destino = {
+  etiqueta: 'Buscar alojamientos',
+  ruta: '/alojamientos',
+  descripcion:
+    'Encuentra casas, apartamentos y cabañas por ciudad, fechas y huéspedes.',
+  accion: 'Buscar alojamientos',
+  disponible: true,
+  activaEn: ['/alojamientos', '/alojamientos/:id'],
+}
+
 export const CREAR_CUENTA: Destino = {
   etiqueta: 'Crear cuenta',
   ruta: '/registro',
@@ -83,15 +93,16 @@ export const PUBLICACIONES_PENDIENTES: Destino = {
   activaEn: ['/admin', '/admin/*'],
 }
 
+// La búsqueda es pública: la ven todos, también quien no tiene cuenta.
 const SECCIONES_POR_ROL: Record<RolUsuario, Destino[]> = {
-  HUESPED: [],
-  ANFITRION: [MIS_PUBLICACIONES, NUEVA_PUBLICACION],
-  ADMINISTRADOR: [PUBLICACIONES_PENDIENTES],
+  HUESPED: [BUSCAR_ALOJAMIENTOS],
+  ANFITRION: [BUSCAR_ALOJAMIENTOS, MIS_PUBLICACIONES, NUEVA_PUBLICACION],
+  ADMINISTRADOR: [BUSCAR_ALOJAMIENTOS, PUBLICACIONES_PENDIENTES],
 }
 
 // Secciones del menú principal (además de Inicio) para un rol.
 export function seccionesDelRol(rol: RolUsuario | null): Destino[] {
-  return rol ? SECCIONES_POR_ROL[rol] : []
+  return rol ? SECCIONES_POR_ROL[rol] : [BUSCAR_ALOJAMIENTOS]
 }
 
 export function estaActivo(destino: Destino, ruta: string): boolean {
