@@ -38,6 +38,10 @@ const MENSAJES = new Map<string, string>([
   ['NO_AUTENTICADO', 'Tu sesión no es válida. Inicia sesión de nuevo.'],
   ['ACCESO_DENEGADO', 'No tienes permiso para realizar esta acción.'],
   ['PUBLICACION_NO_ENCONTRADA', 'La publicación no existe.'],
+  [
+    'ALOJAMIENTO_NO_ENCONTRADO',
+    'Este alojamiento ya no está disponible o el enlace no es correcto.',
+  ],
   ['PERIODO_NO_ENCONTRADO', 'El periodo no existe.'],
   ['FECHAS_INVALIDAS', 'La fecha final no puede ser anterior a la inicial.'],
   ['PERIODO_CRUZADO', 'Las fechas se cruzan con otro periodo.'],

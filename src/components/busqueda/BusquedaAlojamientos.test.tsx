@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   buscarAlojamientos,
   listarServiciosPublicos,
+  obtenerAlojamiento,
   type AlojamientoResumen,
   type PaginaAlojamientos,
 } from '../../api/alojamientos'
@@ -15,10 +16,12 @@ vi.mock('../../api/alojamientos', async (importarOriginal) => ({
   ...(await importarOriginal<typeof import('../../api/alojamientos')>()),
   buscarAlojamientos: vi.fn(),
   listarServiciosPublicos: vi.fn(),
+  obtenerAlojamiento: vi.fn(),
 }))
 
 const buscar = vi.mocked(buscarAlojamientos)
 const servicios = vi.mocked(listarServiciosPublicos)
+const detalle = vi.mocked(obtenerAlojamiento)
 
 const WIFI = 'b0a1c3d4-0000-4000-8000-000000000101'
 const PISCINA = 'b0a1c3d4-0000-4000-8000-000000000104'
@@ -484,11 +487,20 @@ describe('búsqueda de alojamientos', () => {
       const { router, usuario } = await abrir(`/alojamientos${busqueda}`)
       await esperarResultados()
 
+      detalle.mockResolvedValue({
+        estado: 'ok',
+        datos: {
+          ...alojamiento(1),
+          descripcion: 'Descripción.',
+          ubicacionTextual: 'Calle 1',
+          anfitrionNombre: 'Ana',
+        },
+      })
       await usuario.click(screen.getByRole('link', { name: 'Alojamiento 1' }))
       expect(
-        await screen.findByRole('heading', { name: 'Detalle del alojamiento' }),
+        await screen.findByRole('heading', { level: 1, name: 'Alojamiento 1' }),
       ).toBeInTheDocument()
-      // El marcador de posición ofrece volver a la misma búsqueda.
+      // El detalle ofrece volver a la misma búsqueda.
       expect(screen.getByRole('link', { name: 'Volver a los resultados' })).toHaveAttribute(
         'href',
         `/alojamientos${busqueda}`,

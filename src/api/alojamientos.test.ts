@@ -5,6 +5,7 @@ import {
   buscarAlojamientos,
   construirConsulta,
   listarServiciosPublicos,
+  obtenerAlojamiento,
 } from './alojamientos'
 
 const PAGINA_VACIA = { contenido: [], pagina: 0, tamano: 12, total: 0, totalPaginas: 0 }
@@ -88,6 +89,34 @@ describe('API de búsqueda', () => {
     expect(fetchSimulado).toHaveBeenCalledWith('http://api.prueba/api/servicios', {
       method: 'GET',
       headers: {},
+    })
+  })
+
+  it('pide el detalle con GET y sin token, aunque haya sesión', async () => {
+    iniciarSesionDePrueba('HUESPED', { token: 'token-huesped' })
+    fetchSimulado.mockResolvedValue(respuestaJson({ id: 'a 1' }, 200))
+
+    await expect(obtenerAlojamiento('a 1')).resolves.toEqual({
+      estado: 'ok',
+      datos: { id: 'a 1' },
+    })
+    expect(fetchSimulado).toHaveBeenCalledWith('http://api.prueba/api/alojamientos/a%201', {
+      method: 'GET',
+      headers: {},
+    })
+  })
+
+  it('devuelve ALOJAMIENTO_NO_ENCONTRADO con un mensaje propio', async () => {
+    fetchSimulado.mockResolvedValue(
+      respuestaJson({ codigo: 'ALOJAMIENTO_NO_ENCONTRADO', mensaje: 'x' }, 404),
+    )
+
+    await expect(obtenerAlojamiento('a-1')).resolves.toMatchObject({
+      estado: 'error',
+      error: {
+        codigo: 'ALOJAMIENTO_NO_ENCONTRADO',
+        mensaje: 'Este alojamiento ya no está disponible o el enlace no es correcto.',
+      },
     })
   })
 })

@@ -1,6 +1,10 @@
-import type { Servicio } from './catalogos'
+import type { PoliticaCancelacion, Servicio } from './catalogos'
 import { solicitarApi } from './cliente'
-import type { ModoReserva, TipoAlojamiento } from './publicaciones'
+import type {
+  ModoReserva,
+  ServicioAdicional,
+  TipoAlojamiento,
+} from './publicaciones'
 
 // Búsqueda pública. En docs/contrato-api-marketplace.yaml está marcada como
 // PROPUESTA. No se envía el token: el endpoint es público y un token vencido
@@ -71,6 +75,37 @@ export function buscarAlojamientos(consulta: ConsultaAlojamientos) {
 export function listarServiciosPublicos() {
   return solicitarApi<Servicio[]>({
     ruta: '/api/servicios',
+    metodo: 'GET',
+    estadoExito: 200,
+  })
+}
+
+// AlojamientoDetalle del contrato (PROPUESTA): la vista pública, sin datos
+// internos del anfitrión ni estado. La primera imagen es la portada.
+export interface AlojamientoDetalle {
+  id: string
+  titulo: string
+  descripcion: string
+  ciudad: string
+  ubicacionTextual: string
+  tipo: TipoAlojamiento
+  capacidad: number
+  precioNoche: number
+  tarifaLimpieza?: number
+  reglas?: string
+  modoReserva: ModoReserva
+  anfitrionNombre: string
+  servicios?: Servicio[]
+  serviciosAdicionales?: ServicioAdicional[]
+  politicaCancelacion?: PoliticaCancelacion
+  imagenes?: string[]
+}
+
+// GET /api/alojamientos/{alojamientoId}. Público, como la búsqueda. Responde
+// 404 ALOJAMIENTO_NO_ENCONTRADO si no existe o si no está ACTIVA.
+export function obtenerAlojamiento(id: string) {
+  return solicitarApi<AlojamientoDetalle>({
+    ruta: `/api/alojamientos/${encodeURIComponent(id)}`,
     metodo: 'GET',
     estadoExito: 200,
   })
