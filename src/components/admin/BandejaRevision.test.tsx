@@ -55,9 +55,10 @@ describe('bandeja de aprobación', () => {
     listar.mockReturnValue(new Promise(() => {}))
     renderizarApp('/admin')
 
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Cargando publicaciones pendientes…',
-    )
+    // La sección de tarifa anuncia su propia carga en la misma pantalla.
+    expect(
+      screen.getByText('Cargando publicaciones pendientes…'),
+    ).toHaveAttribute('role', 'status')
     expect(
       screen.getByRole('heading', { name: 'Publicaciones pendientes' }),
     ).toBeInTheDocument()

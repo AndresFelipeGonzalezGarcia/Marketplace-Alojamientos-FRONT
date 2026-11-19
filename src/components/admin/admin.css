@@ -444,6 +444,68 @@
   background: color-mix(in srgb, var(--color-error) 82%, var(--color-texto));
 }
 
+/* ---------- Tarifa de servicio ---------- */
+
+.tarifa {
+  max-width: 560px;
+  margin-top: var(--espacio-7);
+}
+
+.tarifa .publicacion-tarjeta__titulo {
+  margin-bottom: var(--espacio-2);
+}
+
+.tarifa__aviso {
+  margin: 0 0 var(--espacio-5);
+  padding: var(--espacio-3) var(--espacio-4);
+  background: var(--color-marca-suave);
+  border-radius: var(--radio-pequeno);
+  line-height: var(--linea-parrafo);
+}
+
+.tarifa__formulario {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espacio-4);
+}
+
+.tarifa__vigente {
+  margin: 0;
+}
+
+.tarifa__entrada {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+}
+
+.tarifa__entrada .campo__control {
+  width: 120px;
+}
+
+.tarifa__sufijo {
+  font-weight: var(--peso-fuerte);
+}
+
+.tarifa__exito {
+  margin: 0;
+  padding: var(--espacio-2) var(--espacio-3);
+  color: var(--color-exito);
+  background: var(--color-exito-suave);
+  border-radius: var(--radio-pequeno);
+  font-weight: var(--peso-etiqueta);
+}
+
+.tarifa__error p {
+  margin: 0 0 var(--espacio-4);
+  color: var(--color-error);
+}
+
+.tarifa .panel-decision__error {
+  margin: 0;
+}
+
 /* ---------- Pantallas estrechas ---------- */
 
 @media (max-width: 960px) {
