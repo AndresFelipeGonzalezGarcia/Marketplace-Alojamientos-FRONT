@@ -172,3 +172,51 @@ main {
   font-weight: var(--peso-etiqueta);
   white-space: nowrap;
 }
+
+/* Esqueletos de carga, compartidos por las pantallas públicas. */
+
+.esqueleto {
+  display: block;
+  background: linear-gradient(
+    90deg,
+    var(--color-borde-suave) 0%,
+    var(--color-fondo-pagina) 50%,
+    var(--color-borde-suave) 100%
+  );
+  background-size: 200% 100%;
+  animation: esqueleto-brillo 1.4s ease-in-out infinite;
+}
+
+.esqueleto--linea {
+  height: 14px;
+  border-radius: var(--radio-pequeno);
+}
+
+.esqueleto--titulo {
+  width: 85%;
+  height: 18px;
+}
+
+.esqueleto--media {
+  width: 60%;
+}
+
+.esqueleto--corta {
+  width: 40%;
+}
+
+@keyframes esqueleto-brillo {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .esqueleto {
+    animation: none;
+  }
+}
