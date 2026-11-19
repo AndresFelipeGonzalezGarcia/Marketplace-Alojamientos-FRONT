@@ -3,6 +3,7 @@ import BandejaRevision, {
   type EstadoBandeja,
   type ResultadoRevision,
 } from '../components/admin/BandejaRevision'
+import TarifaServicio from '../components/admin/TarifaServicio'
 
 function leerResultado(estado: unknown): ResultadoRevision | undefined {
   const resultado = (estado as EstadoBandeja | null)?.resultado
@@ -19,6 +20,7 @@ function AdminBandejaPage() {
   return (
     <main className="publicacion-pagina">
       <BandejaRevision resultado={leerResultado(location.state)} />
+      <TarifaServicio />
     </main>
   )
 }
