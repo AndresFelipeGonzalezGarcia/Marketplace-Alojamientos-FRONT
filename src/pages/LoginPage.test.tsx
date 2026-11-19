@@ -300,17 +300,19 @@ describe('LoginPage', () => {
       },
     )
 
-    it.each<[RolUsuario, string, string]>([
-      ['ANFITRION', 'Entrar como anfitrión de prueba', 'Anfitrión de prueba'],
-      ['HUESPED', 'Entrar como huésped de prueba', 'Huésped de prueba'],
+    // Cada rol aterriza en su pantalla principal (el inicio si aún no existe).
+    it.each<[RolUsuario, string, string, string]>([
+      ['ANFITRION', 'Entrar como anfitrión de prueba', 'Anfitrión de prueba', '/'],
+      ['HUESPED', 'Entrar como huésped de prueba', 'Huésped de prueba', '/'],
       [
         'ADMINISTRADOR',
         'Entrar como administrador de prueba',
         'Administrador de prueba',
+        '/admin',
       ],
     ])(
       'con VITE_SESION_DEMO=true entra como %s sin llamar al backend',
-      async (rol, boton, nombre) => {
+      async (rol, boton, nombre, destino) => {
         vi.stubEnv('VITE_SESION_DEMO', 'true')
         const { router, usuario } = renderizarApp('/login')
 
@@ -333,8 +335,13 @@ describe('LoginPage', () => {
         const vence = Date.parse(sesion?.expiraEn ?? '') - antes
         expect(vence).toBeGreaterThan(59 * 60 * 1000)
         expect(vence).toBeLessThanOrEqual(60 * 60 * 1000 + 1000)
-        expect(fetchSimulado).not.toHaveBeenCalled()
-        expect(router.state.location.pathname).toBe('/')
+        // La sesión no pasa por el backend; la pantalla de destino sí
+        // puede consultar sus datos (la bandeja del administrador).
+        expect(fetchSimulado).not.toHaveBeenCalledWith(
+          expect.stringContaining('/api/auth/'),
+          expect.anything(),
+        )
+        expect(router.state.location.pathname).toBe(destino)
         expect(
           within(screen.getByRole('banner')).getByText(nombre),
         ).toBeInTheDocument()

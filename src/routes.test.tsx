@@ -110,7 +110,7 @@ describe('routes', () => {
   })
 
   describe('pantallas de administración', () => {
-    it('muestra el marcador de posición de /admin al administrador', () => {
+    it('muestra la bandeja de /admin al administrador', () => {
       iniciarSesionDePrueba('ADMINISTRADOR')
       renderizarApp('/admin')
 

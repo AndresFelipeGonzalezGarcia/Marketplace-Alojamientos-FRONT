@@ -1,5 +1,7 @@
 import type { RouteObject } from 'react-router'
 import RutaProtegida from './auth/RutaProtegida'
+import AdminBandejaPage from './pages/AdminBandejaPage'
+import AdminRevisionPage from './pages/AdminRevisionPage'
 import LayoutApp from './components/navegacion/LayoutApp'
 import DisponibilidadPage from './pages/DisponibilidadPage'
 import HomePage from './pages/HomePage'
@@ -54,15 +56,10 @@ export const routes: RouteObject[] = [
       {
         element: <RutaProtegida rolesPermitidos={['ADMINISTRADOR']} />,
         children: [
+          { path: '/admin', element: <AdminBandejaPage /> },
           {
-            // Marcador de posición hasta la historia de moderación.
-            path: '/admin',
-            element: (
-              <ProximamentePage
-                titulo="Publicaciones pendientes"
-                mensaje="Aquí revisarás y aprobarás las publicaciones enviadas por los anfitriones."
-              />
-            ),
+            path: '/admin/publicaciones/:id',
+            element: <AdminRevisionPage />,
           },
         ],
       },

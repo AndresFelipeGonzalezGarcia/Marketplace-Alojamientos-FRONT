@@ -79,8 +79,8 @@ export const PUBLICACIONES_PENDIENTES: Destino = {
   ruta: '/admin',
   descripcion: 'Revisa y aprueba las publicaciones enviadas por anfitriones.',
   accion: 'Revisar pendientes',
-  disponible: false,
-  activaEn: ['/admin/*'],
+  disponible: true,
+  activaEn: ['/admin', '/admin/*'],
 }
 
 const SECCIONES_POR_ROL: Record<RolUsuario, Destino[]> = {

@@ -4,6 +4,8 @@ import { solicitarApi } from './cliente'
 export interface PoliticaCancelacion {
   id: string
   nombre: string
+  horasAntesLlegada?: number
+  porcentajeDevolucion?: number
 }
 
 export interface Servicio {
