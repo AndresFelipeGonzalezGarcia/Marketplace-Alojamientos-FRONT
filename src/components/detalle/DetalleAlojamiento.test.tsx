@@ -4,6 +4,7 @@ import {
   buscarAlojamientos,
   listarServiciosPublicos,
   obtenerAlojamiento,
+  obtenerCalendario,
   type AlojamientoDetalle,
 } from '../../api/alojamientos'
 import type { ResultadoApi } from '../../api/cliente'
@@ -15,6 +16,7 @@ vi.mock('../../api/alojamientos', async (importarOriginal) => ({
   buscarAlojamientos: vi.fn(),
   listarServiciosPublicos: vi.fn(),
   obtenerAlojamiento: vi.fn(),
+  obtenerCalendario: vi.fn(),
 }))
 
 const obtener = vi.mocked(obtenerAlojamiento)
@@ -68,6 +70,8 @@ beforeEach(() => {
   buscar.mockReset()
   servicios.mockReset()
   servicios.mockResolvedValue({ estado: 'ok', datos: [] })
+  // El calendario tiene sus propias pruebas; aquí basta con que responda.
+  vi.mocked(obtenerCalendario).mockResolvedValue({ estado: 'ok', datos: [] })
 })
 
 describe('Detalle del alojamiento', () => {
@@ -82,7 +86,7 @@ describe('Detalle del alojamiento', () => {
 
       await act(async () => responder(ok()))
       expect(await titulo()).toBeInTheDocument()
-      expect(screen.queryByRole('status')).not.toBeInTheDocument()
+      expect(screen.queryByText('Cargando el alojamiento…')).not.toBeInTheDocument()
     })
 
     it('muestra toda la información del alojamiento', async () => {
@@ -120,7 +124,7 @@ describe('Detalle del alojamiento', () => {
       expect(panel).toHaveTextContent(/890\.000\s*\/ noche/)
       expect(panel).toHaveTextContent(/Limpieza: .*120\.000 por estadía/)
       expect(panel).toHaveTextContent('Cotización y reserva')
-      expect(screen.getByText('Calendario de disponibilidad')).toBeInTheDocument()
+      expect(screen.getByRole('region', { name: 'Disponibilidad' })).toBeInTheDocument()
     })
 
     it('la galería empieza en la portada y se recorre con botones, teclado y miniaturas', async () => {

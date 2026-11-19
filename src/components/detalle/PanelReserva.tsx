@@ -1,5 +1,7 @@
 import type { AlojamientoDetalle } from '../../api/alojamientos'
+import { formatearDia, textoNoches } from '../busqueda/filtrosBusqueda'
 import { formatearPrecio } from '../formato/formato'
+import { useEstadia } from './estadia'
 import MarcadorPendiente from './MarcadorPendiente'
 
 interface PanelReservaProps {
@@ -10,6 +12,8 @@ interface PanelReservaProps {
 // la reserva llegan en las historias siguientes.
 function PanelReserva({ alojamiento }: PanelReservaProps) {
   const { precioNoche, tarifaLimpieza = 0, modoReserva } = alojamiento
+  // Las mismas fechas que marca el calendario: la cotización las tomará de aquí.
+  const { estadia } = useEstadia()
 
   return (
     <aside className="panel-reserva" aria-label="Precio y reserva">
@@ -27,9 +31,22 @@ function PanelReserva({ alojamiento }: PanelReservaProps) {
             : 'El anfitrión aprueba cada solicitud antes de confirmarla.'}
         </li>
       </ul>
+      <div className="panel-reserva__estadia">
+        <p className="panel-reserva__estadia-titulo">Tu estadía</p>
+        {estadia ? (
+          <p>
+            <strong>{textoNoches(estadia.noches)}</strong>: del{' '}
+            {formatearDia(estadia.llegada)} al {formatearDia(estadia.salida)}
+          </p>
+        ) : (
+          <p className="panel-reserva__estadia-vacia">
+            Elige tus fechas en el calendario de disponibilidad.
+          </p>
+        )}
+      </div>
       <MarcadorPendiente
         titulo="Cotización y reserva"
-        mensaje="Aquí elegirás tus fechas y huéspedes, verás el total de la estadía con tarifas incluidas y podrás reservar."
+        mensaje="Con tus fechas verás aquí el total de la estadía con tarifas incluidas y podrás reservar."
       />
     </aside>
   )

@@ -44,6 +44,7 @@ const MENSAJES = new Map<string, string>([
   ],
   ['PERIODO_NO_ENCONTRADO', 'El periodo no existe.'],
   ['FECHAS_INVALIDAS', 'La fecha final no puede ser anterior a la inicial.'],
+  ['RANGO_EXCESIVO', 'Solo se pueden consultar 365 días a la vez.'],
   ['PERIODO_CRUZADO', 'Las fechas se cruzan con otro periodo.'],
   ['PERIODO_EN_EL_PASADO', 'El periodo no puede empezar en el pasado.'],
   [

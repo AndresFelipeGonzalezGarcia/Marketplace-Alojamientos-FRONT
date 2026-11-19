@@ -110,3 +110,24 @@ export function obtenerAlojamiento(id: string) {
     estadoExito: 200,
   })
 }
+
+// DiaCalendario del contrato (PROPUESTA).
+export interface DiaCalendario {
+  // yyyy-MM-dd
+  fecha: string
+  disponible: boolean
+}
+
+// El contrato admite como máximo 365 días por consulta.
+export const MAXIMO_DIAS_CALENDARIO = 365
+
+// GET /api/alojamientos/{alojamientoId}/calendario. Público. Un elemento por
+// día del rango; `hasta` se incluye. 400 FECHAS_INVALIDAS o RANGO_EXCESIVO.
+export function obtenerCalendario(id: string, desde: string, hasta: string) {
+  const consulta = new URLSearchParams({ desde, hasta })
+  return solicitarApi<DiaCalendario[]>({
+    ruta: `/api/alojamientos/${encodeURIComponent(id)}/calendario?${consulta}`,
+    metodo: 'GET',
+    estadoExito: 200,
+  })
+}

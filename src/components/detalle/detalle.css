@@ -517,3 +517,326 @@ main.detalle-pagina {
     padding: var(--espacio-6) var(--espacio-4);
   }
 }
+
+/* ---------- Calendario de disponibilidad ---------- */
+
+.calendario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+}
+
+.calendario__navegacion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--espacio-3);
+}
+
+.calendario__estado {
+  margin: 0;
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+}
+
+.calendario__flecha {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: var(--color-texto);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-completo);
+  font: inherit;
+  font-size: var(--texto-seccion);
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--transicion);
+}
+
+.calendario__flecha:hover:not(:disabled) {
+  background: var(--color-marca-suave);
+}
+
+.calendario__flecha:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.calendario__flecha:focus-visible {
+  outline: 2px solid var(--color-marca);
+  outline-offset: 2px;
+  box-shadow: var(--halo-marca);
+}
+
+.calendario__meses {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--espacio-6);
+  transition: opacity var(--transicion);
+}
+
+.calendario__meses--cargando {
+  opacity: 0.6;
+}
+
+.mes-calendario__titulo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 var(--espacio-3);
+  font-size: var(--texto-cuerpo);
+  line-height: var(--linea-cuerpo);
+  font-weight: var(--peso-fuerte);
+}
+
+.mes-calendario__tabla {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 var(--espacio-1);
+  table-layout: fixed;
+}
+
+.mes-calendario__tabla th {
+  padding-bottom: var(--espacio-2);
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+  font-weight: var(--peso-etiqueta);
+}
+
+.mes-calendario__tabla td {
+  padding: 0;
+  text-align: center;
+}
+
+.dia-calendario {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  max-height: 48px;
+  padding: 0;
+  color: var(--color-texto);
+  background: transparent;
+  border: 1.5px solid transparent;
+  border-radius: var(--radio-pequeno);
+  font: inherit;
+  font-weight: var(--peso-etiqueta);
+  cursor: pointer;
+  transition:
+    background-color var(--transicion),
+    border-color var(--transicion);
+}
+
+.dia-calendario:hover:not([aria-disabled='true']) {
+  border-color: var(--color-marca);
+}
+
+.dia-calendario:focus-visible {
+  z-index: 1;
+  outline: 2px solid var(--color-marca);
+  outline-offset: 1px;
+  box-shadow: var(--halo-marca);
+}
+
+.dia-calendario[aria-disabled='true'] {
+  cursor: default;
+}
+
+/* Ocupado: tachado sobre un fondo rayado, se distingue sin depender del color. */
+.dia-calendario--ocupado {
+  color: var(--color-texto-secundario);
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--color-fondo-pagina) 0 4px,
+    var(--color-borde-suave) 4px 6px
+  );
+  text-decoration: line-through;
+  font-weight: var(--peso-cuerpo);
+}
+
+.dia-calendario--pasado,
+.dia-calendario--sin-datos {
+  color: var(--color-borde);
+  font-weight: var(--peso-cuerpo);
+}
+
+/* Con la llegada puesta, lo que ya no se puede elegir se apaga. */
+.dia-calendario--inhabilitado:not(.dia-calendario--ocupado, .dia-calendario--pasado) {
+  color: var(--color-texto-secundario);
+  font-weight: var(--peso-cuerpo);
+  opacity: 0.55;
+}
+
+.dia-calendario--solo-salida {
+  color: var(--color-texto-secundario);
+  border-style: dashed;
+  border-color: var(--color-borde);
+}
+
+.dia-calendario--noche {
+  color: var(--color-marca);
+  background: var(--color-marca-suave);
+  border-radius: 0;
+}
+
+.dia-calendario--llegada {
+  color: var(--color-superficie);
+  background: var(--color-marca);
+  border-color: var(--color-marca);
+  font-weight: var(--peso-fuerte);
+}
+
+/* La salida no se ocupa: contorno discontinuo, sin relleno. */
+.dia-calendario--salida {
+  color: var(--color-marca);
+  background: var(--color-superficie);
+  border: 2px dashed var(--color-marca);
+  font-weight: var(--peso-fuerte);
+}
+
+.calendario__aviso,
+.calendario__error {
+  margin: 0;
+  padding: var(--espacio-4);
+  border-radius: var(--radio-pequeno);
+}
+
+.calendario__aviso {
+  color: var(--color-texto);
+  background: var(--color-marca-suave);
+}
+
+.calendario__error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espacio-2);
+  color: var(--color-error);
+  background: var(--color-error-suave);
+}
+
+.calendario__error p {
+  margin: 0;
+}
+
+.calendario__error-titulo {
+  font-weight: var(--peso-fuerte);
+}
+
+.leyenda-calendario {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2) var(--espacio-5);
+  margin: 0;
+  padding: 0;
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+  list-style: none;
+}
+
+.leyenda-calendario li {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+}
+
+.leyenda-calendario__muestra {
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+  border: 1.5px solid var(--color-borde);
+  border-radius: var(--radio-pequeno);
+}
+
+.leyenda-calendario__muestra--disponible {
+  background: var(--color-superficie);
+}
+
+.leyenda-calendario__muestra--ocupado {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--color-fondo-pagina) 0 3px,
+    var(--color-borde-suave) 3px 5px
+  );
+}
+
+.leyenda-calendario__muestra--noche {
+  background: var(--color-marca-suave);
+  border-color: var(--color-marca-suave);
+}
+
+.leyenda-calendario__muestra--salida {
+  background: var(--color-superficie);
+  border: 2px dashed var(--color-marca);
+}
+
+.resumen-estadia {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--espacio-3) var(--espacio-5);
+  padding: var(--espacio-4) var(--espacio-5);
+  background: var(--color-fondo-pagina);
+  border-radius: var(--radio-mediano);
+}
+
+.resumen-estadia p {
+  margin: 0;
+}
+
+.resumen-estadia__principal {
+  font-weight: var(--peso-etiqueta);
+}
+
+.resumen-estadia__noches {
+  color: var(--color-marca);
+  font-size: var(--texto-seccion);
+  line-height: var(--linea-seccion);
+  font-weight: var(--peso-titulo);
+}
+
+.resumen-estadia .resumen-estadia__nota {
+  margin-top: var(--espacio-1);
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+}
+
+.resumen-estadia__limpiar {
+  padding: var(--espacio-2) var(--espacio-4);
+}
+
+.panel-reserva__estadia {
+  padding: var(--espacio-4);
+  background: var(--color-fondo-pagina);
+  border-radius: var(--radio-pequeno);
+}
+
+.panel-reserva__estadia p {
+  margin: 0;
+}
+
+.panel-reserva__estadia .panel-reserva__estadia-titulo {
+  margin-bottom: var(--espacio-1);
+  font-size: var(--texto-etiqueta);
+  line-height: var(--linea-etiqueta);
+  font-weight: var(--peso-fuerte);
+}
+
+.panel-reserva__estadia-vacia {
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+}
+
+@media (max-width: 720px) {
+  .calendario__meses {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

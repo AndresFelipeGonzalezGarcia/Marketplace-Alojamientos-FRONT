@@ -1,7 +1,7 @@
 import type { AlojamientoDetalle } from '../../api/alojamientos'
 import { etiquetaTipo, formatearPrecio, textoCapacidad } from '../formato/formato'
+import CalendarioDisponibilidad from './CalendarioDisponibilidad'
 import { condicionCancelacion, separarReglas } from './formatoDetalle'
-import MarcadorPendiente from './MarcadorPendiente'
 import SeccionDetalle from './SeccionDetalle'
 
 interface FichaAlojamientoProps {
@@ -86,10 +86,12 @@ function FichaAlojamiento({ alojamiento }: FichaAlojamientoProps) {
       )}
 
       <SeccionDetalle titulo="Disponibilidad">
-        <MarcadorPendiente
-          titulo="Calendario de disponibilidad"
-          mensaje="Aquí verás qué noches están libres para elegir tus fechas de llegada y salida."
-        />
+        <p className="detalle-seccion__nota">
+          Elige el día de llegada y luego el de salida. El día de salida no se
+          cuenta como noche.
+        </p>
+        {/* key: al pasar a otro alojamiento el calendario empieza de cero. */}
+        <CalendarioDisponibilidad key={alojamiento.id} alojamientoId={alojamiento.id} />
       </SeccionDetalle>
 
       <SeccionDetalle titulo="Reglas de la casa">
