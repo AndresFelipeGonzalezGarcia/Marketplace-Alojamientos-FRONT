@@ -6,6 +6,7 @@ import type { RolUsuario } from '../auth/sesion'
 import { useSesion } from '../auth/useSesion'
 import TarjetaAcceso from '../components/inicio/TarjetaAcceso'
 import {
+  BUSCAR_ALOJAMIENTOS,
   CREAR_CUENTA,
   INICIAR_SESION,
   MIS_PUBLICACIONES,
@@ -16,10 +17,10 @@ import {
 import '../components/inicio/inicio.css'
 
 const ACCESOS: Record<RolUsuario | 'INVITADO', Destino[]> = {
-  INVITADO: [CREAR_CUENTA, INICIAR_SESION],
+  INVITADO: [BUSCAR_ALOJAMIENTOS, CREAR_CUENTA, INICIAR_SESION],
   ANFITRION: [NUEVA_PUBLICACION, MIS_PUBLICACIONES],
   ADMINISTRADOR: [PUBLICACIONES_PENDIENTES],
-  HUESPED: [],
+  HUESPED: [BUSCAR_ALOJAMIENTOS],
 }
 
 const INTRODUCCION: Record<RolUsuario | 'INVITADO', string> = {
@@ -89,27 +90,15 @@ function HomePage() {
       </section>
 
       <div className="inicio__contenido">
-        {accesos.length > 0 ? (
-          <ul className="inicio__accesos" aria-label="Accesos rápidos">
-            {accesos.map((destino) => (
-              <TarjetaAcceso
-                key={destino.ruta}
-                destino={destino}
-                destacada={destino === primerDisponible}
-              />
-            ))}
-          </ul>
-        ) : (
-          <section className="inicio__vacio">
-            <h2 className="tarjeta-acceso__titulo">
-              Muy pronto podrás buscar alojamientos
-            </h2>
-            <p className="tarjeta-acceso__texto">
-              Estamos preparando la búsqueda y las reservas. Cuando estén listas
-              las verás aquí.
-            </p>
-          </section>
-        )}
+        <ul className="inicio__accesos" aria-label="Accesos rápidos">
+          {accesos.map((destino) => (
+            <TarjetaAcceso
+              key={destino.ruta}
+              destino={destino}
+              destacada={destino === primerDisponible}
+            />
+          ))}
+        </ul>
 
         {usuario?.rol === 'ANFITRION' && (
           <p className="inicio__nota">

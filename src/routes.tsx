@@ -2,6 +2,8 @@ import type { RouteObject } from 'react-router'
 import RutaProtegida from './auth/RutaProtegida'
 import AdminBandejaPage from './pages/AdminBandejaPage'
 import AdminRevisionPage from './pages/AdminRevisionPage'
+import AlojamientoDetallePage from './pages/AlojamientoDetallePage'
+import AlojamientosPage from './pages/AlojamientosPage'
 import LayoutApp from './components/navegacion/LayoutApp'
 import DisponibilidadPage from './pages/DisponibilidadPage'
 import HomePage from './pages/HomePage'
@@ -19,6 +21,9 @@ export const routes: RouteObject[] = [
     children: [
       { path: '/', element: <HomePage /> },
       { path: '/registro', element: <RegistroPage /> },
+      // Públicas: sin sesión y para cualquier rol.
+      { path: '/alojamientos', element: <AlojamientosPage /> },
+      { path: '/alojamientos/:id', element: <AlojamientoDetallePage /> },
       // Marcador de posición hasta la historia de inicio de sesión.
       { path: '/login', element: <LoginPage /> },
       { path: '/recuperar-contrasena', element: <RecuperarContrasenaPage /> },
