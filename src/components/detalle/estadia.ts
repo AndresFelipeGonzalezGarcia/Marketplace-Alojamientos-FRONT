@@ -1,11 +1,16 @@
 import { useLocation, useSearchParams } from 'react-router'
-import { contarNoches, esFechaValida } from '../busqueda/filtrosBusqueda'
+import {
+  contarNoches,
+  esFechaValida,
+  MAXIMO_HUESPEDES,
+} from '../busqueda/filtrosBusqueda'
 import { hoyEnBogota } from '../disponibilidad/validacionPeriodo'
 
 // Estadía elegida en el detalle. La URL es la fuente de verdad, como en la
-// búsqueda: `?llegada=&salida=` (salida exclusiva) llega desde los filtros,
-// la escribe el calendario y la leerá la cotización con useEstadia(), sin
-// pasar nada por props. Así también sobrevive a recargar o compartir.
+// búsqueda: `?llegada=&salida=` (salida exclusiva) y `?huespedes=` llegan
+// desde los filtros, los escriben el calendario y el selector de huéspedes,
+// y la cotización los lee con useEstadia(), sin pasar nada por props. Así
+// también sobreviven a recargar, compartir o volver del login.
 
 export interface Estadia {
   llegada: string
@@ -37,6 +42,14 @@ export function leerEstadia(
   return noches === null ? null : { llegada, salida, noches }
 }
 
+// Entero entre 1 y el máximo del buscador, o null.
+export function leerHuespedes(parametros: URLSearchParams): number | null {
+  const valor = parametros.get('huespedes') ?? ''
+  if (!/^\d+$/.test(valor)) return null
+  const numero = Number(valor)
+  return numero >= 1 && numero <= MAXIMO_HUESPEDES ? numero : null
+}
+
 function leerDescartadas(estado: unknown) {
   const descartadas = (estado as EstadoNavegacion | null)?.fechasDescartadas
   return descartadas &&
@@ -54,6 +67,12 @@ export function useEstadia() {
   // Reemplaza la entrada del historial: «atrás» no recorre cada clic del
   // calendario. Conserva el resto de la URL (huéspedes) y la búsqueda de la
   // que se vino.
+  function navegar(siguientes: URLSearchParams, estado: EstadoNavegacion) {
+    setParametros(siguientes, { replace: true, state: estado })
+  }
+
+  const anterior = (location.state as EstadoNavegacion | null) ?? {}
+
   function escribir(
     nueva: { llegada: string; salida: string } | null,
     descartadas?: { llegada: string; salida: string },
@@ -65,14 +84,23 @@ export function useEstadia() {
       siguientes.set('llegada', nueva.llegada)
       siguientes.set('salida', nueva.salida)
     }
-    const anterior = (location.state as EstadoNavegacion | null) ?? {}
     const estado: EstadoNavegacion = { desde: anterior.desde }
     if (descartadas) estado.fechasDescartadas = descartadas
-    setParametros(siguientes, { replace: true, state: estado })
+    navegar(siguientes, estado)
+  }
+
+  function elegirHuespedes(huespedes: number) {
+    const siguientes = new URLSearchParams(parametros)
+    siguientes.set('huespedes', String(huespedes))
+    // Cambiar huéspedes no toca las fechas ni el aviso del calendario.
+    navegar(siguientes, anterior)
   }
 
   return {
     estadia,
+    // null si la URL no lo trae: la cotización usa 1 hasta que se elija.
+    huespedes: leerHuespedes(parametros),
+    elegirHuespedes,
     // Las fechas con que se llegó y que ya no estaban libres, o null.
     fechasDescartadas: leerDescartadas(location.state),
     elegir: (llegada: string, salida: string) => escribir({ llegada, salida }),

@@ -351,31 +351,6 @@ main.detalle-pagina {
   font-weight: var(--peso-fuerte);
 }
 
-/* ---------- Huecos para las historias siguientes ---------- */
-
-.marcador-pendiente {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--espacio-2);
-  padding: var(--espacio-5);
-  background: var(--color-fondo-pagina);
-  border: 1.5px dashed var(--color-borde);
-  border-radius: var(--radio-mediano);
-}
-
-.marcador-pendiente__titulo {
-  margin: 0;
-  font-weight: var(--peso-fuerte);
-}
-
-.marcador-pendiente__texto {
-  margin: 0;
-  color: var(--color-texto-secundario);
-  font-size: var(--texto-pequeno);
-  line-height: var(--linea-pequeno);
-}
-
 /* ---------- Panel de precio y reserva ---------- */
 
 .panel-reserva {
@@ -389,6 +364,9 @@ main.detalle-pagina {
   border: 1px solid var(--color-borde-suave);
   border-radius: var(--radio-mediano);
   box-shadow: var(--elevacion-elevada);
+  /* Fijo, pero sin salirse de la ventana cuando el desglose crece. */
+  max-height: calc(100vh - var(--alto-encabezado, 64px) - var(--espacio-7));
+  overflow-y: auto;
 }
 
 .panel-reserva__precio {
@@ -480,6 +458,7 @@ main.detalle-pagina {
   /* Sin lateral, el panel deja de ser fijo y va después de la información. */
   .panel-reserva {
     position: static;
+    max-height: none;
     box-shadow: var(--elevacion-reposo);
   }
 }
@@ -812,31 +791,227 @@ main.detalle-pagina {
   padding: var(--espacio-2) var(--espacio-4);
 }
 
-.panel-reserva__estadia {
-  padding: var(--espacio-4);
-  background: var(--color-fondo-pagina);
-  border-radius: var(--radio-pequeno);
+@media (max-width: 720px) {
+  .calendario__meses {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
-.panel-reserva__estadia p {
+/* ---------- Cotización ---------- */
+
+.cotizacion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+  padding-top: var(--espacio-4);
+  border-top: 1px solid var(--color-borde-suave);
+}
+
+.cotizacion p {
   margin: 0;
 }
 
-.panel-reserva__estadia .panel-reserva__estadia-titulo {
-  margin-bottom: var(--espacio-1);
-  font-size: var(--texto-etiqueta);
-  line-height: var(--linea-etiqueta);
-  font-weight: var(--peso-fuerte);
+.cotizacion__fechas {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espacio-1);
 }
 
-.panel-reserva__estadia-vacia {
+.cotizacion__etiqueta,
+.selector-huespedes__etiqueta {
+  font-size: var(--texto-etiqueta);
+  line-height: var(--linea-etiqueta);
+  font-weight: var(--peso-etiqueta);
+}
+
+.cotizacion__vacio,
+.cotizacion__nota,
+.selector-huespedes__ayuda {
   color: var(--color-texto-secundario);
   font-size: var(--texto-pequeno);
   line-height: var(--linea-pequeno);
 }
 
-@media (max-width: 720px) {
-  .calendario__meses {
-    grid-template-columns: minmax(0, 1fr);
-  }
+.cotizacion__enlace {
+  padding: 0;
+  color: var(--color-marca);
+  background: none;
+  border: 0;
+  border-radius: var(--radio-pequeno);
+  font: inherit;
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+  font-weight: var(--peso-fuerte);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.cotizacion__enlace:focus-visible {
+  outline: 2px solid var(--color-marca);
+  outline-offset: 2px;
+}
+
+.campo-error-cotizacion {
+  color: var(--color-error);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+  font-weight: var(--peso-etiqueta);
+}
+
+/* Contador de huéspedes */
+
+.selector-huespedes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+}
+
+.selector-huespedes__control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+  padding: var(--espacio-1);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-pequeno);
+}
+
+.selector-huespedes__control--error {
+  border-color: var(--color-error);
+  box-shadow: var(--halo-error);
+}
+
+.selector-huespedes__valor {
+  font-weight: var(--peso-fuerte);
+}
+
+.selector-huespedes__boton {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  color: var(--color-marca);
+  background: var(--color-superficie);
+  border: 1.5px solid var(--color-marca);
+  border-radius: var(--radio-completo);
+  font: inherit;
+  font-size: var(--texto-seccion);
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--transicion);
+}
+
+.selector-huespedes__boton:hover:not(:disabled) {
+  background: var(--color-marca-suave);
+}
+
+.selector-huespedes__boton:disabled {
+  color: var(--color-borde);
+  border-color: var(--color-borde-suave);
+  cursor: not-allowed;
+}
+
+.selector-huespedes__boton:focus-visible {
+  outline: 2px solid var(--color-marca);
+  outline-offset: 2px;
+  box-shadow: var(--halo-marca);
+}
+
+/* Desglose */
+
+.desglose {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+  margin: 0;
+}
+
+.desglose__fila {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--espacio-4);
+}
+
+.desglose__fila dt {
+  color: var(--color-texto-secundario);
+}
+
+.desglose__fila dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.desglose__fila--total {
+  margin-top: var(--espacio-2);
+  padding-top: var(--espacio-3);
+  border-top: 1px solid var(--color-borde-suave);
+  font-size: var(--texto-seccion);
+  line-height: var(--linea-seccion);
+  font-weight: var(--peso-titulo);
+}
+
+.desglose__fila--total dt {
+  color: var(--color-texto);
+}
+
+.desglose--cargando {
+  gap: var(--espacio-3);
+}
+
+/* Avisos dentro de la cotización */
+
+.cotizacion__aviso,
+.acceso-cotizacion {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espacio-2);
+  padding: var(--espacio-4);
+  border-radius: var(--radio-pequeno);
+}
+
+.cotizacion__aviso {
+  background: var(--color-marca-suave);
+}
+
+.cotizacion__aviso--error {
+  color: var(--color-error);
+  background: var(--color-error-suave);
+}
+
+.cotizacion__aviso-titulo,
+.acceso-cotizacion__titulo {
+  font-weight: var(--peso-fuerte);
+}
+
+.acceso-cotizacion {
+  padding: 0;
+}
+
+.acceso-cotizacion .boton-enlace {
+  align-self: stretch;
+}
+
+.acceso-cotizacion[role='note'] {
+  padding: var(--espacio-4);
+  background: var(--color-fondo-pagina);
+}
+
+.acceso-cotizacion__texto {
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+}
+
+.acceso-cotizacion__texto a {
+  color: var(--color-marca);
+  font-weight: var(--peso-fuerte);
+}
+
+.cotizacion__reservar {
+  width: 100%;
 }

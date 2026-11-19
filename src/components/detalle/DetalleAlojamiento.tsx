@@ -29,6 +29,7 @@ interface Respuesta {
 function DetalleAlojamiento({ id, rutaVolver }: DetalleAlojamientoProps) {
   const [intento, setIntento] = useState(0)
   const [respuesta, setRespuesta] = useState<Respuesta | null>(null)
+  const [versionCalendario, setVersionCalendario] = useState(0)
   const solicitud = `${id}#${intento}`
 
   useEffect(() => {
@@ -105,8 +106,11 @@ function DetalleAlojamiento({ id, rutaVolver }: DetalleAlojamientoProps) {
         imagenes={alojamiento.imagenes ?? []}
       />
       <div className="detalle__cuerpo">
-        <FichaAlojamiento alojamiento={alojamiento} />
-        <PanelReserva alojamiento={alojamiento} />
+        <FichaAlojamiento alojamiento={alojamiento} versionCalendario={versionCalendario} />
+        <PanelReserva
+          alojamiento={alojamiento}
+          onFechasOcupadas={() => setVersionCalendario((actual) => actual + 1)}
+        />
       </div>
     </article>
   )

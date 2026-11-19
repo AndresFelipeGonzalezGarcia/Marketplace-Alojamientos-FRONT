@@ -1,16 +1,20 @@
 import type { AlojamientoDetalle } from '../../api/alojamientos'
 import { etiquetaTipo, formatearPrecio, textoCapacidad } from '../formato/formato'
 import CalendarioDisponibilidad from './CalendarioDisponibilidad'
+import { ID_DISPONIBILIDAD } from './irAlCalendario'
 import { condicionCancelacion, separarReglas } from './formatoDetalle'
 import SeccionDetalle from './SeccionDetalle'
 
 interface FichaAlojamientoProps {
   alojamiento: AlojamientoDetalle
+  // Sube cuando la cotización detecta noches ocupadas: el calendario se
+  // vuelve a montar y carga la disponibilidad de nuevo.
+  versionCalendario: number
 }
 
 // Toda la información del alojamiento en una sola columna de lectura,
 // en el orden en que se decide: qué es, qué trae, qué reglas tiene.
-function FichaAlojamiento({ alojamiento }: FichaAlojamientoProps) {
+function FichaAlojamiento({ alojamiento, versionCalendario }: FichaAlojamientoProps) {
   const {
     titulo,
     ciudad,
@@ -85,13 +89,16 @@ function FichaAlojamiento({ alojamiento }: FichaAlojamientoProps) {
         </SeccionDetalle>
       )}
 
-      <SeccionDetalle titulo="Disponibilidad">
+      <SeccionDetalle titulo="Disponibilidad" id={ID_DISPONIBILIDAD}>
         <p className="detalle-seccion__nota">
           Elige el día de llegada y luego el de salida. El día de salida no se
           cuenta como noche.
         </p>
-        {/* key: al pasar a otro alojamiento el calendario empieza de cero. */}
-        <CalendarioDisponibilidad key={alojamiento.id} alojamientoId={alojamiento.id} />
+        {/* key: otro alojamiento, o noches que se ocuparon, empiezan de cero. */}
+        <CalendarioDisponibilidad
+          key={`${alojamiento.id}#${versionCalendario}`}
+          alojamientoId={alojamiento.id}
+        />
       </SeccionDetalle>
 
       <SeccionDetalle titulo="Reglas de la casa">
