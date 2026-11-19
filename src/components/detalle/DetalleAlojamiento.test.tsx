@@ -123,7 +123,7 @@ describe('Detalle del alojamiento', () => {
       const panel = screen.getByRole('complementary', { name: 'Precio y reserva' })
       expect(panel).toHaveTextContent(/890\.000\s*\/ noche/)
       expect(panel).toHaveTextContent(/Limpieza: .*120\.000 por estadía/)
-      expect(panel).toHaveTextContent('Cotización y reserva')
+      expect(within(panel).getByRole('region', { name: 'Cotización' })).toBeInTheDocument()
       expect(screen.getByRole('region', { name: 'Disponibilidad' })).toBeInTheDocument()
     })
 
