@@ -96,7 +96,9 @@ describe('EncabezadoApp', () => {
       renderizarApp('/')
 
       expect(textosDelMenu()).toEqual(['Inicio', 'Publicaciones pendientes'])
-      deshabilitado('Publicaciones pendientes')
+      expect(
+        menu().getByRole('link', { name: 'Publicaciones pendientes' }),
+      ).toHaveAttribute('href', '/admin')
       expect(
         encabezado().queryByText('Nueva publicación'),
       ).not.toBeInTheDocument()
@@ -133,15 +135,17 @@ describe('EncabezadoApp', () => {
       expect(actuales[0]?.firstChild?.textContent).toBe(activa)
     })
 
-    it('marca Publicaciones pendientes en /admin', () => {
-      iniciarSesionDePrueba('ADMINISTRADOR')
-      renderizarApp('/admin')
+    it.each(['/admin', '/admin/publicaciones/7'])(
+      'marca Publicaciones pendientes en %s',
+      (ruta) => {
+        iniciarSesionDePrueba('ADMINISTRADOR')
+        renderizarApp(ruta)
 
-      expect(deshabilitado('Publicaciones pendientes')).toHaveAttribute(
-        'aria-current',
-        'page',
-      )
-    })
+        expect(
+          menu().getByRole('link', { name: 'Publicaciones pendientes' }),
+        ).toHaveAttribute('aria-current', 'page')
+      },
+    )
 
     it('marca Crear cuenta en /registro', () => {
       renderizarApp('/registro')

@@ -26,11 +26,11 @@ La aplicación queda disponible en <http://localhost:5173>.
 
 ## Scripts
 
-| Comando              | Descripción                            |
-| -------------------- | -------------------------------------- |
-| `npm run dev`        | Servidor de desarrollo                 |
-| `npm run build`      | Comprobación de tipos y build          |
-| `npm run preview`    | Sirve localmente el build              |
-| `npm run lint`       | Revisión con ESLint                    |
+| Comando              | Descripción                             |
+| -------------------- | --------------------------------------- |
+| `npm run dev`        | Servidor de desarrollo                  |
+| `npm run build`      | Comprobación de tipos y build           |
+| `npm run preview`    | Sirve localmente el build               |
+| `npm run lint`       | Revisión con ESLint                     |
 | `npm test`           | Pruebas con Vitest (una sola ejecución) |
-| `npm run test:watch` | Pruebas en modo observación            |
+| `npm run test:watch` | Pruebas en modo observación             |
