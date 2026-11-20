@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { iniciarSesionDePrueba } from '../test/sesion'
-import { crearReserva, obtenerReserva } from './reservas'
+import { crearReserva, obtenerReserva, pagarReserva } from './reservas'
 
 const SOLICITUD = {
   alojamientoId: 'a-1',
@@ -67,6 +67,42 @@ describe('API de reservas', () => {
     expect(fetchSimulado).toHaveBeenCalledWith('http://api.prueba/api/huesped/reservas/r%2F1', {
       method: 'GET',
       headers: { Authorization: 'Bearer token-huesped' },
+    })
+  })
+
+  describe('pago', () => {
+    const PAGO = { pagoId: 'p-1', reservaId: 'r-1', estadoPago: 'APROBADO', estadoReserva: 'CONFIRMADA', total: 1 }
+
+    it('dispara el pago con la Idempotency-Key y sin cuerpo en uso normal', async () => {
+      fetchSimulado.mockResolvedValue(json(PAGO, 200))
+
+      await expect(pagarReserva('r-1', CLAVE)).resolves.toEqual({ estado: 'ok', datos: PAGO })
+      expect(fetchSimulado).toHaveBeenCalledWith('http://api.prueba/api/huesped/reservas/r-1/pago', {
+        method: 'POST',
+        headers: { 'Idempotency-Key': CLAVE, Authorization: 'Bearer token-huesped' },
+      })
+    })
+
+    it('manda el escenario de prueba cuando se indica', async () => {
+      fetchSimulado.mockResolvedValue(json(PAGO, 200))
+      await pagarReserva('r-1', CLAVE, 'DEMORAR')
+      expect(fetchSimulado.mock.calls[0][1]?.body).toBe(JSON.stringify({ escenarioPrueba: 'DEMORAR' }))
+    })
+
+    it('el 202 (incierto) llega como respuesta, no como error', async () => {
+      const incierto = { ...PAGO, estadoPago: 'PAGO_INCIERTO' }
+      fetchSimulado.mockResolvedValue(json(incierto, 202))
+      await expect(pagarReserva('r-1', CLAVE)).resolves.toEqual({ estado: 'ok', datos: incierto })
+    })
+
+    it.each([
+      [402, 'PAGO_RECHAZADO'],
+      [503, 'SERVICIO_PAGOS_NO_DISPONIBLE'],
+      [409, 'ESTADO_RESERVA_INVALIDO'],
+    ])('un %i %s es un error con su código', async (status, codigo) => {
+      fetchSimulado.mockResolvedValue(json({ codigo, mensaje: 'x' }, status))
+      const resultado = await pagarReserva('r-1', CLAVE)
+      expect(resultado.estado === 'error' && resultado.error.codigo).toBe(codigo)
     })
   })
 })

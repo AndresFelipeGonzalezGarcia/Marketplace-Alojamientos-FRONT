@@ -7,7 +7,7 @@ import FotoRevision from '../admin/FotoRevision'
 import DesgloseCotizacion from '../detalle/DesgloseCotizacion'
 import { contarNoches, textoNoches } from '../busqueda/filtrosBusqueda'
 import { textoCapacidad } from '../formato/formato'
-import EstadoReservaPanel from './EstadoReservaPanel'
+import EstadoReservaPanel, { type AvisoReserva } from './EstadoReservaPanel'
 import { formatearFecha } from './formatoReserva'
 import '../formulario/formulario.css'
 import '../publicacion/publicacion.css'
@@ -17,7 +17,7 @@ import './reservas.css'
 
 interface DetalleReservaProps {
   id: string
-  recienCreada: boolean
+  aviso: AvisoReserva | null
 }
 
 interface Respuesta {
@@ -32,7 +32,7 @@ const volver = (
   </Link>
 )
 
-function DetalleReserva({ id, recienCreada }: DetalleReservaProps) {
+function DetalleReserva({ id, aviso }: DetalleReservaProps) {
   const [intento, setIntento] = useState(0)
   const [respuesta, setRespuesta] = useState<Respuesta | null>(null)
   const solicitud = `${id}#${intento}`
@@ -137,7 +137,7 @@ function DetalleReserva({ id, recienCreada }: DetalleReservaProps) {
       </header>
 
       <div className="detalle-reserva__cuerpo">
-        <EstadoReservaPanel reserva={reserva} recienCreada={recienCreada} />
+        <EstadoReservaPanel reserva={reserva} aviso={aviso} />
 
         <section className="publicacion-tarjeta" aria-labelledby="detalle-reserva-estadia">
           <h2 className="publicacion-tarjeta__titulo" id="detalle-reserva-estadia">
