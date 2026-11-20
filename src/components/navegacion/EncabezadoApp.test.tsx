@@ -111,11 +111,18 @@ describe('EncabezadoApp', () => {
   })
 
   describe('con sesión de HUESPED', () => {
-    it('muestra el inicio y la búsqueda', () => {
+    it('muestra el inicio, la búsqueda y sus reservas', () => {
       iniciarSesionDePrueba('HUESPED')
       renderizarApp('/')
 
-      expect(textosDelMenu()).toEqual(['Inicio', 'Buscar alojamientos'])
+      expect(textosDelMenu()).toEqual([
+        'Inicio',
+        'Buscar alojamientos',
+        'Mis reservas',
+      ])
+      expect(
+        menu().getByRole('link', { name: 'Mis reservas' }),
+      ).toHaveAttribute('href', '/reservas')
       expect(encabezado().getByText('Huésped')).toBeInTheDocument()
     })
   })

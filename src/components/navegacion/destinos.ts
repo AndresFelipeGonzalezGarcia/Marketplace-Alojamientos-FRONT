@@ -84,6 +84,15 @@ export const NUEVA_PUBLICACION: Destino = {
   activaEn: ['/publicaciones/nueva'],
 }
 
+export const MIS_RESERVAS: Destino = {
+  etiqueta: 'Mis reservas',
+  ruta: '/reservas',
+  descripcion: 'Consulta tus reservas, su estado y lo que tienes pendiente.',
+  accion: 'Ver mis reservas',
+  disponible: true,
+  activaEn: ['/reservas', '/reservas/:id', '/reservas/:id/pago'],
+}
+
 export const PUBLICACIONES_PENDIENTES: Destino = {
   etiqueta: 'Publicaciones pendientes',
   ruta: '/admin',
@@ -95,7 +104,7 @@ export const PUBLICACIONES_PENDIENTES: Destino = {
 
 // La búsqueda es pública: la ven todos, también quien no tiene cuenta.
 const SECCIONES_POR_ROL: Record<RolUsuario, Destino[]> = {
-  HUESPED: [BUSCAR_ALOJAMIENTOS],
+  HUESPED: [BUSCAR_ALOJAMIENTOS, MIS_RESERVAS],
   ANFITRION: [BUSCAR_ALOJAMIENTOS, MIS_PUBLICACIONES, NUEVA_PUBLICACION],
   ADMINISTRADOR: [BUSCAR_ALOJAMIENTOS, PUBLICACIONES_PENDIENTES],
 }
