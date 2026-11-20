@@ -43,8 +43,7 @@ const ALOJAMIENTO: AlojamientoDetalle = {
   imagenes: [],
 }
 
-// Importes que no salen de multiplicar lo de la publicación: si la pantalla
-// calculara algo por su cuenta, no coincidirían.
+// Importes de prueba
 const COTIZACION: Cotizacion = {
   noches: 4,
   precioNoche: 255000,
@@ -120,7 +119,7 @@ describe('Cotización', () => {
         ['Tarifa de servicio (8,5 %)', '$ 86.700'],
         ['Total', '$ 1.137.701'],
       ])
-      // Con el total a la vista ya se puede reservar (ver ReservarEstadia.test).
+      // Botón reservar
       expect(panel().getByRole('button', { name: 'Reservar' })).toBeEnabled()
     })
 
@@ -188,7 +187,7 @@ describe('Cotización', () => {
       cotizar.mockResolvedValue(await errorDelServidor('PERIODO_NO_DISPONIBLE', 409))
       const { router } = await abrir()
       await vi.waitFor(() => expect(calendario).toHaveBeenCalledTimes(1))
-      // Lo que el calendario ve al recargar: la noche del 12 ya está ocupada.
+      // Noche ocupada
       calendario.mockImplementation(conOcupados('2030-04-12'))
 
       const aviso = await panel().findByRole('alert')
@@ -196,10 +195,10 @@ describe('Cotización', () => {
       expect(within(aviso).getByRole('button', { name: 'Elegir otras fechas' })).toBeInTheDocument()
       expect(panel().queryByLabelText('Desglose del precio')).not.toBeInTheDocument()
 
-      // El calendario vuelve a pedir la disponibilidad y quita las fechas ocupadas.
+      // Recarga del calendario
       await vi.waitFor(() => expect(calendario).toHaveBeenCalledTimes(2))
       await vi.waitFor(() => expect(new URLSearchParams(router.state.location.search).get('llegada')).toBeNull())
-      // El aviso sigue a la vista aunque ya no haya fechas elegidas.
+      // Aviso de fechas
       expect(panel().getByRole('alert')).toHaveTextContent('Estas fechas ya no están libres')
     })
 
@@ -225,7 +224,7 @@ describe('Cotización', () => {
 
       const alerta = await panel().findByRole('alert')
       expect(alerta).toHaveTextContent('La fecha final no puede ser anterior a la inicial.')
-      // Va dentro del bloque de fechas, no en el del selector ni en el desglose.
+      // Ubicación del aviso
       expect(alerta.closest('.cotizacion__fechas')).not.toBeNull()
       expect(panel().getByRole('group', { name: 'Huéspedes' })).not.toHaveAccessibleDescription(/fecha/)
     })

@@ -1,5 +1,4 @@
-// Política de contraseña del contrato (registro y restablecimiento):
-// de 8 a 128 caracteres con mayúscula, minúscula, número y símbolo.
+// Política de contraseña
 export const LONGITUD_MINIMA_CONTRASENA = 8
 export const LONGITUD_MAXIMA_CONTRASENA = 128
 

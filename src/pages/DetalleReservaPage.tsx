@@ -7,12 +7,12 @@ function DetalleReservaPage() {
   const { id = '' } = useParams()
   const location = useLocation()
   const estado = location.state as Partial<EstadoReservaCreada & EstadoPagoAprobado> | null
-  // Se llega justo después de reservar o de pagar: se anuncia el desenlace.
+  // Aviso
   const aviso = estado?.pagoAprobado === true ? 'pagada' : estado?.recienCreada === true ? 'creada' : null
 
   return (
     <main className="publicacion-pagina">
-      {/* key: al pasar a otra reserva se empieza de cero. */}
+      {/* Detalle de la reserva */}
       <DetalleReserva key={id} id={id} aviso={aviso} />
     </main>
   )

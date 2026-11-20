@@ -14,8 +14,7 @@ interface FilaRevisionProps {
 }
 
 export interface EstadoNavegacionRevision {
-  // La fila viaja al detalle para mostrar anfitrión y fecha de envío,
-  // que PublicacionDetalle no trae.
+  // Fila de revisión
   fila?: PublicacionRevision
 }
 
@@ -44,7 +43,7 @@ function FilaRevision({ publicacion }: FilaRevisionProps) {
       />
       <div className="fila-revision__cuerpo">
         <h2 className="fila-revision__titulo">
-          {/* El enlace cubre toda la fila (ver admin.css). */}
+          {/* Enlace de la fila */}
           <Link
             className="fila-revision__enlace"
             to={`/admin/publicaciones/${encodeURIComponent(id)}`}

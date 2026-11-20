@@ -90,14 +90,14 @@ function FormularioPublicacion({
   const [errorGeneral, setErrorGeneral] = useState('')
   const [guardando, setGuardando] = useState(false)
   const [guardado, setGuardado] = useState(borradorRecienGuardado)
-  // El backend revalida lo guardado: no se envía con cambios pendientes.
+  // Cambios sin guardar
   const [sinGuardar, setSinGuardar] = useState(false)
   const [enviando, setEnviando] = useState(false)
   const [recienEnviada, setRecienEnviada] = useState(false)
   const avisoEstado = useRef<HTMLDivElement>(null)
   const editable = sePuedeEditar(estado)
 
-  // El botón de envío desaparece: el foco pasa a la confirmación.
+  // Foco en la confirmación
   useEffect(() => {
     if (recienEnviada) {
       avisoEstado.current?.focus()
@@ -146,7 +146,7 @@ function FormularioPublicacion({
 
     setErrorGeneral('')
     setGuardado(false)
-    // Sin filas vacías, los índices coinciden con los errores del backend.
+    // Imágenes
     const valoresCompactos = quitarFilasVacias(valores)
     setValores(valoresCompactos)
     const erroresValidacion = validarPublicacion(valoresCompactos)
@@ -195,7 +195,7 @@ function FormularioPublicacion({
   }
 
   function mostrarPublicacionIncompleta(error: ErrorApi) {
-    // Cada detalle va junto a su campo; el aviso general resume.
+    // Errores del servidor
     const entradas = Object.entries(error.erroresPorCampo)
     const conocidos = entradas.filter(([ruta]) => esCampoConocido(ruta))
     const otros = entradas
@@ -294,7 +294,7 @@ function FormularioPublicacion({
         noValidate
         onSubmit={guardar}
       >
-        {/* En solo lectura el fieldset deshabilita todos los controles. */}
+        {/* Solo lectura */}
         <fieldset className="publicacion-columna" disabled={!editable}>
           <legend className="solo-lector">Datos de la publicación</legend>
           <section

@@ -15,6 +15,8 @@ tags:
   - name: Periodos disponibles (Anfitrión)
   - name: Búsqueda (público)
   - name: Reservas (Huésped)
+  - name: Reservas (Anfitrión)
+  - name: Reseñas
   - name: Administración
   - name: Operación
 security:
@@ -617,6 +619,172 @@ paths:
         '400': { $ref: '#/components/responses/SolicitudInvalida' }
         '401': { $ref: '#/components/responses/NoAutenticado' }
         '403': { $ref: '#/components/responses/Prohibido' }
+  /api/anfitrion/reservas:
+    get:
+      tags: [Reservas (Anfitrión)]
+      summary: "PROPUESTA. Reservas de mis publicaciones (SCRUM-50)"
+      description: |
+        Propuesta del frontend, pendiente de implementar y confirmar por backend.
+        Rol ANFITRION. Solo reservas sobre publicaciones propias. Sin `estado` devuelve
+        las que están en PENDIENTE_APROBACION, que son las que esperan una decisión,
+        de la más antigua a la más reciente.
+      parameters:
+        - { name: estado, in: query, required: false, schema: { $ref: '#/components/schemas/EstadoReserva' } }
+      responses:
+        '200':
+          description: Reservas sobre mis publicaciones
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/ReservaAnfitrion' } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+  /api/anfitrion/reservas/{reservaId}/aprobar:
+    parameters:
+      - $ref: '#/components/parameters/ReservaId'
+    post:
+      tags: [Reservas (Anfitrión)]
+      summary: "PROPUESTA. Aprobar una reserva (SCRUM-50)"
+      description: |
+        Propuesta del frontend, pendiente de implementar y confirmar por backend.
+        Rol ANFITRION y dueño de la publicación. Solo desde PENDIENTE_APROBACION.
+        La reserva pasa a PENDIENTE_PAGO y el huésped puede pagar. Se audita.
+      responses:
+        '200':
+          description: Reserva aprobada, queda en PENDIENTE_PAGO
+          content: { application/json: { schema: { $ref: '#/components/schemas/ReservaAnfitrion' } } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+        '404':
+          description: "`RESERVA_NO_ENCONTRADA`"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '409':
+          description: "No está en PENDIENTE_APROBACION (`ESTADO_RESERVA_INVALIDO`)"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+  /api/anfitrion/reservas/{reservaId}/rechazar:
+    parameters:
+      - $ref: '#/components/parameters/ReservaId'
+    post:
+      tags: [Reservas (Anfitrión)]
+      summary: "PROPUESTA. Rechazar una reserva (SCRUM-50)"
+      description: |
+        Propuesta del frontend, pendiente de implementar y confirmar por backend.
+        Rol ANFITRION y dueño. Solo desde PENDIENTE_APROBACION. La reserva pasa a
+        CANCELADA, el periodo vuelve a quedar libre y el motivo se guarda para el huésped.
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/RechazoRequest' } } }
+      responses:
+        '200':
+          description: Reserva rechazada y periodo liberado
+          content: { application/json: { schema: { $ref: '#/components/schemas/ReservaAnfitrion' } } }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+        '404':
+          description: "`RESERVA_NO_ENCONTRADA`"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '409':
+          description: "`ESTADO_RESERVA_INVALIDO`"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+  /api/huesped/reservas/{reservaId}/cancelacion:
+    parameters:
+      - $ref: '#/components/parameters/ReservaId'
+    get:
+      tags: [Reservas (Huésped)]
+      summary: "PROPUESTA. Qué pasa si cancelo ahora (SCRUM-51)"
+      description: |
+        Propuesta del frontend, pendiente de implementar y confirmar por backend.
+        Rol HUESPED y dueño. No cancela nada: calcula qué devolución correspondería
+        si se cancelara en este momento, aplicando la política de la publicación.
+        La pantalla lo muestra antes de que la persona confirme, para que sepa
+        cuánto pierde.
+      responses:
+        '200':
+          description: Previsualización de la cancelación
+          content: { application/json: { schema: { $ref: '#/components/schemas/PrevisualizacionCancelacion' } } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+        '404':
+          description: "`RESERVA_NO_ENCONTRADA`"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '409':
+          description: "La reserva ya no se puede cancelar (`ESTADO_RESERVA_INVALIDO`)"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+  /api/huesped/reservas/{reservaId}/cancelar:
+    parameters:
+      - $ref: '#/components/parameters/ReservaId'
+    post:
+      tags: [Reservas (Huésped)]
+      summary: "PROPUESTA. Cancelar una reserva (SCRUM-51)"
+      description: |
+        Propuesta del frontend, pendiente de implementar y confirmar por backend.
+        Rol HUESPED y dueño. Cancelable desde PENDIENTE_PAGO, PENDIENTE_APROBACION
+        y CONFIRMADA. La reserva pasa a CANCELADA, el periodo se libera y, si había
+        cobro, se reembolsa la parte que marque la política (el pago pasa a REEMBOLSADO).
+        El importe devuelto es el que calculó la previsualización, salvo que haya
+        cambiado de tramo entre tanto.
+      requestBody:
+        required: false
+        content: { application/json: { schema: { $ref: '#/components/schemas/CancelacionRequest' } } }
+      responses:
+        '200':
+          description: Reserva cancelada
+          content: { application/json: { schema: { $ref: '#/components/schemas/ResultadoCancelacion' } } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+        '404':
+          description: "`RESERVA_NO_ENCONTRADA`"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '409':
+          description: "Ya cancelada, completada o en curso (`ESTADO_RESERVA_INVALIDO`)"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+  /api/huesped/reservas/{reservaId}/resena:
+    parameters:
+      - $ref: '#/components/parameters/ReservaId'
+    post:
+      tags: [Reseñas]
+      summary: "PROPUESTA. Calificar y reseñar una estadía (SCRUM-54)"
+      description: |
+        Propuesta del frontend, pendiente de implementar y confirmar por backend.
+        Rol HUESPED y dueño de la reserva. Solo sobre reservas COMPLETADA y una sola
+        vez por reserva, que es lo que garantiza que quien reseña se alojó de verdad.
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/ResenaRequest' } } }
+      responses:
+        '201':
+          description: Reseña publicada
+          content: { application/json: { schema: { $ref: '#/components/schemas/Resena' } } }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/Prohibido' }
+        '404':
+          description: "`RESERVA_NO_ENCONTRADA`"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+        '409':
+          description: "La reserva no está COMPLETADA (`ESTADO_RESERVA_INVALIDO`) o ya tiene reseña (`RESENA_YA_EXISTE`)"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
+  /api/alojamientos/{alojamientoId}/resenas:
+    parameters:
+      - $ref: '#/components/parameters/AlojamientoId'
+    get:
+      tags: [Reseñas]
+      summary: "PROPUESTA. Reseñas de un alojamiento (SCRUM-57)"
+      description: |
+        Propuesta del frontend, pendiente de implementar y confirmar por backend.
+        Público, sin autenticación. De la más reciente a la más antigua. No incluye
+        las reseñas ocultadas por un administrador.
+      security: []
+      parameters:
+        - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
+        - { name: tamano, in: query, schema: { type: integer, minimum: 1, maximum: 50, default: 10 } }
+      responses:
+        '200':
+          description: Reseñas paginadas
+          content: { application/json: { schema: { $ref: '#/components/schemas/PaginaResenas' } } }
+        '404':
+          description: "`ALOJAMIENTO_NO_ENCONTRADO`"
+          content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } }
   /api/admin/publicaciones:
     get:
       tags: [Administración]
@@ -972,6 +1140,8 @@ components:
         precioNoche: { type: number }
         imagenPortada: { type: string, nullable: true }
         modoReserva: { $ref: '#/components/schemas/ModoReserva' }
+        calificacionPromedio: { type: number, nullable: true, description: "PROPUESTA (SCRUM-57). Nulo si no tiene reseñas." }
+        totalResenas: { type: integer, description: "PROPUESTA (SCRUM-57)." }
     PaginaAlojamientos:
       type: object
       description: PROPUESTA.
@@ -1001,6 +1171,8 @@ components:
         serviciosAdicionales: { type: array, items: { $ref: '#/components/schemas/ServicioAdicional' } }
         politicaCancelacion: { $ref: '#/components/schemas/PoliticaCancelacion' }
         imagenes: { type: array, items: { type: string } }
+        calificacionPromedio: { type: number, nullable: true, description: "PROPUESTA (SCRUM-57). Nulo si no tiene reseñas." }
+        totalResenas: { type: integer, description: "PROPUESTA (SCRUM-57)." }
     DiaCalendario:
       type: object
       description: PROPUESTA.
@@ -1082,6 +1254,75 @@ components:
       required: [porcentaje]
       properties:
         porcentaje: { type: number, minimum: 0, maximum: 100, description: "Porcentaje sobre el subtotal, por ejemplo 8.5." }
+    ReservaAnfitrion:
+      type: object
+      description: "PROPUESTA. Reserva vista por el anfitrión: lleva al huésped en vez del alojamiento."
+      properties:
+        id: { type: string, format: uuid }
+        publicacionId: { type: string, format: uuid }
+        publicacionTitulo: { type: string }
+        huespedNombre: { type: string }
+        fechaLlegada: { type: string, format: date }
+        fechaSalida: { type: string, format: date }
+        numeroHuespedes: { type: integer }
+        estado: { $ref: '#/components/schemas/EstadoReserva' }
+        total: { type: number }
+        creadaEn: { type: string, format: date-time }
+        motivoEstado: { type: string, nullable: true }
+    PrevisualizacionCancelacion:
+      type: object
+      description: PROPUESTA. Lo calcula el backend aplicando la política; el frontend solo lo muestra.
+      properties:
+        cancelable: { type: boolean }
+        horasHastaLlegada: { type: integer }
+        politicaNombre: { type: string }
+        porcentajeDevolucion: { type: number }
+        totalPagado: { type: number }
+        montoDevolucion: { type: number }
+        montoRetenido: { type: number }
+        moneda: { type: string, example: COP }
+    CancelacionRequest:
+      type: object
+      description: PROPUESTA.
+      properties:
+        motivo: { type: string, maxLength: 500 }
+    ResultadoCancelacion:
+      type: object
+      description: PROPUESTA.
+      properties:
+        reservaId: { type: string, format: uuid }
+        estadoReserva: { $ref: '#/components/schemas/EstadoReserva' }
+        estadoPago: { $ref: '#/components/schemas/EstadoPago' }
+        montoDevolucion: { type: number }
+        moneda: { type: string, example: COP }
+        canceladaEn: { type: string, format: date-time }
+    ResenaRequest:
+      type: object
+      description: PROPUESTA.
+      required: [calificacion]
+      properties:
+        calificacion: { type: integer, minimum: 1, maximum: 5 }
+        comentario: { type: string, maxLength: 1000 }
+    Resena:
+      type: object
+      description: PROPUESTA.
+      properties:
+        id: { type: string, format: uuid }
+        alojamientoId: { type: string, format: uuid }
+        autorNombre: { type: string, description: Nombre del huésped; no se expone su correo. }
+        calificacion: { type: integer, minimum: 1, maximum: 5 }
+        comentario: { type: string, nullable: true }
+        publicadaEn: { type: string, format: date-time }
+    PaginaResenas:
+      type: object
+      description: PROPUESTA.
+      properties:
+        contenido: { type: array, items: { $ref: '#/components/schemas/Resena' } }
+        pagina: { type: integer }
+        tamano: { type: integer }
+        total: { type: integer }
+        totalPaginas: { type: integer }
+        calificacionPromedio: { type: number, nullable: true, description: Nulo si no hay reseñas. }
     PeriodoRequest:
       type: object
       required: [fechaInicio, fechaFin]

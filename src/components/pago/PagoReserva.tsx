@@ -34,7 +34,7 @@ interface Respuesta {
   resultado: ResultadoApi<Reserva>
 }
 
-// Carga la reserva y, si se puede pagar, muestra el resumen y el pago.
+// Pago de la reserva
 function PagoReserva({ reservaId }: PagoReservaProps) {
   const [intento, setIntento] = useState(0)
   const [respuesta, setRespuesta] = useState<Respuesta | null>(null)
@@ -105,7 +105,7 @@ function PagoReserva({ reservaId }: PagoReservaProps) {
   return (
     <div className="pago">
       {cabecera}
-      {/* key: el estado del pago es de esta reserva. */}
+      {/* Pago */}
       <PantallaPago key={resultado.datos.id} reserva={resultado.datos} />
     </div>
   )
@@ -123,12 +123,11 @@ function PantallaPago({ reserva }: PantallaPagoProps) {
   const total = reserva.cotizacion?.total
   const moneda = reserva.cotizacion?.moneda
 
-  // El resumen enseña el estado en que quedó la reserva tras el intento.
+  // Resumen
   let estadoMostrado = reserva.estado
   if (estado.fase === 'rechazado') estadoMostrado = 'PAGO_FALLIDO'
   if (estado.fase === 'incierto' && estado.resultado) estadoMostrado = estado.resultado.estadoReserva
-  // Un 202 de una visita anterior que la conciliación ya resolvió: manda el
-  // estado actual de la reserva.
+  // Pago incierto resuelto
   const inciertoResuelto =
     estado.fase === 'incierto' && estado.resultado === null && reserva.estado !== 'PENDIENTE_PAGO'
 
@@ -138,7 +137,7 @@ function PantallaPago({ reserva }: PantallaPagoProps) {
   } else if (estado.fase !== 'lista' && !inciertoResuelto) {
     accion = <DesenlacePago reserva={reserva} estado={estado} onReintentar={disparar} />
   } else if (reserva.estado !== 'PENDIENTE_PAGO') {
-    // El backend respondería 409: se explica sin ofrecer pagar.
+    // Reserva no pagable
     accion = (
       <section className="desenlace-pago desenlace-pago--aviso" aria-labelledby="pago-no-disponible">
         <h2 className="desenlace-pago__titulo" id="pago-no-disponible">

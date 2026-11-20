@@ -2,7 +2,7 @@ main.inicio {
   padding: 0;
 }
 
-/* ---------- Portada: la foto manda, a todo el ancho ---------- */
+/* ---------- Portada ---------- */
 
 .inicio__portada {
   position: relative;
@@ -23,8 +23,7 @@ main.inicio {
   object-fit: cover;
 }
 
-/* Velo solo bajo el texto (82 % o más hasta la mitad): más de 9:1 con el
-   blanco sobre cualquier zona de la foto. La parte alta queda limpia. */
+/* Velo de la foto */
 .inicio__portada::after {
   content: '';
   position: absolute;
@@ -65,7 +64,7 @@ main.inicio {
   line-height: var(--linea-entrada);
 }
 
-/* ---------- Accesos: disciplinados bajo la foto ---------- */
+/* ---------- Accesos ---------- */
 
 .inicio__contenido {
   max-width: 1440px;

@@ -5,7 +5,7 @@ export type TonoEstado = 'neutro' | 'marca' | 'exito' | 'error'
 interface PresentacionEstado {
   etiqueta: string
   tono: TonoEstado
-  // Qué significa para el anfitrión, en una frase.
+  // Descripción
   descripcion: string
 }
 
@@ -42,20 +42,20 @@ export const PRESENTACION_ESTADO: Record<
   },
 }
 
-// Según el contrato, PUT solo se acepta en BORRADOR, ACTIVA o PAUSADA.
+// Estados editables
 const EDITABLES: readonly EstadoPublicacion[] = [
   'BORRADOR',
   'ACTIVA',
   'PAUSADA',
 ]
 
-// Una publicación nueva (sin estado todavía) se puede editar.
+// Publicación nueva
 export function sePuedeEditar(estado: EstadoPublicacion | undefined): boolean {
   return estado === undefined || EDITABLES.includes(estado)
 }
 
 export function presentacionDe(estado: EstadoPublicacion): PresentacionEstado {
-  // El backend podría añadir estados: se muestran tal cual, sin romper.
+  // Estado desconocido
   return (
     PRESENTACION_ESTADO[estado] ?? {
       etiqueta: estado,

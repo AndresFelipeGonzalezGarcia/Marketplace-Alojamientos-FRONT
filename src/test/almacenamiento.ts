@@ -1,6 +1,4 @@
-// Node 25 expone un `localStorage` propio que, sin `--localstorage-file`,
-// es un objeto vacío y tapa al de jsdom. En ese caso se instala un Storage
-// en memoria con la misma interfaz.
+// localStorage en memoria
 class AlmacenamientoEnMemoria implements Storage {
   private datos = new Map<string, string>()
 

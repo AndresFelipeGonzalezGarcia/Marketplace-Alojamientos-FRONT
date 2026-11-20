@@ -5,8 +5,7 @@ import { PRESENTACION_RESERVA } from './estadoReserva'
 import { rutaReserva } from './formatoReserva'
 import InsigniaReserva from './InsigniaReserva'
 
-// Se llega aquí justo después de reservar o de pagar: se celebra y se
-// explica qué sigue.
+// Aviso de reserva
 export type AvisoReserva = 'creada' | 'pagada'
 
 interface EstadoReservaPanelProps {
@@ -48,14 +47,14 @@ function mensajeDe(reserva: Reserva, aviso: AvisoReserva | null): Mensaje {
   }
 }
 
-// El estado, bien visible, con lo que el huésped puede hacer a continuación.
+// Estado de la reserva
 function EstadoReservaPanel({ reserva, aviso }: EstadoReservaPanelProps) {
   const titulo = useRef<HTMLHeadingElement>(null)
   const idTitulo = useId()
   const { tono } = PRESENTACION_RESERVA[reserva.estado]
   const { titulo: textoTitulo, texto } = mensajeDe(reserva, aviso)
 
-  // Con un aviso, el foco va al desenlace para que se lea primero.
+  // Foco en el aviso
   useEffect(() => {
     if (aviso) titulo.current?.focus()
   }, [aviso])

@@ -73,7 +73,7 @@ describe('detalle de la reserva', () => {
     expect(desglose.getByText('Tarifa de servicio (8,5 %)')).toBeInTheDocument()
     expect(desglose.getByText(/853\.750/)).toBeInTheDocument()
     expect(screen.getByText(RESERVA.id)).toBeInTheDocument()
-    // Confirmada: nada que pagar.
+    // Reserva confirmada
     expect(screen.queryByRole('link', { name: 'Pagar ahora' })).not.toBeInTheDocument()
   })
 

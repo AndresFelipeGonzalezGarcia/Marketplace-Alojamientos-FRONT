@@ -3,12 +3,12 @@ import { PRESENTACION_RESERVA } from './estadoReserva'
 import IconoEstado from './IconoEstado'
 
 interface FiltroEstadoProps {
-  // null: todas.
+  // Estado
   seleccionado: EstadoReserva | null
   onCambiar: (estado: EstadoReserva | null) => void
 }
 
-// Radios con forma de chip: se recorren con las flechas del teclado.
+// Filtro de estado
 function FiltroEstado({ seleccionado, onCambiar }: FiltroEstadoProps) {
   return (
     <fieldset className="filtro-estado">

@@ -81,7 +81,7 @@ describe('LoginPage', () => {
         }),
       })
       expect(obtenerSesion()).toEqual(sesion)
-      // Se guarda lo que define la capa de sesión, sin `tipo`.
+      // Sesión guardada
       expect(JSON.parse(localStorage.getItem(CLAVE_SESION) ?? '{}')).toEqual(
         sesion,
       )
@@ -139,7 +139,23 @@ describe('LoginPage', () => {
     })
 
     it('tras una sesión expirada vuelve a donde estaba', async () => {
-      responderLogin('ADMINISTRADOR')
+      const sesion = crearSesionDePrueba('ADMINISTRADOR', {
+        usuario: { nombre: 'Laura Ríos' },
+      })
+      // Respuestas por URL
+      const cuerpos: Record<string, unknown> = {
+        [`${API}/api/auth/login`]: { ...sesion, tipo: 'Bearer' },
+        [`${API}/api/admin/publicaciones`]: [],
+        [`${API}/api/admin/configuracion/tarifa-servicio`]: { porcentaje: 8.5 },
+      }
+      fetchSimulado.mockImplementation(async (url) => {
+        const cuerpo = cuerpos[String(url)]
+        if (cuerpo === undefined) throw new Error(`Petición inesperada: ${String(url)}`)
+        return new Response(JSON.stringify(cuerpo), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      })
       const { router, usuario } = renderizarApp({
         pathname: '/login',
         state: { desde: '/admin', motivo: 'expirada' },
@@ -300,7 +316,7 @@ describe('LoginPage', () => {
       },
     )
 
-    // Cada rol aterriza en su pantalla principal (el inicio si aún no existe).
+    // Pantalla principal por rol
     it.each<[RolUsuario, string, string, string]>([
       ['ANFITRION', 'Entrar como anfitrión de prueba', 'Anfitrión de prueba', '/'],
       ['HUESPED', 'Entrar como huésped de prueba', 'Huésped de prueba', '/'],
@@ -335,8 +351,7 @@ describe('LoginPage', () => {
         const vence = Date.parse(sesion?.expiraEn ?? '') - antes
         expect(vence).toBeGreaterThan(59 * 60 * 1000)
         expect(vence).toBeLessThanOrEqual(60 * 60 * 1000 + 1000)
-        // La sesión no pasa por el backend; la pantalla de destino sí
-        // puede consultar sus datos (la bandeja del administrador).
+        // Acceso de prueba
         expect(fetchSimulado).not.toHaveBeenCalledWith(
           expect.stringContaining('/api/auth/'),
           expect.anything(),
@@ -345,7 +360,7 @@ describe('LoginPage', () => {
         expect(
           within(screen.getByRole('banner')).getByText(nombre),
         ).toBeInTheDocument()
-        // El aviso sigue visible mientras dura el modo.
+        // Aviso de modo demo
         expect(
           screen.getByText('Modo de desarrollo: sesión simulada'),
         ).toBeInTheDocument()

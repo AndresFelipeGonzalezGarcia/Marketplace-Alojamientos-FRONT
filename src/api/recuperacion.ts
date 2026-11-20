@@ -1,7 +1,6 @@
 import { solicitarApi, type ResultadoApi } from './cliente'
 
-// RecuperacionResponse del contrato. `enlaceSimulado` solo llega cuando el
-// backend corre con el perfil de desarrollo.
+// Respuesta de recuperación
 export interface RespuestaRecuperacion {
   mensaje?: string
   enlaceSimulado?: string
@@ -12,7 +11,7 @@ export interface DatosRestablecimiento {
   nuevaContrasena: string
 }
 
-// Siempre responde 202, exista o no la cuenta.
+// Solicitar recuperación
 export function solicitarRecuperacion(
   correo: string,
 ): Promise<ResultadoApi<RespuestaRecuperacion | undefined>> {
@@ -24,7 +23,7 @@ export function solicitarRecuperacion(
   })
 }
 
-// Responde 204 sin cuerpo; luego el enlace deja de servir.
+// Restablecer contraseña
 export function restablecerContrasena(
   datos: DatosRestablecimiento,
 ): Promise<ResultadoApi<void>> {

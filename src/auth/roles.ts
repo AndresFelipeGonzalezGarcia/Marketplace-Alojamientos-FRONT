@@ -6,11 +6,11 @@ export const ETIQUETA_ROL: Record<RolUsuario, string> = {
   ADMINISTRADOR: 'Administrador',
 }
 
-// Estado que RutaProtegida deja en la navegación hacia /login.
+// Estado de navegación al login
 export interface EstadoRedireccionLogin {
   desde?: string
   motivo?: MotivoCierre
-  // Aviso que deja /restablecer-contrasena al terminar bien.
+  // Aviso de contraseña restablecida
   aviso?: 'contrasena-restablecida'
 }
 

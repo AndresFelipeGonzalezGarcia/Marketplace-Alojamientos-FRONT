@@ -10,8 +10,7 @@ interface TarjetaReservaProps {
   reserva: ReservaResumen
 }
 
-// Toda la tarjeta lleva al detalle. «Pagar» es un segundo enlace que queda
-// por encima, así que se puede pulsar sin abrir el detalle.
+// Tarjeta de reserva
 function TarjetaReserva({ reserva }: TarjetaReservaProps) {
   const {
     id,

@@ -1,7 +1,4 @@
-// Único punto de lectura y escritura de la sesión.
-// Se guarda en localStorage y se mantiene una copia en memoria para que,
-// si el almacenamiento falla o está bloqueado, la sesión dure al menos
-// lo que dure la pestaña.
+// Sesión
 
 export type RolUsuario = 'HUESPED' | 'ANFITRION' | 'ADMINISTRADOR'
 
@@ -18,19 +15,19 @@ export interface UsuarioSesion {
   rol: RolUsuario
 }
 
-// Lo que devuelve POST /api/auth/login (sin `tipo`, que siempre es Bearer).
+// Sesión
 export interface Sesion {
   token: string
   expiraEn: string
   usuario: UsuarioSesion
 }
 
-// Por qué terminó la última sesión, para que el login pueda explicarlo.
+// Motivo de cierre
 export type MotivoCierre = 'manual' | 'expirada'
 
 export const CLAVE_SESION = 'marketplace.sesion'
 
-// setTimeout no admite esperas mayores a ~24,8 días.
+// Espera máxima de setTimeout
 const ESPERA_MAXIMA_MS = 2_147_483_647
 
 type Oyente = () => void
@@ -88,7 +85,7 @@ function escribirAlmacenamiento(sesion: Sesion | null) {
       localStorage.removeItem(CLAVE_SESION)
     }
   } catch {
-    // Almacenamiento bloqueado o lleno: queda la copia en memoria.
+    // Almacenamiento no disponible
   }
 }
 
@@ -98,8 +95,7 @@ function avisar() {
   }
 }
 
-// Programa el cierre automático cuando llegue `expiraEn`, para que la
-// interfaz reaccione aunque nadie haga una petición.
+// Vencimiento de la sesión
 function programarVencimiento() {
   clearTimeout(temporizador)
   temporizador = undefined
@@ -152,12 +148,11 @@ export function guardarSesion(sesion: Sesion) {
   avisar()
 }
 
-// Devuelve la sesión vigente o null. Conserva la identidad del objeto
-// mientras no cambie, como exige useSyncExternalStore.
+// Sesión vigente
 export function obtenerSesion(): Sesion | null {
   cargar()
   if (enMemoria && estaVencida(enMemoria)) {
-    // Se informa en el próximo turno para no avisar en medio de un render.
+    // Aviso de vencimiento
     queueMicrotask(() => {
       if (enMemoria && estaVencida(enMemoria)) cerrar('expirada')
     })
@@ -183,14 +178,12 @@ export function obtenerMotivoUltimoCierre(): MotivoCierre | null {
   return ultimoCierre
 }
 
-// Cierre pedido por la persona.
+// Cierre manual
 export function limpiarSesion() {
   cerrar('manual')
 }
 
-// El servidor rechazó el token (401 NO_AUTENTICADO). Solo se cierra si el
-// token rechazado es el actual: una respuesta tardía de una sesión anterior
-// no debe tumbar una sesión nueva.
+// Token rechazado
 export function invalidarSesion(tokenRechazado: string) {
   if (obtenerTokenSesion() === tokenRechazado) {
     cerrar('expirada')
@@ -204,7 +197,7 @@ export function suscribirSesion(oyente: Oyente): () => void {
   }
 }
 
-// Mantiene sincronizadas varias pestañas: si otra entra o sale, esta también.
+// Sincronización entre pestañas
 if (typeof window !== 'undefined') {
   window.addEventListener('storage', (evento) => {
     if (evento.key !== CLAVE_SESION && evento.key !== null) return

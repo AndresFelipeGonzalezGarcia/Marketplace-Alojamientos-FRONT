@@ -6,7 +6,7 @@ import { mesDe, primerDia, ultimoDia } from './fechasCalendario'
 import type { Disponibilidad } from './seleccionEstadia'
 
 interface Carga {
-  // Con qué intento se pidió: un error de un intento anterior se vuelve a pedir.
+  // Intento
   intento: number
   resultado: ResultadoApi<DiaCalendario[]>
 }
@@ -14,15 +14,13 @@ interface Carga {
 export type EstadoMes =
   | { fase: 'cargando' }
   | { fase: 'listo' }
-  // 400: el rango pedido no es válido; reintentar no lo arregla.
+  // Rango inválido
   | { fase: 'rango_invalido'; error: ErrorApi }
   | { fase: 'error'; error: ErrorApi }
 
 const CODIGOS_RANGO = new Set(['FECHAS_INVALIDAS', 'RANGO_EXCESIVO', 'SOLICITUD_INVALIDA'])
 
-// Carga por meses: pide de una vez los meses que falten de `meses` (que debe
-// ser una lista contigua y ordenada, de no más de 365 días) y guarda lo que
-// ya llegó, para que volver a un mes no lo pida otra vez.
+// Calendario
 export function useCalendario(alojamientoId: string, meses: string[]) {
   const [cargas, setCargas] = useState<Record<string, Carga>>({})
   const [intento, setIntento] = useState(0)
@@ -46,7 +44,7 @@ export function useCalendario(alojamientoId: string, meses: string[]) {
     if (pendientes.length === 0) return
 
     pendientes.forEach((mes) => enCurso.current.add(mes))
-    // Los meses de la lista son contiguos: un solo rango los cubre todos.
+    // Rango de meses
     const desde = primerDia(pendientes[0])
     const hasta = ultimoDia(pendientes[pendientes.length - 1])
     obtenerCalendario(alojamientoId, desde, hasta).then((resultado) => {

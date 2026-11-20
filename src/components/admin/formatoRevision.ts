@@ -7,8 +7,7 @@ export {
   textoCapacidad,
 } from '../formato/formato'
 
-// Las fechas de envío se muestran en la hora de Colombia, como el backend.
-// «12 de nov de 2026, 10:00 a. m.»: sin ambigüedad entre día y mes.
+// Fecha de envío
 const FECHA_HORA = new Intl.DateTimeFormat('es-CO', {
   day: 'numeric',
   month: 'short',
@@ -25,7 +24,7 @@ export function formatearFechaHora(instante: string) {
   return Number.isNaN(fecha.getTime()) ? 'Fecha desconocida' : FECHA_HORA.format(fecha)
 }
 
-// «hace 3 días», «hace 2 horas»: ayuda a ver qué lleva más tiempo esperando.
+// Tiempo transcurrido
 export function formatearHaceCuanto(instante: string, ahora = Date.now()) {
   const diferencia = Date.parse(instante) - ahora
   if (Number.isNaN(diferencia)) return ''
@@ -42,7 +41,7 @@ export function etiquetaModoReserva(modo: ModoReserva) {
     : 'Reserva inmediata'
 }
 
-// Se valida el texto sin espacios de los extremos, que es lo que se envía.
+// Validar motivo
 export function validarMotivo(motivo: string): string | null {
   const largo = motivo.trim().length
   if (largo === 0) return 'Escribe el motivo del rechazo.'

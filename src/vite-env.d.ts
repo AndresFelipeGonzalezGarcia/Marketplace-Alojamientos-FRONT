@@ -2,7 +2,7 @@
 
 interface ImportMetaEnv {
   readonly VITE_API_URL?: string
-  // Solo para desarrollo: habilita las sesiones simuladas del login.
+  // Sesión de prueba
   readonly VITE_SESION_DEMO?: string
 }
 

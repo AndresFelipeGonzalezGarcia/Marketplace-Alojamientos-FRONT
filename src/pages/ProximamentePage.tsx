@@ -6,7 +6,7 @@ interface ProximamentePageProps {
   mensaje: string
 }
 
-// Marcador de posición para rutas cuya pantalla llega en otra historia.
+// Próximamente
 function ProximamentePage({ titulo, mensaje }: ProximamentePageProps) {
   return (
     <main className="publicacion-pagina">

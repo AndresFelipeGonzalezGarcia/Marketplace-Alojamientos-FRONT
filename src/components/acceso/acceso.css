@@ -1,6 +1,4 @@
-/* Pantallas de acceso (login y registro).
-   La audacia está en un solo sitio: la foto con el eslogan. El formulario
-   es sobrio: superficie blanca elevada, campos claros y un botón sólido. */
+/* Pantallas de acceso */
 
 .acceso {
   display: grid;
@@ -126,7 +124,7 @@ main.acceso {
 
 /* ---------- Campo con etiqueta flotante ---------- */
 
-/* El borde delimita dónde se escribe; el foco lo refuerza con un halo. */
+/* Borde del campo */
 .campo-flotante__caja {
   position: relative;
   background: var(--color-superficie);
@@ -170,7 +168,7 @@ main.acceso {
   line-height: var(--linea-cuerpo);
 }
 
-/* El foco se dibuja en la caja (borde de marca y halo), siempre visible. */
+/* Foco */
 .campo-flotante__control:focus {
   outline: none;
 }
@@ -295,7 +293,7 @@ main.acceso {
   font-weight: var(--peso-etiqueta);
 }
 
-/* Mismo alto que la línea: el icono queda centrado en la primera línea. */
+/* Icono */
 .campo-flotante__error-icono {
   flex: none;
   width: 16px;
@@ -339,7 +337,7 @@ main.acceso {
   cursor: progress;
 }
 
-/* Único movimiento continuo: confirma que el envío está en curso. */
+/* Animación de carga */
 .boton-acceso__indicador {
   width: 18px;
   height: 18px;
@@ -449,10 +447,9 @@ main.acceso {
   line-height: var(--linea-pequeno);
 }
 
-/* ---------- Panel de marca: la foto manda ---------- */
+/* ---------- Panel de marca ---------- */
 
-/* Fijo junto al formulario: en el registro, que es largo, la foto y el
-   eslogan siguen a la vista mientras se baja por los campos. */
+/* Panel fijo */
 .panel-marca {
   position: sticky;
   top: var(--alto-encabezado);
@@ -469,9 +466,7 @@ main.acceso {
   background: url('../../../img/inicio.jpg') 30% center / cover no-repeat;
 }
 
-/* Velo solo donde va el texto: la mitad superior de la foto queda limpia.
-   Hasta el 45 % el velo no baja del 82 %, lo que garantiza más de 9:1 con
-   el blanco y más de 4.4:1 con el acento sobre cualquier zona de la foto. */
+/* Velo de la foto */
 .panel-marca::before {
   content: '';
   position: absolute;
@@ -514,7 +509,7 @@ main.acceso {
     min-height: 0;
   }
 
-  /* En móvil la foto se apila arriba, a todo el ancho. */
+  /* Móvil */
   .panel-marca {
     position: relative;
     top: auto;
@@ -533,7 +528,7 @@ main.acceso {
     padding: 0 var(--espacio-5) var(--espacio-7);
   }
 
-  /* La tarjeta sube sobre la foto para unir ambas partes. */
+  /* Tarjeta sobre la foto */
   .acceso__tarjeta {
     position: relative;
     z-index: 1;
@@ -557,7 +552,7 @@ main.acceso {
 
 /* ---------- Recuperación de contraseña ---------- */
 
-/* «¿Olvidaste tu contraseña?» queda pegado al campo de contraseña. */
+/* Enlace de recuperación */
 .acceso__olvido {
   margin: calc(-1 * var(--espacio-2)) 0 0;
   font-size: var(--texto-etiqueta);
@@ -570,7 +565,7 @@ main.acceso {
   gap: var(--espacio-3);
 }
 
-/* Enlace simulado: solo aparece con el backend en perfil de desarrollo. */
+/* Enlace simulado */
 .acceso-dev {
   display: grid;
   gap: var(--espacio-2);
@@ -602,7 +597,7 @@ main.acceso {
   margin-top: var(--espacio-5);
 }
 
-/* El botón secundario también se usa como enlace. */
+/* Botón secundario como enlace */
 a.boton-acceso-secundario {
   text-decoration: none;
 }

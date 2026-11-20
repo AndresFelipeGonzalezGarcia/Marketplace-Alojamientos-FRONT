@@ -77,7 +77,7 @@ function FormularioRestablecimiento({
   }
 
   function mostrarErrorApi(error: ErrorApi) {
-    // Un token rechazado por formato es, para la persona, un enlace que no sirve.
+    // Token inválido
     if (error.codigo === 'ENLACE_INVALIDO' || error.erroresPorCampo.token) {
       setEnlaceInvalido(
         error.codigo === 'ENLACE_INVALIDO'

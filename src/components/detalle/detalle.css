@@ -1,6 +1,4 @@
-/* Detalle público del alojamiento: donde el producto se vende. La galería
-   ocupa el ancho completo arriba; debajo, una columna de lectura amplia y el
-   panel de precio fijo al lado. Todo usa los tokens de index.css. */
+/* Detalle público */
 
 main.detalle-pagina {
   padding: 0;
@@ -364,7 +362,7 @@ main.detalle-pagina {
   border: 1px solid var(--color-borde-suave);
   border-radius: var(--radio-mediano);
   box-shadow: var(--elevacion-elevada);
-  /* Fijo, pero sin salirse de la ventana cuando el desglose crece. */
+  /* Panel fijo */
   max-height: calc(100vh - var(--alto-encabezado, 64px) - var(--espacio-7));
   overflow-y: auto;
 }
@@ -455,7 +453,7 @@ main.detalle-pagina {
     gap: var(--espacio-5);
   }
 
-  /* Sin lateral, el panel deja de ser fijo y va después de la información. */
+  /* Panel en móvil */
   .panel-reserva {
     position: static;
     max-height: none;
@@ -468,7 +466,7 @@ main.detalle-pagina {
     padding: var(--espacio-4) var(--espacio-4) var(--espacio-7);
   }
 
-  /* La galería llega a los bordes de la pantalla. */
+  /* Galería en móvil */
   .galeria__escenario {
     width: auto;
     margin: 0 calc(-1 * var(--espacio-4));
@@ -625,7 +623,7 @@ main.detalle-pagina {
   cursor: default;
 }
 
-/* Ocupado: tachado sobre un fondo rayado, se distingue sin depender del color. */
+/* Día ocupado */
 .dia-calendario--ocupado {
   color: var(--color-texto-secundario);
   background: repeating-linear-gradient(
@@ -643,7 +641,7 @@ main.detalle-pagina {
   font-weight: var(--peso-cuerpo);
 }
 
-/* Con la llegada puesta, lo que ya no se puede elegir se apaga. */
+/* Día no disponible */
 .dia-calendario--inhabilitado:not(.dia-calendario--ocupado, .dia-calendario--pasado) {
   color: var(--color-texto-secundario);
   font-weight: var(--peso-cuerpo);
@@ -669,7 +667,7 @@ main.detalle-pagina {
   font-weight: var(--peso-fuerte);
 }
 
-/* La salida no se ocupa: contorno discontinuo, sin relleno. */
+/* Día de salida */
 .dia-calendario--salida {
   color: var(--color-marca);
   background: var(--color-superficie);
@@ -962,7 +960,7 @@ main.detalle-pagina {
   gap: var(--espacio-3);
 }
 
-/* Avisos dentro de la cotización */
+/* Avisos */
 
 .cotizacion__aviso,
 .acceso-cotizacion {
@@ -1016,7 +1014,7 @@ main.detalle-pagina {
   width: 100%;
 }
 
-/* ---------- Confirmación de la reserva (diálogo modal) ---------- */
+/* ---------- Confirmación de la reserva ---------- */
 
 .confirmacion-reserva {
   width: min(480px, calc(100vw - 2 * var(--espacio-4)));

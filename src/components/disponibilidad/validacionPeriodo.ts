@@ -2,7 +2,7 @@ import type { DatosPeriodo } from '../../api/periodos'
 
 export type ErroresPeriodo = Partial<Record<keyof DatosPeriodo, string>>
 
-// El backend evalúa "pasado" en la zona America/Bogota.
+// Zona horaria
 export function hoyEnBogota(ahora = new Date()) {
   return new Intl.DateTimeFormat('en-CA', {
     timeZone: 'America/Bogota',

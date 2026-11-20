@@ -1,5 +1,4 @@
-// Silueta del detalle mientras llega. Es decorativa: la carga se anuncia
-// aparte con texto.
+// Esqueleto del detalle
 function EsqueletoDetalle() {
   return (
     <div className="detalle-esqueleto">

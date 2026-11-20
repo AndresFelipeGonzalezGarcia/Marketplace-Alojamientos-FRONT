@@ -5,14 +5,14 @@ import type { ErrorApi } from '../../api/errores'
 import type { Estadia } from './estadia'
 
 export type EstadoCotizacion =
-  // Faltan fechas o no hay sesión de huésped: no se pide nada.
+  // Sin cotización
   | { fase: 'inactiva' }
   | { fase: 'cargando' }
   | { fase: 'lista'; cotizacion: Cotizacion }
   | { fase: 'error'; error: ErrorApi }
 
 interface Respuesta {
-  // Qué estadía (y qué intento) contestó: si no es la actual, se carga.
+  // Resultado de la cotización
   solicitud: string
   resultado: ResultadoApi<Cotizacion>
 }
@@ -22,12 +22,11 @@ interface OpcionesCotizacion {
   estadia: Estadia | null
   huespedes: number
   activa: boolean
-  // Las fechas se ocuparon mientras se miraba (409 PERIODO_NO_DISPONIBLE).
+  // Fechas ocupadas
   onPeriodoNoDisponible: (estadia: Estadia) => void
 }
 
-// Pide la cotización cada vez que cambian las fechas o los huéspedes. Una
-// respuesta que llega tarde (de una elección anterior) se descarta.
+// Cotización
 export function useCotizacion({
   alojamientoId,
   estadia,

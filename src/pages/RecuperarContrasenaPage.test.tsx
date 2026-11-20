@@ -69,7 +69,7 @@ describe('RecuperarContrasenaPage', () => {
         body: JSON.stringify({ correo: 'laura@correo.com' }),
       },
     )
-    // Sin perfil de desarrollo no aparece ningún enlace simulado.
+    // Sin enlace simulado
     expect(
       screen.queryByText('Solo en desarrollo: correo simulado'),
     ).not.toBeInTheDocument()

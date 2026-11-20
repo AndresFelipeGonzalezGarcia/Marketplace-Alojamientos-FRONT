@@ -8,7 +8,7 @@ interface ResumenEstadiaProps {
   onLimpiar: () => void
 }
 
-// Lo que va quedando elegido, en palabras. Se anuncia al cambiar.
+// Resumen de la estadía
 function ResumenEstadia({
   estadia,
   llegadaPendiente,

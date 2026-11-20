@@ -1,10 +1,10 @@
 import { obtenerTokenSesion } from '../auth/sesion'
 import { solicitarApi } from './cliente'
 
-// PROPUESTA en docs/contrato-api-marketplace.yaml. Rol ADMINISTRADOR.
+// Tarifa de servicio
 const RUTA_TARIFA = '/api/admin/configuracion/tarifa-servicio'
 
-// TarifaServicio del contrato: porcentaje sobre el subtotal (p. ej. 8.5).
+// Tarifa de servicio
 export interface TarifaServicio {
   porcentaje: number
 }

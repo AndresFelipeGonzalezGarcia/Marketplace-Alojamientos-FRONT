@@ -6,12 +6,12 @@ import { presentacionDe } from './estadoPublicacion'
 interface AvisoEstadoProps {
   estado: EstadoPublicacion
   motivo?: string | null
-  // true justo después de enviarla: se anuncia como confirmación.
+  // Recién enviada
   recienEnviada: boolean
   ref?: Ref<HTMLDivElement>
 }
 
-// Explica por qué la publicación está en solo lectura.
+// Aviso de estado
 function AvisoEstado({ estado, motivo, recienEnviada, ref }: AvisoEstadoProps) {
   const { tono, descripcion } = presentacionDe(estado)
   return (
@@ -26,7 +26,7 @@ function AvisoEstado({ estado, motivo, recienEnviada, ref }: AvisoEstadoProps) {
         className="aviso-estado__icono"
       />
       <div>
-        {/* El nombre del estado ya está en la insignia del encabezado. */}
+        {/* Descripción del estado */}
         {recienEnviada && (
           <p className="aviso-estado__titulo">Enviada a revisión</p>
         )}

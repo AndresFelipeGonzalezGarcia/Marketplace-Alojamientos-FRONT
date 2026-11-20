@@ -23,8 +23,7 @@ type Modo = 'inicio' | 'aprobar' | 'rechazar'
 
 const ID_MOTIVO = 'revision-motivo'
 
-// Panel lateral con las dos decisiones posibles sobre una publicación
-// pendiente. Mientras se envía una, ambos botones quedan bloqueados.
+// Panel de decisión
 function PanelDecision({
   publicacionId,
   titulo,
@@ -182,7 +181,7 @@ function PanelDecision({
               aria-describedby={`${ID_MOTIVO}-aviso ${ID_MOTIVO}-conteo${errorMotivo ? ` ${ID_MOTIVO}-error` : ''}`}
               onChange={(evento) => {
                 setMotivo(evento.target.value)
-                // El error se corrige mientras se escribe, sin esperar a enviar.
+                // Validación del motivo
                 if (errorMotivo) setErrorMotivo(validarMotivo(evento.target.value))
               }}
             />

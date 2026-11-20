@@ -2,7 +2,7 @@ import { useLocation, useParams } from 'react-router'
 import DetalleAlojamiento from '../components/detalle/DetalleAlojamiento'
 import { rutaVolverBusqueda } from '../components/detalle/volverBusqueda'
 
-// Detalle público de un alojamiento: funciona con o sin sesión.
+// Detalle de alojamiento
 function AlojamientoDetallePage() {
   const { id = '' } = useParams()
   const location = useLocation()

@@ -96,7 +96,7 @@ const panel = () => within(screen.getByRole('complementary', { name: 'Precio y r
 const dialogo = () => screen.getByRole('dialog')
 const claves = () => reservar.mock.calls.map(([, clave]) => clave)
 
-// Abre el detalle con la cotización lista y pulsa «Reservar».
+// Abrir confirmación
 async function abrirConfirmacion(ruta = CON_FECHAS, boton = 'Reservar') {
   const app = renderizarApp(ruta)
   await screen.findByRole('heading', { level: 1, name: ALOJAMIENTO.titulo })
@@ -145,7 +145,7 @@ describe('Reservar', () => {
         ['Huéspedes', '2 huéspedes'],
         ['Total', '$ 1.137.701'],
       ])
-      // Abrir la confirmación no reserva nada.
+      // Confirmación abierta
       expect(reservar).not.toHaveBeenCalled()
     })
 
@@ -249,7 +249,7 @@ describe('Reservar', () => {
       await usuario.click(within(dialogo()).getByRole('button', { name: 'Confirmar y reservar' }))
       expect(await within(dialogo()).findByRole('alert')).toHaveTextContent('No pudimos conectar con el servidor')
 
-      // Se cierra y se vuelve a abrir: sigue siendo la misma reserva.
+      // Misma reserva
       await usuario.click(within(dialogo()).getByRole('button', { name: 'Volver' }))
       await usuario.click(panel().getByRole('button', { name: 'Reservar' }))
       await usuario.click(within(dialogo()).getByRole('button', { name: 'Confirmar y reservar' }))
@@ -320,7 +320,7 @@ describe('Reservar', () => {
       expect(aviso).toHaveTextContent('Estas fechas ya no están libres')
       expect(aviso).toHaveTextContent('Elige otras fechas en el calendario.')
       expect(panel().getByRole('button', { name: 'Reservar' })).toBeDisabled()
-      // El calendario vuelve a cargar lo ocupado y recibe el foco.
+      // Recarga del calendario
       await vi.waitFor(() => expect(calendario.mock.calls.length).toBeGreaterThan(cargasCalendario))
       expect(screen.getByRole('heading', { level: 2, name: 'Disponibilidad' })).toHaveFocus()
     })

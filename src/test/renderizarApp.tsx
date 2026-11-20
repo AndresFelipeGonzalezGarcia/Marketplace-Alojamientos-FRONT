@@ -7,7 +7,7 @@ import {
 } from 'react-router'
 import { routes } from '../routes'
 
-// Monta la aplicación completa (layout, encabezado y rutas) en una ruta.
+// Renderizar app
 export function renderizarApp(ruta: InitialEntry) {
   const router = createMemoryRouter(routes, { initialEntries: [ruta] })
   const usuario = userEvent.setup()

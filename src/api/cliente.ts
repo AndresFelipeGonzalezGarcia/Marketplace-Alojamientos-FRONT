@@ -12,7 +12,7 @@ export type ResultadoApi<T> =
 interface SolicitudApi {
   ruta: string
   metodo: 'GET' | 'POST' | 'PUT' | 'DELETE'
-  // Uno o varios: crear una reserva acepta 201 (nueva) y 200 (ya existía).
+  // Estados de éxito
   estadoExito: number | readonly number[]
   cuerpo?: unknown
   token?: string | null
@@ -51,8 +51,7 @@ export async function solicitarApi<T>({
     const exitos = typeof estadoExito === 'number' ? [estadoExito] : estadoExito
     if (!exitos.includes(respuesta.status)) {
       const error = await interpretarRespuestaError(respuesta)
-      // El token caducó o fue rechazado: se cierra la sesión y las rutas
-      // protegidas llevan al login recordando a dónde se iba.
+      // Sesión expirada
       if (
         respuesta.status === 401 &&
         error.codigo === 'NO_AUTENTICADO' &&
@@ -63,7 +62,7 @@ export async function solicitarApi<T>({
       return { estado: 'error', error }
     }
 
-    // 204, o un 2xx sin cuerpo (p. ej. un 202), no trae JSON que leer.
+    // Respuesta sin cuerpo
     const texto = respuesta.status === 204 ? '' : await respuesta.text()
     const datos = (texto ? JSON.parse(texto) : undefined) as T
     return { estado: 'ok', datos }

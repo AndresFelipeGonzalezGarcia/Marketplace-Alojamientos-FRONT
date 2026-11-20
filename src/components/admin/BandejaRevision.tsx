@@ -11,14 +11,14 @@ import { MENSAJE_BLOQUEO } from './errorRevision'
 import FilaRevision from './FilaRevision'
 import './admin.css'
 
-// Lo que deja el detalle al volver tras aprobar o rechazar.
+// Resultado de la revisión
 export interface ResultadoRevision {
   id: string
   titulo: string
   decision: 'aprobada' | 'rechazada'
 }
 
-// Estado de navegación con el que el detalle vuelve a la bandeja.
+// Estado de la bandeja
 export interface EstadoBandeja {
   resultado?: ResultadoRevision
 }
@@ -47,8 +47,7 @@ function BandejaRevision({ resultado }: BandejaRevisionProps) {
     listarPendientes().then((respuesta) => {
       if (!vigente) return
       if (respuesta.estado === 'ok') {
-        // La recién decidida no debe reaparecer aunque el backend tarde
-        // en reflejar el cambio.
+        // Ocultar publicación decidida
         const publicaciones = ordenarPorEnvio(respuesta.datos).filter(
           (publicacion) => publicacion.id !== resultado?.id,
         )

@@ -24,7 +24,7 @@ interface CalendarioDisponibilidadProps {
   alojamientoId: string
 }
 
-// Se ven dos meses a la vez; se puede avanzar hasta un año desde el actual.
+// Meses visibles
 const MESES_VISIBLES = 2
 const MESES_HACIA_ADELANTE = 11
 
@@ -35,9 +35,7 @@ const MOVIMIENTOS: Record<string, number> = {
   ArrowDown: 7,
 }
 
-// Meses que hay que tener cargados: los visibles y el siguiente, y al
-// entrar con fechas, los que cubren la estadía para poder comprobarla.
-// Siempre contiguos y sin pasar de 365 días, lo que admite el contrato.
+// Meses a cargar
 function mesesACargar(mesVisible: string, hastaFecha: string | null) {
   let ultimo = sumarMeses(mesVisible, MESES_VISIBLES)
   if (hastaFecha && mesDe(hastaFecha) > ultimo) ultimo = mesDe(hastaFecha)
@@ -66,7 +64,7 @@ function CalendarioDisponibilidad({ alojamientoId }: CalendarioDisponibilidadPro
   const raiz = useRef<HTMLDivElement>(null)
 
   const meses = Array.from({ length: MESES_VISIBLES }, (_, i) => sumarMeses(mesVisible, i))
-  // Solo si la estadía empieza en lo visible: antes ya se comprobó o se quitó.
+  // Estadía visible
   const ultimaNoche =
     estadia && estadia.llegada >= primerDia(mesVisible) ? sumarDias(estadia.salida, -1) : null
   const { disponible, estadoMes, reintentar } = useCalendario(
@@ -74,14 +72,13 @@ function CalendarioDisponibilidad({ alojamientoId }: CalendarioDisponibilidadPro
     mesesACargar(mesVisible, ultimaNoche),
   )
 
-  // Las fechas de la búsqueda pueden haber dejado de estar libres: si alguna
-  // noche está ocupada se quitan y se avisa.
+  // Fechas ocupadas
   const libres = estadia ? nochesLibres(estadia.llegada, estadia.salida, disponible) : undefined
   useEffect(() => {
     if (estadia && libres === false) descartar(estadia)
   })
 
-  // El teclado mueve el foco entre días; se aplica después de pintar.
+  // Foco del teclado
   useEffect(() => {
     if (!enfocarAlPintar.current) return
     enfocarAlPintar.current = false
@@ -91,7 +88,7 @@ function CalendarioDisponibilidad({ alojamientoId }: CalendarioDisponibilidadPro
   const ultimaVisible = ultimoDia(meses[meses.length - 1])
   const minimoNavegable = primerDia(mesActual)
   const maximoNavegable = ultimoDia(sumarMeses(mesMaximo, MESES_VISIBLES - 1))
-  // Solo un día del calendario entra en el orden de tabulación.
+  // Orden de tabulación
   const focoVisible =
     foco >= primerDia(mesVisible) && foco <= ultimaVisible
       ? foco
@@ -112,8 +109,7 @@ function CalendarioDisponibilidad({ alojamientoId }: CalendarioDisponibilidadPro
       if (fecha === llegadaPendiente) rol = 'llegada'
       const comoSalida = puedeSalir(fecha, llegadaPendiente, disponible)
       soloSalida = comoSalida && libre === false
-      // Antes de la llegada se puede cambiar de llegada; después, solo
-      // salidas que no crucen noches ocupadas.
+      // Selección de fechas
       habilitado =
         comoSalida || (fecha <= llegadaPendiente && puedeLlegar(fecha, hoy, disponible))
     } else {
@@ -136,7 +132,7 @@ function CalendarioDisponibilidad({ alojamientoId }: CalendarioDisponibilidadPro
     }
     if (!puedeLlegar(fecha, hoy, disponible)) return
     setLlegadaPendiente(fecha)
-    // Mientras se elige la salida no hay estadía que cotizar.
+    // Selección incompleta
     if (estadia || fechasDescartadas) limpiar()
   }
 

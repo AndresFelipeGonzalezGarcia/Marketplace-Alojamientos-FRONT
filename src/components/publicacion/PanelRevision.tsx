@@ -4,10 +4,10 @@ interface Requisito {
 }
 
 export interface EstadoEnvio {
-  // Solo una publicación en BORRADOR (o una nueva) se envía a revisión.
+  // Enviable
   disponible: boolean
   enviando: boolean
-  // Si existe, explica por qué todavía no se puede enviar.
+  // Motivo de bloqueo
   impedimento?: string
 }
 

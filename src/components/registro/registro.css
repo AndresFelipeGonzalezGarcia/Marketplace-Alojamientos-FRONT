@@ -1,5 +1,4 @@
-/* Tarjetas de tipo de cuenta. Sin borde en reposo: el borde de marca
-   aparece solo para decir cuál está elegida. */
+/* Tipo de cuenta */
 
 .registro-roles {
   min-width: 0;
@@ -55,7 +54,7 @@
   box-shadow: none;
 }
 
-/* El radio sigue siendo el control real: invisible, pero enfocable. */
+/* Radio */
 .tarjeta-rol__radio {
   position: absolute;
   width: 20px;

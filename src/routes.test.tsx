@@ -137,7 +137,7 @@ describe('routes', () => {
       renderizarApp('/')
 
       expect(
-        screen.getByRole('heading', { name: 'Marketplace de Alojamientos' }),
+        screen.getByRole('heading', { name: 'Bienvenido a tus próximas vacaciones' }),
       ).toBeInTheDocument()
       expect(
         accesos().getByRole('link', { name: 'Registrarme' }),
@@ -257,7 +257,7 @@ describe('routes', () => {
 
     expect(
       await screen.findByRole('heading', {
-        name: 'Marketplace de Alojamientos',
+        name: 'Bienvenido a tus próximas vacaciones',
       }),
     ).toBeInTheDocument()
   })

@@ -1,5 +1,4 @@
-// Porcentaje de la tarifa de servicio: de 0 a 100, con hasta un decimal.
-// Acepta coma o punto decimal («8,5» o «8.5»).
+// Validar tarifa
 
 const PORCENTAJE = new Intl.NumberFormat('es-CO', { maximumFractionDigits: 1 })
 

@@ -11,7 +11,7 @@
   font-weight: var(--peso-etiqueta);
 }
 
-/* El borde del campo sí informa: delimita dónde se escribe. */
+/* Borde del campo */
 .campo__control {
   width: 100%;
   padding: var(--espacio-3);

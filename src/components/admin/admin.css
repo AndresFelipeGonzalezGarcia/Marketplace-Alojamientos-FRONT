@@ -1,4 +1,4 @@
-/* Bandeja de aprobación y detalle de revisión del administrador. */
+/* Administración */
 
 /* ---------- Cabecera y avisos ---------- */
 
@@ -132,7 +132,7 @@
   text-decoration: none;
 }
 
-/* Toda la fila responde al clic; el enlace sigue siendo uno solo. */
+/* Fila clicable */
 .fila-revision__enlace::after {
   content: '';
   position: absolute;
@@ -315,7 +315,7 @@
   list-style: none;
 }
 
-/* Solo lectura: los chips informan, no se eligen. */
+/* Chips de solo lectura */
 .ficha .chip {
   cursor: default;
 }
@@ -426,7 +426,7 @@
   color: var(--color-texto);
 }
 
-/* Rechazar es destructivo para el anfitrión: se distingue en rojo. */
+/* Botón de rechazo */
 .boton-secundario--peligro {
   color: var(--color-error);
   border-color: var(--color-error);

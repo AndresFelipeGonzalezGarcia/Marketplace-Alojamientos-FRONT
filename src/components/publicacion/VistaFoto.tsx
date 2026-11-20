@@ -6,13 +6,12 @@ interface VistaFotoProps {
   portada: boolean
 }
 
-// Solo se intenta mostrar algo que parezca una dirección de imagen.
+// URL de imagen
 function pareceUrlDeImagen(url: string) {
   return /^https?:\/\/\S+$/i.test(url) || /^\/(?!\/)\S+$/.test(url)
 }
 
-// Vista previa de una foto de la publicación. Quien la usa debe darle
-// `key={url}` para que un error de carga no se arrastre a otra dirección.
+// Vista previa de foto
 function VistaFoto({ url, numero, portada }: VistaFotoProps) {
   const [fallo, setFallo] = useState(false)
   const limpia = url.trim()

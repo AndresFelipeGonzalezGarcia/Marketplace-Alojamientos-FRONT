@@ -1,8 +1,7 @@
 import { contarNoches, textoNoches } from '../busqueda/filtrosBusqueda'
 import { textoCapacidad } from '../formato/formato'
 
-// Las fechas del contrato son días sin hora: se leen en UTC para que la zona
-// horaria del navegador no las corra un día.
+// Fechas
 const FECHA = new Intl.DateTimeFormat('es-CO', {
   day: 'numeric',
   month: 'short',
@@ -15,7 +14,7 @@ export function formatearFecha(fecha: string) {
   return Number.isNaN(instante.getTime()) ? fecha : FECHA.format(instante)
 }
 
-// «3 noches · 2 huéspedes». Sin noches si las fechas no cuadran.
+// Noches y huéspedes
 export function textoEstadia(llegada: string, salida: string, huespedes: number) {
   const noches = contarNoches(llegada, salida)
   const partes = [textoCapacidad(huespedes)]

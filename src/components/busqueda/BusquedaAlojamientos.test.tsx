@@ -25,7 +25,7 @@ const detalle = vi.mocked(obtenerAlojamiento)
 
 const WIFI = 'b0a1c3d4-0000-4000-8000-000000000101'
 const PISCINA = 'b0a1c3d4-0000-4000-8000-000000000104'
-// Lejos en el futuro para que la validación «no en el pasado» no dependa de hoy.
+// Fechas de prueba
 const LLEGADA = '2030-12-10'
 const SALIDA = '2030-12-14'
 
@@ -66,7 +66,7 @@ async function abrir(ruta = '/alojamientos') {
   return app
 }
 
-// Espera a que termine la búsqueda en curso.
+// Esperar búsqueda
 async function esperarResultados() {
   await screen.findByRole('list', { name: 'Alojamientos encontrados' })
 }
@@ -312,7 +312,7 @@ describe('búsqueda de alojamientos', () => {
       buscar.mockResolvedValue(
         await errorDelServidor({ codigo: 'FECHAS_INVALIDAS', mensaje: 'x' }, 400),
       )
-      // Un enlace con la salida antes de la llegada llega tal cual a la API.
+      // Fechas invertidas
       await abrir(`/alojamientos?llegada=${SALIDA}&salida=${LLEGADA}`)
 
       const salida = buscador().getByLabelText('Salida')
@@ -436,7 +436,7 @@ describe('búsqueda de alojamientos', () => {
       expect(await screen.findByText('Mostrando 13–24 de 28')).toBeInTheDocument()
       expect(ultimaConsulta()).toMatchObject({ ciudad: 'Cali', pagina: 1 })
       expect(screen.getByRole('link', { name: 'Página 2' })).toHaveAttribute('aria-current', 'page')
-      // El foco vuelve al inicio de los resultados.
+      // Foco en resultados
       expect(screen.getByRole('heading', { level: 2, name: '28 alojamientos' })).toHaveFocus()
     })
 
@@ -500,13 +500,13 @@ describe('búsqueda de alojamientos', () => {
       expect(
         await screen.findByRole('heading', { level: 1, name: 'Alojamiento 1' }),
       ).toBeInTheDocument()
-      // El detalle ofrece volver a la misma búsqueda.
+      // Volver a la búsqueda
       expect(screen.getByRole('link', { name: 'Volver a los resultados' })).toHaveAttribute(
         'href',
         `/alojamientos${busqueda}`,
       )
 
-      // Y también el botón «atrás» del navegador.
+      // Botón atrás
       await act(() => router.navigate(-1))
       await esperarResultados()
       expect(router.state.location.search).toBe(busqueda)

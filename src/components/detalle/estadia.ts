@@ -6,29 +6,22 @@ import {
 } from '../busqueda/filtrosBusqueda'
 import { hoyEnBogota } from '../disponibilidad/validacionPeriodo'
 
-// Estadía elegida en el detalle. La URL es la fuente de verdad, como en la
-// búsqueda: `?llegada=&salida=` (salida exclusiva) y `?huespedes=` llegan
-// desde los filtros, los escriben el calendario y el selector de huéspedes,
-// y la cotización los lee con useEstadia(), sin pasar nada por props. Así
-// también sobreviven a recargar, compartir o volver del login.
+// Estadía
 
 export interface Estadia {
   llegada: string
-  // Exclusiva: es el día en que se sale, esa noche no se cuenta.
+  // Fecha de salida
   salida: string
   noches: number
 }
 
-// Lo que el detalle guarda en el estado de navegación: la búsqueda de la que
-// se vino (para volver) y, si las fechas de esa búsqueda ya no estaban
-// libres aquí, cuáles eran (para avisarlo).
+// Estado de navegación
 interface EstadoNavegacion {
   desde?: string
   fechasDescartadas?: { llegada: string; salida: string }
 }
 
-// Solo vale un rango completo, con al menos una noche y que no empiece en
-// el pasado; cualquier otra cosa (un enlace editado a mano) se ignora.
+// Leer fechas
 export function leerEstadia(
   parametros: URLSearchParams,
   hoy = hoyEnBogota(),
@@ -42,7 +35,7 @@ export function leerEstadia(
   return noches === null ? null : { llegada, salida, noches }
 }
 
-// Entero entre 1 y el máximo del buscador, o null.
+// Leer huéspedes
 export function leerHuespedes(parametros: URLSearchParams): number | null {
   const valor = parametros.get('huespedes') ?? ''
   if (!/^\d+$/.test(valor)) return null
@@ -64,9 +57,7 @@ export function useEstadia() {
   const location = useLocation()
   const estadia = leerEstadia(parametros)
 
-  // Reemplaza la entrada del historial: «atrás» no recorre cada clic del
-  // calendario. Conserva el resto de la URL (huéspedes) y la búsqueda de la
-  // que se vino.
+  // Cambiar fechas
   function navegar(siguientes: URLSearchParams, estado: EstadoNavegacion) {
     setParametros(siguientes, { replace: true, state: estado })
   }
@@ -92,20 +83,20 @@ export function useEstadia() {
   function elegirHuespedes(huespedes: number) {
     const siguientes = new URLSearchParams(parametros)
     siguientes.set('huespedes', String(huespedes))
-    // Cambiar huéspedes no toca las fechas ni el aviso del calendario.
+    // Cambiar huéspedes
     navegar(siguientes, anterior)
   }
 
   return {
     estadia,
-    // null si la URL no lo trae: la cotización usa 1 hasta que se elija.
+    // Huéspedes
     huespedes: leerHuespedes(parametros),
     elegirHuespedes,
-    // Las fechas con que se llegó y que ya no estaban libres, o null.
+    // Fechas no disponibles
     fechasDescartadas: leerDescartadas(location.state),
     elegir: (llegada: string, salida: string) => escribir({ llegada, salida }),
     limpiar: () => escribir(null),
-    // Quita una estadía que ya no está libre y recuerda cuál era.
+    // Quitar estadía
     descartar: (actual: Estadia) =>
       escribir(null, { llegada: actual.llegada, salida: actual.salida }),
   }

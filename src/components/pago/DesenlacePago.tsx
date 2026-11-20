@@ -10,7 +10,7 @@ type Desenlace = Exclude<FasePago, { fase: 'lista' } | { fase: 'procesando' }>
 interface DesenlacePagoProps {
   reserva: Reserva
   estado: Desenlace
-  // Solo en 503 y en errores sin respuesta: los únicos que admiten reintento.
+  // Reintento
   onReintentar: () => void
 }
 
@@ -25,7 +25,7 @@ function DesenlacePago({ reserva, estado, onReintentar }: DesenlacePagoProps) {
   const titulo = useRef<HTMLHeadingElement>(null)
   const detalle = rutaReserva(reserva.id)
 
-  // Al llegar el desenlace, el foco va a su título para que se lea primero.
+  // Foco en el desenlace
   useEffect(() => {
     titulo.current?.focus()
   }, [estado.fase])

@@ -14,15 +14,13 @@ interface ConfirmacionReservaProps {
   huespedes: number
   total: number
   moneda?: string
-  // 'confirmando' o 'enviando': cerrada no se monta.
+  // Fase
   estado: Exclude<EstadoEnvioReserva, { fase: 'cerrada' }>
   onConfirmar: () => void
   onCerrar: () => void
 }
 
-// Resumen que se confirma antes de crear la reserva. Es un diálogo modal
-// nativo: atrapa el foco, Esc lo cierra y al cerrarse el foco vuelve a
-// «Reservar». Mientras se envía no se puede cerrar.
+// Confirmación de reserva
 function ConfirmacionReserva({
   alojamientoTitulo,
   capacidad,
@@ -45,7 +43,7 @@ function ConfirmacionReserva({
   useEffect(() => {
     const elemento = dialogo.current
     if (!elemento) return
-    // jsdom no implementa showModal: ahí basta con marcarlo abierto.
+    // Diálogo en jsdom
     if (typeof elemento.showModal === 'function') elemento.showModal()
     else elemento.setAttribute('open', '')
     return () => {
@@ -65,7 +63,7 @@ function ConfirmacionReserva({
       aria-labelledby={idTitulo}
       aria-busy={enviando || undefined}
       onCancel={(evento) => {
-        // Esc: se cierra por el estado de React, no por el navegador.
+        // Tecla Esc
         evento.preventDefault()
         onCerrar()
       }}

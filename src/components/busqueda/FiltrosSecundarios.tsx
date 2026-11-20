@@ -22,16 +22,14 @@ type CambiosFiltros = Partial<
 interface FiltrosSecundariosProps {
   filtros: FiltrosBusqueda
   servicios: EstadoServicios
-  // Error de precio que devolvió la API.
+  // Error de precio
   errorPrecioServidor?: string
   onCambiar: (cambios: CambiosFiltros) => void
 }
 
 const aTexto = (valor: number | null) => (valor === null ? '' : String(valor))
 
-// Precio, tipo y servicios. Tipo y servicios se aplican al marcarlos; el
-// precio, al pulsar «Aplicar» (o Enter), para no buscar a cada tecla.
-// Quien lo usa le da una `key` con el precio de la URL.
+// Filtros secundarios
 function FiltrosSecundarios({
   filtros,
   servicios,
@@ -142,7 +140,7 @@ function FiltrosSecundarios({
         </div>
       </fieldset>
 
-      {/* Sin catálogo no se pueden nombrar: se ocultan y lo demás sigue. */}
+      {/* Servicios */}
       {servicios.fase !== 'error' && (
         <fieldset className="filtros__grupo filtros__fieldset">
           <legend className="filtros__titulo">Servicios</legend>

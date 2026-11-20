@@ -3,7 +3,7 @@ import {
   type TipoAlojamiento,
 } from '../../api/publicaciones'
 
-// Formatos compartidos por las pantallas que muestran alojamientos.
+// Formatos
 
 const PESOS = new Intl.NumberFormat('es-CO', {
   style: 'currency',
@@ -16,7 +16,7 @@ export function formatearPrecio(valor: number) {
   return PESOS.format(valor)
 }
 
-// Un importe tal como llega del backend, en su moneda (COP si no la indica).
+// Precio
 export function formatearImporte(valor: number, moneda = 'COP') {
   if (moneda === 'COP') return PESOS.format(valor)
   try {
@@ -32,7 +32,7 @@ export function formatearImporte(valor: number, moneda = 'COP') {
 
 const PORCENTAJE = new Intl.NumberFormat('es-CO', { maximumFractionDigits: 2 })
 
-// 8.5 → «8,5 %»
+// Porcentaje
 export function formatearPorcentaje(valor: number) {
   return `${PORCENTAJE.format(valor)} %`
 }

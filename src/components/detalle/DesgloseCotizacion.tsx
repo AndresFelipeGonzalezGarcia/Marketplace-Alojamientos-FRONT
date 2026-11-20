@@ -5,8 +5,7 @@ interface DesgloseCotizacionProps {
   cotizacion: Cotizacion
 }
 
-// Muestra el desglose tal como llega: aquí no se suma ni se multiplica nada,
-// porque el precio que se enseña tiene que ser el que se cobra.
+// Desglose
 function DesgloseCotizacion({ cotizacion }: DesgloseCotizacionProps) {
   const {
     noches,

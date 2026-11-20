@@ -1,6 +1,6 @@
 import BusquedaAlojamientos from '../components/busqueda/BusquedaAlojamientos'
 
-// Búsqueda pública: funciona con o sin sesión.
+// Búsqueda
 function AlojamientosPage() {
   return (
     <main className="busqueda-pagina">

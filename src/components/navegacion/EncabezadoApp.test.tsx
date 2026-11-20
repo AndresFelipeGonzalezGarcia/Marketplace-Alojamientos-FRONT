@@ -12,7 +12,7 @@ function menu() {
   return within(screen.getByRole('navigation', { name: 'Principal' }))
 }
 
-// Elemento deshabilitado («Próximamente») con ese texto dentro del encabezado.
+// Destino deshabilitado
 function deshabilitado(texto: string) {
   const elemento = encabezado().getByText(texto)
   expect(elemento).toHaveAttribute('aria-disabled', 'true')
@@ -29,7 +29,7 @@ function textosDelMenu() {
 
 describe('EncabezadoApp', () => {
   beforeEach(() => {
-    // Las pantallas de publicación consultan catálogos; sin API fallan rápido.
+    // Catálogos
     vi.stubEnv('VITE_API_URL', '')
   })
 
@@ -182,7 +182,7 @@ describe('EncabezadoApp', () => {
       encabezado().getByRole('link', { name: 'Crear cuenta' }),
     ).toBeInTheDocument()
     expect(
-      screen.getByRole('heading', { name: 'Marketplace de Alojamientos' }),
+      screen.getByRole('heading', { name: 'Bienvenido a tus próximas vacaciones' }),
     ).toBeInTheDocument()
   })
 

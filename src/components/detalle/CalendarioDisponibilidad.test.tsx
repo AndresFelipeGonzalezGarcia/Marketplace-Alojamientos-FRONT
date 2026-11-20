@@ -21,7 +21,7 @@ const detalle = vi.mocked(obtenerAlojamiento)
 const calendario = vi.mocked(obtenerCalendario)
 
 const ID = 'c1d2e3f4-0000-4000-8000-000000000210'
-// Hoy es el martes 5 de marzo de 2030 en Bogotá: se ven marzo y abril.
+// Fecha de hoy
 const AHORA = new Date('2030-03-05T15:00:00Z')
 
 const ALOJAMIENTO: AlojamientoDetalle = {
@@ -38,7 +38,7 @@ const ALOJAMIENTO: AlojamientoDetalle = {
   imagenes: [],
 }
 
-// Todo libre salvo `ocupados`.
+// Días ocupados
 function conOcupados(...ocupados: string[]) {
   return async (_id: string, desde: string, hasta: string): Promise<ResultadoApi<DiaCalendario[]>> => {
     const dias: DiaCalendario[] = []
@@ -67,7 +67,7 @@ const estadiaEnUrl = (router: { state: { location: { search: string } } }) => {
   return [parametros.get('llegada'), parametros.get('salida')]
 }
 
-// Abre el detalle y espera a que el calendario tenga datos.
+// Abrir detalle
 async function abrir(ruta: Parameters<typeof renderizarApp>[0] = `/alojamientos/${ID}`) {
   const app = renderizarApp(ruta)
   await screen.findByRole('heading', { level: 1, name: ALOJAMIENTO.titulo })
@@ -160,7 +160,7 @@ describe('Calendario de disponibilidad', () => {
 
       await usuario.click(dia('2030-04-14'))
       expect(estadiaEnUrl(router)).toEqual(['2030-04-10', '2030-04-14'])
-      // Conserva lo demás de la URL y la búsqueda de la que se vino.
+      // Estado de la URL
       expect(new URLSearchParams(router.state.location.search).get('huespedes')).toBe('2')
       expect(screen.getByRole('link', { name: 'Volver a los resultados' })).toHaveAttribute(
         'href',
@@ -177,7 +177,7 @@ describe('Calendario de disponibilidad', () => {
       expect(dia('2030-04-14')).not.toHaveClass('dia-calendario--noche')
 
       expect(calendarioVisible().getByText('4 noches')).toBeInTheDocument()
-      // La cotización lee las mismas fechas: hoy las muestra el panel.
+      // Fechas en la cotización
       expect(screen.getByRole('complementary', { name: 'Precio y reserva' })).toHaveTextContent('4 noches')
     })
 
@@ -185,7 +185,7 @@ describe('Calendario de disponibilidad', () => {
       const { router, usuario } = await abrir(`/alojamientos/${ID}?llegada=2030-04-10&salida=2030-04-14`)
 
       await usuario.click(dia('2030-04-20'))
-      // Mientras se elige la salida no queda una estadía a medias para cotizar.
+      // Selección incompleta
       expect(estadiaEnUrl(router)).toEqual([null, null])
       await usuario.click(dia('2030-04-22'))
       expect(estadiaEnUrl(router)).toEqual(['2030-04-20', '2030-04-22'])
@@ -232,13 +232,13 @@ describe('Calendario de disponibilidad', () => {
       await usuario.click(dia('2030-04-12'))
       expect(screen.getByText(/Como máximo puedes salir el/)).toHaveTextContent(/15 (de )?abr/)
 
-      // Más allá de la primera noche ocupada no se puede salir.
+      // Límite de salida
       expect(dia('2030-04-17')).toHaveAttribute('aria-disabled', 'true')
       await usuario.click(dia('2030-04-17'))
       expect(estadiaEnUrl(router)).toEqual([null, null])
       expect(screen.getByText(/Ahora elige el día de salida/)).toBeInTheDocument()
 
-      // El 15 está ocupado, pero como salida no se usa su noche.
+      // Salida en día ocupado
       expect(dia('2030-04-15')).toHaveAccessibleName(/ocupado, pero puedes salir este día$/)
       expect(dia('2030-04-15')).toHaveAttribute('aria-disabled', 'false')
       await usuario.click(dia('2030-04-15'))
@@ -255,7 +255,7 @@ describe('Calendario de disponibilidad', () => {
       })
 
       await vi.waitFor(() => expect(estadiaEnUrl(router)).toEqual([null, null]))
-      // La URL cambia antes de que React pinte: se espera al aviso.
+      // Esperar aviso
       expect(await screen.findByText(/ya no están libres en este alojamiento/)).toBeInTheDocument()
       expect(dia('2030-04-10')).toHaveAttribute('aria-pressed', 'false')
       expect(screen.getByRole('link', { name: 'Volver a los resultados' })).toHaveAttribute(
@@ -307,7 +307,7 @@ describe('Calendario de disponibilidad', () => {
     it('se recorre con flechas, cambia de mes al pasar el borde y elige con Enter', async () => {
       const { router, usuario } = await abrir()
 
-      // Un solo día en el orden de tabulación: hoy.
+      // Orden de tabulación
       act(() => dia('2030-03-05').focus())
       expect(dia('2030-03-05')).toHaveAttribute('tabindex', '0')
       expect(dia('2030-03-06')).toHaveAttribute('tabindex', '-1')
@@ -320,14 +320,14 @@ describe('Calendario de disponibilidad', () => {
       await usuario.keyboard('{ArrowRight}{ArrowRight}{Enter}')
       expect(estadiaEnUrl(router)).toEqual(['2030-03-13', '2030-03-15'])
 
-      // Bajar desde la última semana de abril lleva a mayo.
+      // Cambio de mes
       await usuario.keyboard('{PageDown}')
       expect(dia('2030-04-15')).toHaveFocus()
       await usuario.keyboard('{ArrowDown}{ArrowDown}{ArrowDown}')
       expect(dia('2030-05-06')).toHaveFocus()
       expect(meses()).toEqual(['Abril de 2030', 'Mayo de 2030'])
 
-      // No va antes del mes actual: el viernes 1 de marzo es el primer día.
+      // Primer día
       await usuario.keyboard('{PageUp}{PageUp}{PageUp}')
       expect(meses()).toEqual(['Marzo de 2030', 'Abril de 2030'])
       expect(dia('2030-03-01')).toHaveFocus()

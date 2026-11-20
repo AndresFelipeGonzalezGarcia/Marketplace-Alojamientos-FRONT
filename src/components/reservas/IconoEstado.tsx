@@ -52,7 +52,7 @@ interface IconoEstadoProps {
   nombre: NombreIcono
 }
 
-// Decorativo: el nombre del estado siempre va escrito al lado.
+// Icono de estado
 function IconoEstado({ nombre }: IconoEstadoProps) {
   return (
     <svg

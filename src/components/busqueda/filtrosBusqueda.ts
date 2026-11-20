@@ -8,22 +8,20 @@ import {
 } from '../../api/publicaciones'
 import { hoyEnBogota } from '../disponibilidad/validacionPeriodo'
 
-// La URL es la fuente de verdad de la búsqueda: lo que está en la barra de
-// direcciones es lo que se ve. Así se puede recargar, compartir o volver
-// desde el detalle sin perder nada.
+// Filtros de búsqueda
 
 export interface FiltrosBusqueda {
   ciudad: string
-  // yyyy-MM-dd, o '' si no hay fechas. Siempre vienen las dos o ninguna.
+  // Fecha de llegada
   llegada: string
-  // Exclusiva: es el día en que se sale, esa noche no se cuenta.
+  // Fecha de salida
   salida: string
   huespedes: number | null
   precioMin: number | null
   precioMax: number | null
   tipo: TipoAlojamiento | null
   servicios: string[]
-  // Empieza en 1, como lo lee una persona (la API empieza en 0).
+  // Página
   pagina: number
 }
 
@@ -61,7 +59,7 @@ function leerPrecio(valor: string | null): number | null {
   return Number(valor)
 }
 
-// Lectura tolerante: lo que no se entiende (un enlace editado a mano) se ignora.
+// Leer filtros
 export function leerFiltros(parametros: URLSearchParams): FiltrosBusqueda {
   const llegada = parametros.get('llegada') ?? ''
   const salida = parametros.get('salida') ?? ''
@@ -74,8 +72,7 @@ export function leerFiltros(parametros: URLSearchParams): FiltrosBusqueda {
 
   return {
     ciudad: (parametros.get('ciudad') ?? '').trim().slice(0, MAXIMO_CIUDAD),
-    // Una salida anterior a la llegada sí se conserva: la API responde
-    // FECHAS_INVALIDAS y se muestra junto a las fechas.
+    // Fechas invertidas
     llegada: fechasValidas ? llegada : '',
     salida: fechasValidas ? salida : '',
     huespedes: leerEntero(parametros.get('huespedes'), 1),
@@ -89,7 +86,7 @@ export function leerFiltros(parametros: URLSearchParams): FiltrosBusqueda {
   }
 }
 
-// Solo lo que tiene valor, en un orden fijo, para que la URL sea estable.
+// Escribir filtros
 export function escribirFiltros(filtros: FiltrosBusqueda): URLSearchParams {
   const parametros = new URLSearchParams()
   if (filtros.ciudad) parametros.set('ciudad', filtros.ciudad)
@@ -125,16 +122,16 @@ export function aConsulta(filtros: FiltrosBusqueda): ConsultaAlojamientos {
   }
 }
 
-// ¿Hay algo que limpiar? La página no cuenta como filtro.
+// Hay filtros
 export function hayFiltros(filtros: FiltrosBusqueda) {
   return escribirFiltros({ ...filtros, pagina: 1 }).size > 0
 }
 
-// ---------- Fechas: la salida es exclusiva ----------
+// ---------- Fechas ----------
 
 const DIA_MS = 24 * 60 * 60 * 1000
 
-// Del 10 al 14 son 4 noches (10, 11, 12 y 13). null si no tiene sentido.
+// Noches
 export function contarNoches(llegada: string, salida: string): number | null {
   if (!esFechaValida(llegada) || !esFechaValida(salida)) return null
   const noches = Math.round(
@@ -159,7 +156,7 @@ export function formatearDia(fecha: string) {
   return DIA_CORTO.format(new Date(`${fecha}T00:00:00Z`))
 }
 
-// «4 noches: llegas el mié, 10 de dic. y sales el dom, 14 de dic.»
+// Resumen de fechas
 export function describirEstadia(
   llegada: string,
   salida: string,
@@ -221,8 +218,7 @@ export function validarBusqueda(
 
 // ---------- Validación del rango de precio ----------
 
-// '' → null; válido → número; inválido → undefined. Acepta «150.000»
-// (punto de miles) y «95000,50» (coma decimal), como se escribe en Colombia.
+// Leer precio
 export function leerPrecioEscrito(texto: string): number | null | undefined {
   const limpio = texto.trim().replaceAll('.', '').replace(',', '.')
   if (!limpio) return null
@@ -243,8 +239,7 @@ export function validarPrecios(minimo: string, maximo: string): string | null {
 
 // ---------- Paginación ----------
 
-// Páginas a mostrar: la primera, la última y dos a cada lado de la actual;
-// el resto se resume con «…».
+// Páginas visibles
 export function paginasVisibles(
   pagina: number,
   total: number,

@@ -3,12 +3,11 @@ import { ETIQUETA_ROL, type EstadoRedireccionLogin } from '../../auth/roles'
 import type { RolUsuario } from '../../auth/sesion'
 
 interface AccesoCotizacionProps {
-  // null: no hay sesión. Otro rol: la cuenta no es de huésped.
+  // Usuario
   rol: RolUsuario | null
 }
 
-// Lo que ve quien no puede cotizar: una invitación a entrar (que vuelve aquí,
-// con las fechas y los huéspedes de la URL) o por qué su cuenta no sirve.
+// Acceso a la cotización
 function AccesoCotizacion({ rol }: AccesoCotizacionProps) {
   const location = useLocation()
 

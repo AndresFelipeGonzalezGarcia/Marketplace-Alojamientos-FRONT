@@ -5,8 +5,7 @@ import { pagarReserva, type EscenarioPago, type ResultadoPago } from '../../api/
 import { rutaReserva } from '../reservas/formatoReserva'
 import { claveDePago, leerRegistroPago, marcarPagoIncierto } from './registroPago'
 
-// Lo que el detalle de la reserva lee del estado de navegación tras un pago
-// aprobado, para mostrar la confirmación.
+// Pago aprobado
 export interface EstadoPagoAprobado {
   pagoAprobado: true
 }
@@ -14,25 +13,24 @@ export interface EstadoPagoAprobado {
 export type FasePago =
   | { fase: 'lista' }
   | { fase: 'procesando' }
-  // 202: lo resolverá la conciliación. Nunca se ofrece volver a cobrar.
+  // Pago incierto
   | { fase: 'incierto'; resultado: ResultadoPago | null }
-  // 402: compensación hecha, reserva en PAGO_FALLIDO y fechas liberadas.
+  // Pago rechazado
   | { fase: 'rechazado'; error: ErrorApi }
-  // 503: circuit breaker abierto. Se puede reintentar más tarde.
+  // Servicio no disponible
   | { fase: 'no-disponible'; error: ErrorApi }
-  // 409: la reserva no está en PENDIENTE_PAGO.
+  // Conflicto
   | { fase: 'estado-invalido'; error: ErrorApi }
-  // Red caída, 500…: no se sabe si el cobro llegó. Reintentar es seguro
-  // porque va con la misma clave.
+  // Error de red
   | { fase: 'error'; error: ErrorApi }
 
 export function usePago(reservaId: string) {
   const navigate = useNavigate()
-  // Si ya hubo un 202 para esta reserva, se arranca en «incierto».
+  // Estado inicial
   const [estado, setEstado] = useState<FasePago>(() =>
     leerRegistroPago(reservaId)?.incierto ? { fase: 'incierto', resultado: null } : { fase: 'lista' },
   )
-  // Frena un segundo clic antes de que React quite el botón.
+  // Doble clic
   const enCurso = useRef(false)
   const montado = useRef(true)
 
@@ -45,7 +43,7 @@ export function usePago(reservaId: string) {
 
   const procesando = estado.fase === 'procesando'
 
-  // Cerrar o recargar la pestaña a mitad del cobro: el navegador pide confirmar.
+  // Cierre de pestaña
   useEffect(() => {
     if (!procesando) return
     const avisar = (evento: BeforeUnloadEvent) => {
@@ -65,9 +63,7 @@ export function usePago(reservaId: string) {
     enCurso.current = false
 
     if (resultado.estado === 'ok') {
-      // Solo APROBADO es un éxito. Cualquier otro 2xx (el 202, o algo que no
-      // se esperaba) se trata como incierto: es lo único seguro, porque no
-      // invita a cobrar otra vez.
+      // Resultado del pago
       if (resultado.datos?.estadoPago === 'APROBADO') {
         if (!montado.current) return
         const destino: EstadoPagoAprobado = { pagoAprobado: true }
