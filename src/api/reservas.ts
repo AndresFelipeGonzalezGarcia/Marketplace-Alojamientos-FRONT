@@ -1,7 +1,8 @@
 import { obtenerTokenSesion } from '../auth/sesion'
 import { solicitarApi } from './cliente'
+import type { Cotizacion, CotizacionRequest } from './cotizaciones'
 
-// GET /api/huesped/reservas. PROPUESTA en el contrato, rol HUESPED.
+// /api/huesped/reservas. PROPUESTA en el contrato, rol HUESPED.
 
 export const ESTADOS_RESERVA = [
   'PENDIENTE_PAGO',
@@ -52,4 +53,53 @@ export function ordenarPorLlegada(reservas: ReservaResumen[]) {
   return [...reservas].sort((a, b) =>
     b.fechaLlegada.localeCompare(a.fechaLlegada),
   )
+}
+
+// ReservaRequest del contrato: los mismos datos que la cotización. El precio
+// lo recalcula el backend, no se manda.
+export type ReservaRequest = CotizacionRequest
+
+export interface Reserva {
+  id: string
+  alojamientoId: string
+  alojamientoTitulo: string
+  alojamientoCiudad: string
+  imagenPortada?: string | null
+  huespedId?: string
+  fechaLlegada: string
+  // Exclusiva: es el día de salida.
+  fechaSalida: string
+  numeroHuespedes: number
+  estado: EstadoReserva
+  // El desglose con que se creó la reserva, calculado por el backend.
+  cotizacion?: Cotizacion
+  creadaEn?: string
+}
+
+// POST /api/huesped/reservas. `claveIdempotencia` va en la cabecera
+// Idempotency-Key y tiene que ser la misma en cada reintento de la misma
+// reserva: con ella el backend devuelve la ya creada (200) en vez de crear
+// otra (201). Las dos respuestas son un éxito.
+export function crearReserva(
+  solicitud: ReservaRequest,
+  claveIdempotencia: string,
+) {
+  return solicitarApi<Reserva>({
+    ruta: '/api/huesped/reservas',
+    metodo: 'POST',
+    estadoExito: [201, 200],
+    cuerpo: solicitud,
+    cabeceras: { 'Idempotency-Key': claveIdempotencia },
+    token: obtenerTokenSesion(),
+  })
+}
+
+// GET /api/huesped/reservas/{reservaId}. Solo las del huésped autenticado.
+export function obtenerReserva(id: string) {
+  return solicitarApi<Reserva>({
+    ruta: `/api/huesped/reservas/${encodeURIComponent(id)}`,
+    metodo: 'GET',
+    estadoExito: 200,
+    token: obtenerTokenSesion(),
+  })
 }

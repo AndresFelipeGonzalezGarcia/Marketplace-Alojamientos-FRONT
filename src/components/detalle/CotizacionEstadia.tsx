@@ -1,18 +1,23 @@
-import { useId, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { mensajeConReferencia } from '../../api/errores'
+import type { ModoReserva } from '../../api/publicaciones'
 import { useSesion } from '../../auth/useSesion'
 import { formatearDia, textoNoches } from '../busqueda/filtrosBusqueda'
 import { textoCapacidad } from '../formato/formato'
 import AccesoCotizacion from './AccesoCotizacion'
+import ConfirmacionReserva from './ConfirmacionReserva'
 import DesgloseCotizacion from './DesgloseCotizacion'
 import { useEstadia, type Estadia } from './estadia'
 import { irAlCalendario } from './irAlCalendario'
 import SelectorHuespedes from './SelectorHuespedes'
 import { useCotizacion } from './useCotizacion'
+import { useReserva } from './useReserva'
 
 interface CotizacionEstadiaProps {
   alojamientoId: string
+  alojamientoTitulo: string
   capacidad: number
+  modoReserva: ModoReserva
   // Avisa al detalle para que el calendario vuelva a cargar lo ocupado.
   onFechasOcupadas: () => void
 }
@@ -22,7 +27,13 @@ const mismaEstadia = (a: Estadia | null, b: { llegada: string; salida: string } 
 
 // La cotización vive en el lateral: lee las fechas del calendario y los
 // huéspedes de la URL, y muestra el desglose que calcula el backend.
-function CotizacionEstadia({ alojamientoId, capacidad, onFechasOcupadas }: CotizacionEstadiaProps) {
+function CotizacionEstadia({
+  alojamientoId,
+  alojamientoTitulo,
+  capacidad,
+  modoReserva,
+  onFechasOcupadas,
+}: CotizacionEstadiaProps) {
   const sesion = useSesion()
   const idNotaReservar = useId()
   const esHuesped = sesion?.usuario.rol === 'HUESPED'
@@ -31,6 +42,9 @@ function CotizacionEstadia({ alojamientoId, capacidad, onFechasOcupadas }: Cotiz
   // Las últimas fechas que el backend dijo ocupadas: el aviso sigue a la
   // vista cuando el calendario, al recargar, las quita.
   const [ocupadas, setOcupadas] = useState<Estadia | null>(null)
+  // Cuántas veces una reserva chocó con alguien que reservó primero: cada
+  // una lleva al calendario cuando el diálogo ya se cerró.
+  const [choques, setChoques] = useState(0)
 
   const { estado, reintentar } = useCotizacion({
     alojamientoId,
@@ -42,6 +56,21 @@ function CotizacionEstadia({ alojamientoId, capacidad, onFechasOcupadas }: Cotiz
       onFechasOcupadas()
     },
   })
+
+  const reserva = useReserva({
+    alojamientoId,
+    estadia,
+    huespedes,
+    onPeriodoNoDisponible: (estadiaOcupada) => {
+      setOcupadas(estadiaOcupada)
+      setChoques((n) => n + 1)
+      onFechasOcupadas()
+    },
+  })
+
+  useEffect(() => {
+    if (choques > 0) irAlCalendario()
+  }, [choques])
 
   const codigo = estado.fase === 'error' ? estado.error.codigo : null
   const errorFechas = estado.fase === 'error' && codigo === 'FECHAS_INVALIDAS' ? estado.error.mensaje : undefined
@@ -82,6 +111,8 @@ function CotizacionEstadia({ alojamientoId, capacidad, onFechasOcupadas }: Cotiz
       </section>
     )
   }
+
+  const listaParaReservar = !conflicto && estado.fase === 'lista' && estadia !== null
 
   let resultado = null
   if (conflicto) {
@@ -129,14 +160,34 @@ function CotizacionEstadia({ alojamientoId, capacidad, onFechasOcupadas }: Cotiz
         onCambiar={elegirHuespedes}
       />
       {resultado}
-      <button className="boton-principal cotizacion__reservar" type="button" disabled aria-describedby={idNotaReservar}>
-        Reservar
+      <button
+        className="boton-principal cotizacion__reservar"
+        type="button"
+        disabled={!listaParaReservar}
+        aria-describedby={idNotaReservar}
+        onClick={reserva.abrir}
+      >
+        {modoReserva === 'INMEDIATA' ? 'Reservar' : 'Solicitar reserva'}
       </button>
       <p className="cotizacion__nota" id={idNotaReservar}>
-        {estado.fase === 'lista'
-          ? 'Aún no se te cobra nada. La reserva estará disponible muy pronto.'
-          : 'La reserva estará disponible muy pronto.'}
+        {listaParaReservar
+          ? 'Revisarás el resumen antes de confirmar. Aún no se te cobra nada.'
+          : 'Elige fechas libres y huéspedes para ver el total y reservar.'}
       </p>
+      {listaParaReservar && reserva.estado.fase !== 'cerrada' && (
+        <ConfirmacionReserva
+          alojamientoTitulo={alojamientoTitulo}
+          capacidad={capacidad}
+          modoReserva={modoReserva}
+          estadia={estadia}
+          huespedes={huespedes}
+          total={estado.cotizacion.total}
+          moneda={estado.cotizacion.moneda}
+          estado={reserva.estado}
+          onConfirmar={reserva.confirmar}
+          onCerrar={reserva.cerrar}
+        />
+      )}
     </section>
   )
 }

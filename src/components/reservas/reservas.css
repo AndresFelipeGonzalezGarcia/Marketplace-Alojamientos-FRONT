@@ -344,3 +344,203 @@
     white-space: normal;
   }
 }
+
+/* ---------- Detalle de una reserva ---------- */
+
+.detalle-reserva {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-5);
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+.detalle-reserva .detalle__volver {
+  align-self: flex-start;
+  margin-bottom: 0;
+}
+
+.detalle-reserva__cabecera {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--espacio-5);
+}
+
+.detalle-reserva__cabecera p {
+  margin: 0;
+}
+
+.detalle-reserva__foto {
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radio-mediano);
+  overflow: hidden;
+}
+
+.detalle-reserva__antetitulo {
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-etiqueta);
+  line-height: var(--linea-etiqueta);
+  font-weight: var(--peso-etiqueta);
+}
+
+.detalle-reserva__titulo {
+  margin: var(--espacio-1) 0;
+  font-size: var(--texto-titulo);
+  line-height: var(--linea-titulo);
+  font-weight: var(--peso-titulo);
+  letter-spacing: var(--tracking-titulo);
+  overflow-wrap: anywhere;
+}
+
+.detalle-reserva__ciudad {
+  color: var(--color-texto-secundario);
+}
+
+.detalle-reserva__enlace {
+  display: inline-block;
+  margin-top: var(--espacio-2);
+  color: var(--color-marca);
+  font-size: var(--texto-etiqueta);
+  line-height: var(--linea-etiqueta);
+  font-weight: var(--peso-fuerte);
+  border-radius: var(--radio-pequeno);
+}
+
+.detalle-reserva__enlace:focus-visible {
+  outline: 2px solid var(--color-marca);
+  outline-offset: 2px;
+}
+
+.detalle-reserva__cuerpo {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--espacio-5);
+}
+
+.detalle-reserva__cuerpo .estado-reserva {
+  grid-column: 1 / -1;
+}
+
+.detalle-reserva__datos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+  margin: 0;
+}
+
+.detalle-reserva__datos > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--espacio-4);
+}
+
+.detalle-reserva__datos dt {
+  color: var(--color-texto-secundario);
+}
+
+.detalle-reserva__datos dd {
+  margin: 0;
+  font-weight: var(--peso-etiqueta);
+  text-align: right;
+}
+
+.detalle-reserva__referencia {
+  margin: 0;
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+}
+
+.detalle-reserva__codigo {
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.detalle-reserva__esqueleto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+}
+
+.detalle-reserva__esqueleto-foto {
+  width: 200px;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radio-mediano);
+}
+
+/* El estado, protagonista: borde y fondo según el tono de la insignia. */
+.estado-reserva {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espacio-2);
+  padding: var(--espacio-5);
+  background: var(--color-superficie);
+  border: 1.5px solid var(--color-borde-suave);
+  border-radius: var(--radio-mediano);
+  box-shadow: var(--elevacion-reposo);
+}
+
+.estado-reserva--accion,
+.estado-reserva--espera {
+  background: var(--color-marca-suave);
+  border-color: var(--color-marca);
+}
+
+.estado-reserva--exito {
+  background: var(--color-exito-suave);
+  border-color: var(--color-exito);
+}
+
+.estado-reserva--error {
+  background: var(--color-error-suave);
+  border-color: var(--color-error);
+}
+
+.estado-reserva__titulo {
+  margin: var(--espacio-1) 0 0;
+  font-size: var(--texto-seccion);
+  line-height: var(--linea-seccion);
+  font-weight: var(--peso-titulo);
+  border-radius: var(--radio-pequeno);
+}
+
+.estado-reserva__titulo:focus-visible {
+  outline: 2px solid var(--color-marca);
+  outline-offset: 2px;
+}
+
+.estado-reserva__texto {
+  margin: 0;
+  max-width: 60ch;
+}
+
+.estado-reserva__accion {
+  margin-top: var(--espacio-2);
+}
+
+@media (max-width: 720px) {
+  .detalle-reserva__cabecera,
+  .detalle-reserva__cuerpo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .detalle-reserva__foto,
+  .detalle-reserva__esqueleto-foto {
+    width: 100%;
+  }
+
+  .detalle-reserva__titulo {
+    font-size: var(--texto-seccion);
+    line-height: var(--linea-seccion);
+  }
+
+  .estado-reserva {
+    padding: var(--espacio-4);
+  }
+
+  .estado-reserva__accion {
+    align-self: stretch;
+  }
+}

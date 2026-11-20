@@ -49,6 +49,18 @@ const MENSAJES = new Map<string, string>([
     'PERIODO_NO_DISPONIBLE',
     'Estas fechas se acaban de ocupar mientras mirabas. Elige otras en el calendario.',
   ],
+  [
+    'IDEMPOTENCIA_CONFLICTO',
+    'Esta solicitud de reserva no coincide con la que ya se había enviado. Revisa el resumen y vuelve a confirmar.',
+  ],
+  [
+    'IDEMPOTENCIA_REQUERIDA',
+    'No pudimos enviar la reserva de forma segura. Vuelve a intentarlo.',
+  ],
+  [
+    'RESERVA_NO_ENCONTRADA',
+    'Esta reserva no existe o no es de tu cuenta.',
+  ],
   ['CAPACIDAD_EXCEDIDA', 'Son más huéspedes de los que admite el alojamiento.'],
   ['PERIODO_CRUZADO', 'Las fechas se cruzan con otro periodo.'],
   ['PERIODO_EN_EL_PASADO', 'El periodo no puede empezar en el pasado.'],
