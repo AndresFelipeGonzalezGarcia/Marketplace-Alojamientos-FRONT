@@ -5,6 +5,7 @@ import AdminRevisionPage from './pages/AdminRevisionPage'
 import AlojamientoDetallePage from './pages/AlojamientoDetallePage'
 import AlojamientosPage from './pages/AlojamientosPage'
 import LayoutApp from './components/navegacion/LayoutApp'
+import DetalleReservaPage from './pages/DetalleReservaPage'
 import DisponibilidadPage from './pages/DisponibilidadPage'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
@@ -63,17 +64,9 @@ export const routes: RouteObject[] = [
         element: <RutaProtegida rolesPermitidos={['HUESPED']} />,
         children: [
           { path: '/reservas', element: <MisReservasPage /> },
+          { path: '/reservas/:id', element: <DetalleReservaPage /> },
           {
-            // Marcadores de posición hasta las historias de detalle y pago.
-            path: '/reservas/:id',
-            element: (
-              <ProximamentePage
-                titulo="Detalle de la reserva"
-                mensaje="Aquí verás el desglose de tu reserva, su estado y lo que puedes hacer con ella."
-              />
-            ),
-          },
-          {
+            // Marcador de posición hasta la historia del pago.
             path: '/reservas/:id/pago',
             element: (
               <ProximamentePage

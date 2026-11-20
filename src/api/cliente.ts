@@ -12,9 +12,11 @@ export type ResultadoApi<T> =
 interface SolicitudApi {
   ruta: string
   metodo: 'GET' | 'POST' | 'PUT' | 'DELETE'
-  estadoExito: number
+  // Uno o varios: crear una reserva acepta 201 (nueva) y 200 (ya existía).
+  estadoExito: number | readonly number[]
   cuerpo?: unknown
   token?: string | null
+  cabeceras?: Record<string, string>
 }
 
 export async function solicitarApi<T>({
@@ -23,6 +25,7 @@ export async function solicitarApi<T>({
   estadoExito,
   cuerpo,
   token,
+  cabeceras: extra,
 }: SolicitudApi): Promise<ResultadoApi<T>> {
   const urlBase: string | undefined = import.meta.env.VITE_API_URL
 
@@ -30,7 +33,7 @@ export async function solicitarApi<T>({
     return { estado: 'error', error: errorDeConexion() }
   }
 
-  const cabeceras: Record<string, string> = {}
+  const cabeceras: Record<string, string> = { ...extra }
   if (cuerpo !== undefined) {
     cabeceras['Content-Type'] = 'application/json'
   }
@@ -45,7 +48,8 @@ export async function solicitarApi<T>({
       ...(cuerpo !== undefined ? { body: JSON.stringify(cuerpo) } : {}),
     })
 
-    if (respuesta.status !== estadoExito) {
+    const exitos = typeof estadoExito === 'number' ? [estadoExito] : estadoExito
+    if (!exitos.includes(respuesta.status)) {
       const error = await interpretarRespuestaError(respuesta)
       // El token caducó o fue rechazado: se cierra la sesión y las rutas
       // protegidas llevan al login recordando a dónde se iba.

@@ -11,7 +11,7 @@ interface PanelReservaProps {
 // contenido. El precio por noche es el de la publicación; el total, solo el
 // que devuelve la cotización.
 function PanelReserva({ alojamiento, onFechasOcupadas }: PanelReservaProps) {
-  const { id, precioNoche, tarifaLimpieza = 0, modoReserva, capacidad } = alojamiento
+  const { id, titulo, precioNoche, tarifaLimpieza = 0, modoReserva, capacidad } = alojamiento
 
   return (
     <aside className="panel-reserva" aria-label="Precio y reserva">
@@ -31,7 +31,9 @@ function PanelReserva({ alojamiento, onFechasOcupadas }: PanelReservaProps) {
       </ul>
       <CotizacionEstadia
         alojamientoId={id}
+        alojamientoTitulo={titulo}
         capacidad={capacidad}
+        modoReserva={modoReserva}
         onFechasOcupadas={onFechasOcupadas}
       />
     </aside>

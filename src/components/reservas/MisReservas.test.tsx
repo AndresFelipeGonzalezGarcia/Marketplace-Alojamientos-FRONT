@@ -4,6 +4,7 @@ import { interpretarRespuestaError } from '../../api/errores'
 import {
   ESTADOS_RESERVA,
   listarMisReservas,
+  obtenerReserva,
   type ReservaResumen,
 } from '../../api/reservas'
 import { renderizarApp } from '../../test/renderizarApp'
@@ -13,9 +14,11 @@ import { PRESENTACION_RESERVA } from './estadoReserva'
 vi.mock('../../api/reservas', async (importarOriginal) => ({
   ...(await importarOriginal<typeof import('../../api/reservas')>()),
   listarMisReservas: vi.fn(),
+  obtenerReserva: vi.fn(),
 }))
 
 const listar = vi.mocked(listarMisReservas)
+const ver = vi.mocked(obtenerReserva)
 
 function reserva(cambios: Partial<ReservaResumen>): ReservaResumen {
   return {
@@ -150,17 +153,22 @@ describe('mis reservas', () => {
       expect(pagar[0]).toHaveAttribute('href', '/reservas/r-pagar/pago')
     })
 
-    it('el detalle es por ahora un marcador de posición', async () => {
+    it('cada tarjeta abre el detalle de su reserva', async () => {
       listar.mockResolvedValue(ok([reserva({})]))
-      const { usuario } = renderizarApp('/reservas')
+      ver.mockResolvedValue({
+        estado: 'ok',
+        datos: { ...reserva({}), cotizacion: undefined },
+      })
+      const { usuario, router } = renderizarApp('/reservas')
 
       await usuario.click(
         await screen.findByRole('link', { name: 'Cabaña en Minca' }),
       )
+      expect(router.state.location.pathname).toBe('/reservas/r-1')
       expect(
-        screen.getByRole('heading', { name: 'Detalle de la reserva' }),
+        await screen.findByRole('heading', { level: 1, name: 'Cabaña en Minca' }),
       ).toBeInTheDocument()
-      expect(screen.getByText('Próximamente')).toBeInTheDocument()
+      expect(ver).toHaveBeenCalledWith('r-1')
     })
 
     it('marca «Mis reservas» en la navegación', async () => {

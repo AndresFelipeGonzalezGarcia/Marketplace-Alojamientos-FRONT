@@ -120,7 +120,8 @@ describe('Cotización', () => {
         ['Tarifa de servicio (8,5 %)', '$ 86.700'],
         ['Total', '$ 1.137.701'],
       ])
-      expect(panel().getByRole('button', { name: 'Reservar' })).toBeDisabled()
+      // Con el total a la vista ya se puede reservar (ver ReservarEstadia.test).
+      expect(panel().getByRole('button', { name: 'Reservar' })).toBeEnabled()
     })
 
     it('mientras calcula lo anuncia, y al cambiar los huéspedes vuelve a cotizar', async () => {
