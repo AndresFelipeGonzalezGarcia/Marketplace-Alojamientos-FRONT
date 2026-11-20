@@ -1,0 +1,346 @@
+/* ---------- Insignia de estado ---------- */
+
+/* Cada estado combina nombre, icono y estilo (relleno, borde, trazo). */
+.insignia-reserva {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-1) var(--espacio-3);
+  border: 1.5px solid transparent;
+  border-radius: var(--radio-completo);
+  font-size: var(--texto-etiqueta);
+  line-height: var(--linea-etiqueta);
+  font-weight: var(--peso-fuerte);
+  white-space: nowrap;
+}
+
+.icono-estado {
+  flex: none;
+}
+
+.insignia-reserva--accion {
+  color: var(--color-superficie);
+  background: var(--color-marca);
+}
+
+.insignia-reserva--espera {
+  color: var(--color-marca);
+  background: var(--color-marca-suave);
+}
+
+.insignia-reserva--exito {
+  color: var(--color-exito);
+  background: var(--color-exito-suave);
+}
+
+.insignia-reserva--revision {
+  color: var(--color-marca);
+  background: var(--color-superficie);
+  border-color: var(--color-marca);
+  border-style: dashed;
+}
+
+.insignia-reserva--terminada {
+  color: var(--color-texto);
+  background: var(--color-borde-suave);
+}
+
+.insignia-reserva--cancelada {
+  color: var(--color-texto-secundario);
+  background: var(--color-superficie);
+  border-color: var(--color-borde);
+}
+
+.insignia-reserva--error {
+  color: var(--color-error);
+  background: var(--color-error-suave);
+  border-color: var(--color-error);
+}
+
+/* ---------- Filtro ---------- */
+
+.filtro-estado {
+  max-width: 1120px;
+  margin: 0 0 var(--espacio-5);
+  padding: 0;
+  border: 0;
+}
+
+.filtro-estado__titulo {
+  margin-bottom: var(--espacio-2);
+  padding: 0;
+  font-size: var(--texto-etiqueta);
+  line-height: var(--linea-etiqueta);
+  font-weight: var(--peso-etiqueta);
+}
+
+.filtro-estado__opciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+}
+
+.filtro-estado__opcion {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-4);
+  color: var(--color-texto);
+  background: var(--color-superficie);
+  border: 1.5px solid var(--color-borde-suave);
+  border-radius: var(--radio-completo);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+  cursor: pointer;
+  transition:
+    background-color var(--transicion),
+    border-color var(--transicion);
+}
+
+.filtro-estado__opcion:hover {
+  border-color: var(--color-borde);
+}
+
+.filtro-estado__opcion input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.filtro-estado__opcion:has(input:checked) {
+  color: var(--color-marca);
+  background: var(--color-marca-suave);
+  border-color: var(--color-marca);
+  font-weight: var(--peso-fuerte);
+}
+
+.filtro-estado__opcion:has(input:focus-visible) {
+  outline: 2px solid var(--color-marca);
+  outline-offset: 2px;
+}
+
+/* ---------- Tarjeta ---------- */
+
+.tarjeta-reserva {
+  position: relative;
+  display: grid;
+  grid-template-columns: 168px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--espacio-5);
+  padding: var(--espacio-3);
+  padding-right: var(--espacio-5);
+  background: var(--color-superficie);
+  border: 1.5px solid transparent;
+  border-radius: var(--radio-mediano);
+  box-shadow: var(--elevacion-reposo);
+  transition:
+    box-shadow var(--transicion),
+    border-color var(--transicion);
+}
+
+.tarjeta-reserva:hover {
+  box-shadow: var(--elevacion-interactiva);
+}
+
+/* Lo que pide una acción o salió mal se marca también en el borde. */
+.tarjeta-reserva--accion {
+  border-color: var(--color-marca);
+}
+
+.tarjeta-reserva--error {
+  border-color: var(--color-error);
+}
+
+.tarjeta-reserva:has(.tarjeta-reserva__enlace:focus-visible) {
+  outline: 2px solid var(--color-marca);
+  outline-offset: 2px;
+}
+
+.tarjeta-reserva__foto {
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radio-pequeno);
+}
+
+.tarjeta-reserva--cancelada .tarjeta-reserva__foto,
+.tarjeta-reserva--error .tarjeta-reserva__foto {
+  filter: grayscale(1);
+  opacity: 0.7;
+}
+
+.tarjeta-reserva__cuerpo {
+  min-width: 0;
+}
+
+.tarjeta-reserva__estado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-1) var(--espacio-3);
+  margin-bottom: var(--espacio-2);
+}
+
+.tarjeta-reserva__explicacion {
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+}
+
+.tarjeta-reserva__titulo {
+  margin: 0;
+  font-size: var(--texto-seccion);
+  line-height: var(--linea-seccion);
+  font-weight: var(--peso-fuerte);
+}
+
+.tarjeta-reserva__enlace {
+  color: var(--color-texto);
+  text-decoration: none;
+}
+
+.tarjeta-reserva__enlace:focus-visible {
+  outline: none;
+}
+
+/* Toda la tarjeta responde al clic; el enlace sigue siendo uno solo. */
+.tarjeta-reserva__enlace::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radio-mediano);
+}
+
+.tarjeta-reserva:hover .tarjeta-reserva__enlace {
+  color: var(--color-marca);
+}
+
+.tarjeta-reserva__ciudad {
+  margin: 0;
+  color: var(--color-texto-secundario);
+}
+
+.tarjeta-reserva__fechas {
+  margin: var(--espacio-2) 0 0;
+  font-size: var(--texto-etiqueta);
+  line-height: var(--linea-etiqueta);
+  font-weight: var(--peso-etiqueta);
+}
+
+.tarjeta-reserva__estadia {
+  margin: 0;
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+}
+
+.tarjeta-reserva__lateral {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--espacio-3);
+  text-align: right;
+}
+
+.tarjeta-reserva__total {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-size: var(--texto-seccion);
+  line-height: var(--linea-seccion);
+  font-weight: var(--peso-fuerte);
+}
+
+.tarjeta-reserva__total-etiqueta {
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+  font-weight: var(--peso-cuerpo);
+}
+
+/* Queda por encima del enlace que cubre la tarjeta. */
+.tarjeta-reserva__pagar {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- Cargando, vacío y error ---------- */
+
+.tarjeta-reserva--esqueleto {
+  grid-template-columns: 168px minmax(0, 1fr);
+  box-shadow: none;
+}
+
+.esqueleto-reserva {
+  display: block;
+  height: 16px;
+  background: var(--color-borde-suave);
+  border-radius: var(--radio-pequeno);
+}
+
+.esqueleto-reserva--foto {
+  height: auto;
+  aspect-ratio: 4 / 3;
+}
+
+.esqueleto-reserva--corta {
+  width: 50%;
+}
+
+.esqueleto-reserva__lineas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+}
+
+.reservas-mensaje {
+  max-width: 560px;
+  margin: var(--espacio-6) auto;
+  text-align: center;
+}
+
+.reservas-mensaje .publicacion-tarjeta__titulo {
+  margin-bottom: var(--espacio-2);
+}
+
+.reservas-mensaje__texto {
+  margin: 0 0 var(--espacio-5);
+  color: var(--color-texto-secundario);
+  line-height: var(--linea-parrafo);
+}
+
+.reservas-mensaje__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--espacio-3);
+}
+
+@media (max-width: 720px) {
+  .tarjeta-reserva,
+  .tarjeta-reserva--esqueleto {
+    grid-template-columns: 112px minmax(0, 1fr);
+    align-items: start;
+    gap: var(--espacio-3) var(--espacio-4);
+    padding-right: var(--espacio-3);
+  }
+
+  .tarjeta-reserva__lateral {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+  }
+
+  .tarjeta-reserva__titulo {
+    font-size: var(--texto-cuerpo);
+    line-height: var(--linea-cuerpo);
+  }
+
+  .insignia-reserva {
+    white-space: normal;
+  }
+}

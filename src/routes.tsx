@@ -8,6 +8,7 @@ import LayoutApp from './components/navegacion/LayoutApp'
 import DisponibilidadPage from './pages/DisponibilidadPage'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
+import MisReservasPage from './pages/MisReservasPage'
 import NotFoundPage from './pages/NotFoundPage'
 import ProximamentePage from './pages/ProximamentePage'
 import PublicacionFormularioPage from './pages/PublicacionFormularioPage'
@@ -55,6 +56,31 @@ export const routes: RouteObject[] = [
           {
             path: '/publicaciones/:id/editar',
             element: <PublicacionFormularioPage />,
+          },
+        ],
+      },
+      {
+        element: <RutaProtegida rolesPermitidos={['HUESPED']} />,
+        children: [
+          { path: '/reservas', element: <MisReservasPage /> },
+          {
+            // Marcadores de posición hasta las historias de detalle y pago.
+            path: '/reservas/:id',
+            element: (
+              <ProximamentePage
+                titulo="Detalle de la reserva"
+                mensaje="Aquí verás el desglose de tu reserva, su estado y lo que puedes hacer con ella."
+              />
+            ),
+          },
+          {
+            path: '/reservas/:id/pago',
+            element: (
+              <ProximamentePage
+                titulo="Pagar la reserva"
+                mensaje="Aquí podrás pagar tu reserva para confirmarla."
+              />
+            ),
           },
         ],
       },
