@@ -11,6 +11,7 @@ import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import MisReservasPage from './pages/MisReservasPage'
 import NotFoundPage from './pages/NotFoundPage'
+import PagoReservaPage from './pages/PagoReservaPage'
 import ProximamentePage from './pages/ProximamentePage'
 import PublicacionFormularioPage from './pages/PublicacionFormularioPage'
 import RecuperarContrasenaPage from './pages/RecuperarContrasenaPage'
@@ -65,16 +66,7 @@ export const routes: RouteObject[] = [
         children: [
           { path: '/reservas', element: <MisReservasPage /> },
           { path: '/reservas/:id', element: <DetalleReservaPage /> },
-          {
-            // Marcador de posición hasta la historia del pago.
-            path: '/reservas/:id/pago',
-            element: (
-              <ProximamentePage
-                titulo="Pagar la reserva"
-                mensaje="Aquí podrás pagar tu reserva para confirmarla."
-              />
-            ),
-          },
+          { path: '/reservas/:id/pago', element: <PagoReservaPage /> },
         ],
       },
       {

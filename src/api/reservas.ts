@@ -103,3 +103,45 @@ export function obtenerReserva(id: string) {
     token: obtenerTokenSesion(),
   })
 }
+
+// POST /api/huesped/reservas/{reservaId}/pago (saga del ADR-004). El
+// frontend no habla con Stripe: solo dispara el cobro y muestra el desenlace.
+// El backend responde en menos de 12 s:
+// 200 aprobado (CONFIRMADA), 202 incierto (PAGO_INCIERTO, lo resuelve la
+// conciliación), 402 rechazado o expirado (PAGO_FALLIDO, fechas liberadas),
+// 503 circuit breaker abierto (se puede reintentar más tarde) y 409 si la
+// reserva no está en PENDIENTE_PAGO.
+
+export type EstadoPago = 'PENDIENTE' | 'APROBADO' | 'FALLIDO' | 'PAGO_INCIERTO' | 'REEMBOLSADO'
+
+// Solo para demostración y pruebas: fuerza el desenlace del proveedor simulado.
+export const ESCENARIOS_PAGO = ['APROBAR', 'RECHAZAR', 'DEMORAR', 'CAER'] as const
+export type EscenarioPago = (typeof ESCENARIOS_PAGO)[number]
+
+export interface ResultadoPago {
+  pagoId: string
+  reservaId: string
+  estadoPago: EstadoPago
+  estadoReserva: EstadoReserva
+  total: number
+  moneda?: string
+  procesadoEn?: string
+}
+
+// `claveIdempotencia` es la misma para todos los intentos de pago de una
+// reserva: con ella la conciliación consulta el pago y un reintento no cobra
+// dos veces. Sin escenario no se manda cuerpo (uso normal).
+export function pagarReserva(
+  reservaId: string,
+  claveIdempotencia: string,
+  escenarioPrueba?: EscenarioPago,
+) {
+  return solicitarApi<ResultadoPago>({
+    ruta: `/api/huesped/reservas/${encodeURIComponent(reservaId)}/pago`,
+    metodo: 'POST',
+    estadoExito: [200, 202],
+    ...(escenarioPrueba ? { cuerpo: { escenarioPrueba } } : {}),
+    cabeceras: { 'Idempotency-Key': claveIdempotencia },
+    token: obtenerTokenSesion(),
+  })
+}

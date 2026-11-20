@@ -1,0 +1,296 @@
+/* ---------- Pantalla de pago ---------- */
+
+.pago {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.pago .detalle__volver {
+  align-self: flex-start;
+  margin-bottom: 0;
+}
+
+.pago__titulo {
+  margin: 0 0 var(--espacio-2);
+  font-size: var(--texto-titulo);
+  line-height: var(--linea-titulo);
+  font-weight: var(--peso-titulo);
+  letter-spacing: var(--tracking-titulo);
+}
+
+.pago__cuerpo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+  align-items: start;
+  gap: var(--espacio-5);
+}
+
+.pago__lateral {
+  position: sticky;
+  top: var(--espacio-5);
+}
+
+.pago__resumen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+}
+
+.pago__resumen .publicacion-tarjeta__titulo {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.pago__resumen-cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--espacio-3);
+}
+
+.pago__ciudad {
+  margin: calc(-1 * var(--espacio-3)) 0 0;
+  color: var(--color-texto-secundario);
+}
+
+.pago__datos {
+  padding-bottom: var(--espacio-4);
+  border-bottom: 1px solid var(--color-borde-suave);
+}
+
+.pago__accion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+}
+
+.pago__accion .publicacion-tarjeta__titulo {
+  margin: 0;
+}
+
+.pago__nota {
+  margin: 0;
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+}
+
+.pago__boton {
+  width: 100%;
+}
+
+/* ---------- Selector de escenario (solo demostración) ---------- */
+
+.selector-escenario {
+  margin: 0;
+  padding: var(--espacio-4);
+  border: 1.5px dashed var(--color-borde);
+  border-radius: var(--radio-pequeno);
+}
+
+.selector-escenario__titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: 0 var(--espacio-1);
+  font-size: var(--texto-etiqueta);
+  line-height: var(--linea-etiqueta);
+  font-weight: var(--peso-etiqueta);
+}
+
+.selector-escenario__opciones {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+  margin-top: var(--espacio-2);
+}
+
+.selector-escenario__opcion {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-3);
+  padding: var(--espacio-2) var(--espacio-3);
+  border: 1px solid var(--color-borde-suave);
+  border-radius: var(--radio-pequeno);
+  cursor: pointer;
+  transition: background-color var(--transicion);
+}
+
+.selector-escenario__opcion:hover {
+  background: var(--color-fondo-pagina);
+}
+
+.selector-escenario__opcion:has(input:checked) {
+  background: var(--color-marca-suave);
+  border-color: var(--color-marca);
+}
+
+.selector-escenario__opcion:has(input:focus-visible) {
+  outline: 2px solid var(--color-marca);
+  outline-offset: 2px;
+}
+
+.selector-escenario__opcion input {
+  margin: 3px 0 0;
+  accent-color: var(--color-marca);
+}
+
+.selector-escenario__etiqueta {
+  display: block;
+  font-weight: var(--peso-fuerte);
+}
+
+.selector-escenario__ayuda {
+  display: block;
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+}
+
+/* ---------- Procesando ---------- */
+
+.procesando-pago {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espacio-4);
+  padding: var(--espacio-6) var(--espacio-5);
+  text-align: center;
+  background: var(--color-marca-suave);
+  border: 1.5px solid var(--color-marca);
+  border-radius: var(--radio-mediano);
+}
+
+.procesando-pago p {
+  margin: 0;
+}
+
+.procesando-pago__indicador {
+  width: 40px;
+  height: 40px;
+  box-sizing: border-box;
+  border: 4px solid color-mix(in srgb, var(--color-marca) 20%, transparent);
+  border-top-color: var(--color-marca);
+  border-radius: var(--radio-completo);
+  animation: procesando-girar 900ms linear infinite;
+}
+
+@keyframes procesando-girar {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .procesando-pago__indicador {
+    animation-duration: 2.4s;
+  }
+}
+
+.procesando-pago__titulo {
+  margin: 0 0 var(--espacio-2);
+  font-size: var(--texto-seccion);
+  line-height: var(--linea-seccion);
+  font-weight: var(--peso-titulo);
+  border-radius: var(--radio-pequeno);
+}
+
+.procesando-pago__titulo:focus-visible {
+  outline: 2px solid var(--color-marca);
+  outline-offset: 2px;
+}
+
+.procesando-pago__progreso {
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Desenlaces ---------- */
+
+.desenlace-pago {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+  padding: var(--espacio-5);
+  background: var(--color-superficie);
+  border: 1.5px solid var(--color-borde);
+  border-radius: var(--radio-mediano);
+  box-shadow: var(--elevacion-reposo);
+}
+
+.desenlace-pago--espera {
+  background: var(--color-marca-suave);
+  border-color: var(--color-marca);
+}
+
+.desenlace-pago--error {
+  background: var(--color-error-suave);
+  border-color: var(--color-error);
+}
+
+.desenlace-pago--error .desenlace-pago__titulo {
+  color: var(--color-error);
+}
+
+.desenlace-pago__titulo {
+  margin: 0;
+  font-size: var(--texto-seccion);
+  line-height: var(--linea-seccion);
+  font-weight: var(--peso-titulo);
+  border-radius: var(--radio-pequeno);
+}
+
+.desenlace-pago__titulo:focus-visible {
+  outline: 2px solid var(--color-marca);
+  outline-offset: 2px;
+}
+
+.desenlace-pago__cuerpo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+}
+
+.desenlace-pago__cuerpo p {
+  margin: 0;
+}
+
+.desenlace-pago__referencia {
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+  line-height: var(--linea-pequeno);
+}
+
+.desenlace-pago__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-3);
+  margin-top: var(--espacio-2);
+}
+
+@media (max-width: 880px) {
+  .pago__cuerpo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* En móvil la acción va primero: es lo que se viene a hacer. */
+  .pago__lateral {
+    position: static;
+    order: -1;
+  }
+
+  .pago__titulo {
+    font-size: var(--texto-seccion);
+    line-height: var(--linea-seccion);
+  }
+
+  .desenlace-pago__acciones > * {
+    flex: 1 1 100%;
+  }
+}

@@ -61,6 +61,18 @@ const MENSAJES = new Map<string, string>([
     'RESERVA_NO_ENCONTRADA',
     'Esta reserva no existe o no es de tu cuenta.',
   ],
+  [
+    'PAGO_RECHAZADO',
+    'El cobro no se aprobó o expiró. No se completó el pago y las fechas quedaron libres.',
+  ],
+  [
+    'ESTADO_RESERVA_INVALIDO',
+    'Esta reserva ya no está pendiente de pago.',
+  ],
+  [
+    'SERVICIO_PAGOS_NO_DISPONIBLE',
+    'El servicio de pagos no está disponible en este momento. No se hizo ningún cobro.',
+  ],
   ['CAPACIDAD_EXCEDIDA', 'Son más huéspedes de los que admite el alojamiento.'],
   ['PERIODO_CRUZADO', 'Las fechas se cruzan con otro periodo.'],
   ['PERIODO_EN_EL_PASADO', 'El periodo no puede empezar en el pasado.'],
