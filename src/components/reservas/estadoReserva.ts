@@ -1,7 +1,6 @@
 import type { EstadoReserva } from '../../api/reservas'
 
-// Cada estado se reconoce por tres cosas a la vez: el nombre, un icono
-// propio y el estilo de la insignia. El color nunca va solo.
+// Estados de reserva
 export type TonoReserva =
   | 'accion'
   | 'espera'
@@ -22,7 +21,7 @@ export type IconoEstado =
 
 export interface PresentacionReserva {
   etiqueta: string
-  // Qué significa para el huésped, en una frase.
+  // Descripción
   descripcion: string
   tono: TonoReserva
   icono: IconoEstado

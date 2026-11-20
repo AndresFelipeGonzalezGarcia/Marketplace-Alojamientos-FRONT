@@ -6,8 +6,7 @@ interface BotonCargaProps {
   children: ReactNode
 }
 
-// Botón principal de envío con estado de carga propio: se deshabilita,
-// anuncia el cambio y muestra un indicador sin cambiar de tamaño.
+// Botón con carga
 function BotonCarga({ cargando, textoCargando, children }: BotonCargaProps) {
   return (
     <button

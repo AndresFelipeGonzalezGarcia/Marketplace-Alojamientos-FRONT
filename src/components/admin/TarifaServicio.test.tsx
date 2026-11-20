@@ -85,7 +85,7 @@ describe('tarifa de servicio', () => {
           /solo afecta a las cotizaciones y reservas nuevas\. Las que ya se crearon conservan/,
         ),
       ).toBeInTheDocument()
-      // Convive con la bandeja, no la reemplaza.
+      // Tarifa y bandeja
       expect(
         await screen.findByText('No hay publicaciones por revisar'),
       ).toBeInTheDocument()

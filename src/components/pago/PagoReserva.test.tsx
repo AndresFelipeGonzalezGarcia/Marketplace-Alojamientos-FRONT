@@ -74,14 +74,14 @@ async function error(codigo: string, status: number) {
   }
 }
 
-// El backend aprueba: la reserva pasa a CONFIRMADA para su detalle.
+// Pago aprobado
 async function aprobado() {
   ver.mockResolvedValue({ estado: 'ok', datos: reserva({ estado: 'CONFIRMADA' }) })
   return resultado({})
 }
 
 const botonPagar = () => screen.getByRole('button', { name: /^Pagar/ })
-// Ningún botón que vuelva a cobrar: ni «Pagar…» ni «Reintentar…».
+// Sin cobro repetido
 const botonesDeCobro = () => screen.queryAllByRole('button', { name: /pagar|reintentar/i })
 
 async function abrir(ruta = RUTA) {
@@ -92,7 +92,7 @@ async function abrir(ruta = RUTA) {
 
 beforeEach(() => {
   iniciarSesionDePrueba('HUESPED')
-  // El .env local puede activarlo: por defecto, uso normal.
+  // Modo demo
   vi.stubEnv('VITE_SESION_DEMO', 'false')
   ver.mockReset()
   pagar.mockReset()
@@ -119,7 +119,7 @@ describe('pago de la reserva', () => {
     expect(screen.getByText('2 huéspedes')).toBeInTheDocument()
     expect(within(screen.getByLabelText('Desglose del precio')).getByText(/853\.750/)).toBeInTheDocument()
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
-    // Fuera del modo demo no hay selector de escenarios.
+    // Sin selector de escenarios
     expect(screen.queryByRole('group', { name: /Escenario de prueba/ })).not.toBeInTheDocument()
 
     expect(botonPagar()).toHaveTextContent('Pagar $ 853.750')
@@ -142,7 +142,7 @@ describe('pago de la reserva', () => {
     expect(screen.getByRole('heading', { name: 'Estamos procesando tu pago' })).toHaveFocus()
     expect(botonesDeCobro()).toHaveLength(0)
 
-    // Cerrar la pestaña a mitad del cobro pide confirmación.
+    // Cierre de pestaña
     const salir = new Event('beforeunload', { cancelable: true })
     window.dispatchEvent(salir)
     expect(salir.defaultPrevented).toBe(true)
@@ -200,8 +200,7 @@ describe('pago de la reserva', () => {
       expect(within(aviso).getByRole('link', { name: 'Ver mi reserva' })).toHaveAttribute('href', `/reservas/${ID}`)
       expect(botonesDeCobro()).toHaveLength(0)
 
-      // Al volver a la pantalla, aunque el backend aún diga PENDIENTE_PAGO,
-      // sigue sin ofrecerse pagar.
+      // Pago incierto
       cleanup()
       await abrir()
       expect(screen.getByRole('heading', { name: 'Estamos confirmando tu pago' })).toBeInTheDocument()

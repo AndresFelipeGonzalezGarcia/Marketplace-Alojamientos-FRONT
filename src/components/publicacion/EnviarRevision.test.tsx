@@ -55,7 +55,7 @@ function publicacion(
   }
 }
 
-// Construye el error con el manejador único, como lo haría el cliente.
+// Error del servidor
 async function errorDelServidor(
   cuerpo: object,
   status: number,
@@ -213,7 +213,7 @@ describe('enviar a revisión', () => {
       expect(screen.getByRole('alert')).toHaveTextContent(
         'Completa los datos de la publicación. Revisa los campos marcados.',
       )
-      // Sigue en borrador y editable para corregir.
+      // Borrador
       expect(screen.getByText('Borrador')).toHaveClass('insignia-estado')
       expect(campoTitulo()).toBeEnabled()
     })
@@ -266,7 +266,7 @@ describe('enviar a revisión', () => {
         screen.queryByRole('button', { name: 'Enviar a revisión' }),
       ).not.toBeInTheDocument()
       expect(campoTitulo()).toBeDisabled()
-      // Deshabilitado por el fieldset; el CSS además lo oculta.
+      // Botón oculto
       expect(
         screen.getByRole('button', { name: '+ Agregar foto' }),
       ).toBeDisabled()
@@ -275,7 +275,7 @@ describe('enviar a revisión', () => {
           'Un administrador la está revisando. Mientras tanto no se puede editar.',
         )
         .closest('.aviso-estado')
-      // Al abrirla ya en revisión no hay nada que confirmar.
+      // En revisión
       expect(aviso).not.toHaveAttribute('role')
       expect(aviso).not.toHaveTextContent('Enviada a revisión')
     })

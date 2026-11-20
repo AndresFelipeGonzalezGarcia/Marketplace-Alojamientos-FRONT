@@ -180,8 +180,7 @@ beforeEach(() => {
   })
 })
 
-// Llena el formulario completo sobre la app montada: con la suite en
-// paralelo supera el límite por defecto de 5 s sin estar colgado.
+// Tiempo máximo
 describe('crear publicación', { timeout: 15_000 }, () => {
   it('envía todos los campos y queda en BORRADOR', async () => {
     const usuario = renderEn('/publicaciones/nueva')

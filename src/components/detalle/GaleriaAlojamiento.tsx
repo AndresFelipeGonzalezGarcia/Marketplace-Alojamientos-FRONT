@@ -2,7 +2,7 @@ import { useState, type KeyboardEvent } from 'react'
 
 interface GaleriaAlojamientoProps {
   titulo: string
-  // La primera es la portada.
+  // Imágenes
   imagenes: string[]
 }
 
@@ -21,9 +21,7 @@ function Flecha({ direccion }: { direccion: 'anterior' | 'siguiente' }) {
   )
 }
 
-// La foto manda: una foto grande que se recorre con las flechas (en pantalla
-// o del teclado) y una tira de miniaturas para saltar a cualquiera. Empieza
-// siempre en la portada.
+// Galería
 function GaleriaAlojamiento({ titulo, imagenes }: GaleriaAlojamientoProps) {
   const [actual, setActual] = useState(0)
   const [fallidas, setFallidas] = useState<ReadonlySet<number>>(new Set())

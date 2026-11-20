@@ -16,8 +16,7 @@ import FiltroEstado from './FiltroEstado'
 import TarjetaReserva from './TarjetaReserva'
 import './reservas.css'
 
-// `clave` dice para qué consulta es el resultado: si el filtro cambió y aún
-// no ha llegado la respuesta nueva, se muestra como cargando.
+// Resultado del listado
 type Carga =
   | { clave: string; fase: 'lista'; reservas: ReservaResumen[] }
   | { clave: string; fase: 'error'; error: ErrorApi }
@@ -25,7 +24,7 @@ type Carga =
 function MisReservas() {
   const [parametros, setParametros] = useSearchParams()
   const crudo = parametros.get('estado')
-  // Un estado desconocido en la URL se ignora: se ven todas.
+  // Estado desconocido
   const estado: EstadoReserva | null = esEstadoReserva(crudo) ? crudo : null
   const [intento, setIntento] = useState(0)
   const clave = `${estado ?? 'TODAS'}#${intento}`

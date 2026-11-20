@@ -1,6 +1,4 @@
-// Aritmética de fechas del calendario. Las fechas son cadenas yyyy-MM-dd y
-// los meses yyyy-MM; se calculan en UTC para que la zona horaria del
-// navegador no corra ningún día.
+// Fechas del calendario
 
 const aTexto = (fecha: Date) => fecha.toISOString().slice(0, 10)
 const aDate = (fecha: string) => new Date(`${fecha}T00:00:00Z`)
@@ -23,15 +21,15 @@ export const primerDia = (mes: string) => `${mes}-01`
 export const ultimoDia = (mes: string) =>
   sumarDias(primerDia(sumarMeses(mes, 1)), -1)
 
-// Días entre dos fechas, contando ambas.
+// Días entre fechas
 export function diasIncluidos(desde: string, hasta: string) {
   return Math.round((aDate(hasta).getTime() - aDate(desde).getTime()) / 86_400_000) + 1
 }
 
-// 0 = lunes … 6 = domingo: la semana empieza el lunes.
+// Día de la semana
 export const diaDeLaSemana = (fecha: string) => (aDate(fecha).getUTCDay() + 6) % 7
 
-// Semanas del mes, de lunes a domingo; null donde la casilla es de otro mes.
+// Semanas del mes
 export function semanasDelMes(mes: string): (string | null)[][] {
   const semanas: (string | null)[][] = []
   let semana: (string | null)[] = Array(diaDeLaSemana(primerDia(mes))).fill(null)
@@ -63,11 +61,11 @@ const FECHA_COMPLETA = new Intl.DateTimeFormat('es-CO', {
   timeZone: 'UTC',
 })
 
-// «diciembre de 2026», con mayúscula inicial para el título del mes.
+// Nombre del mes
 export function nombreMes(mes: string) {
   const texto = NOMBRE_MES.format(aDate(primerDia(mes)))
   return texto.charAt(0).toUpperCase() + texto.slice(1)
 }
 
-// «jueves, 10 de diciembre de 2026», para lectores de pantalla.
+// Fecha completa
 export const fechaCompleta = (fecha: string) => FECHA_COMPLETA.format(aDate(fecha))

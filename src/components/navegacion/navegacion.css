@@ -1,6 +1,5 @@
 .app {
-  /* Alto del encabezado en escritorio; lo usan las vistas que se ajustan
-     a la ventana o se fijan bajo él (panel de acceso, panel de revisión). */
+  /* Alto del encabezado */
   --alto-encabezado: 64px;
 
   display: flex;
@@ -46,7 +45,7 @@
   transform: none;
 }
 
-/* ---------- Encabezado: disciplinado, sin línea divisoria ---------- */
+/* ---------- Encabezado ---------- */
 
 .encabezado-app {
   position: sticky;
@@ -208,7 +207,7 @@ a.navegacion-enlace--cuenta:hover,
   background: var(--color-marca-suave);
 }
 
-/* Aviso discreto mientras está activo VITE_SESION_DEMO. */
+/* Aviso de modo demo */
 .aviso-modo-demo {
   position: fixed;
   bottom: var(--espacio-4);
@@ -231,8 +230,7 @@ a.navegacion-enlace--cuenta:hover,
     padding: var(--espacio-3) var(--espacio-4);
   }
 
-  /* El menú ocupa su propia fila y se desliza en horizontal dentro de
-     ella: no se apila ni desplaza la página. */
+  /* Menú en móvil */
   .encabezado-app__menu {
     flex-basis: 100%;
     order: 3;

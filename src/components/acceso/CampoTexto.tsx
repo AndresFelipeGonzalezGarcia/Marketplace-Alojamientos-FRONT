@@ -13,8 +13,7 @@ interface CampoTextoProps {
   onCambio: (valor: string) => void
 }
 
-// Campo con etiqueta flotante: la etiqueta ocupa el lugar del texto mientras
-// el campo está vacío y sube cuando recibe foco o tiene valor.
+// Campo con etiqueta flotante
 function CampoTexto({
   id,
   etiqueta,
@@ -41,7 +40,7 @@ function CampoTexto({
           className={`campo-flotante__control${esContrasena ? ' campo-flotante__control--con-boton' : ''}`}
           type={esContrasena && contrasenaVisible ? 'text' : tipo}
           value={valor}
-          // Un espacio permite detectar con CSS si el campo está vacío.
+          // Marcador de campo vacío
           placeholder=" "
           autoComplete={autoComplete}
           aria-invalid={error ? true : undefined}

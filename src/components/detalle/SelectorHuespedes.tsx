@@ -8,9 +8,7 @@ interface SelectorHuespedesProps {
   onCambiar: (huespedes: number) => void
 }
 
-// Contador de huéspedes con botones, entre 1 y la capacidad. Si la URL trajo
-// más de los que caben, se muestra tal cual: el backend responde
-// CAPACIDAD_EXCEDIDA y el error queda aquí, junto al selector.
+// Selector de huéspedes
 function SelectorHuespedes({ valor, capacidad, error, onCambiar }: SelectorHuespedesProps) {
   const id = useId()
   const idEtiqueta = `${id}-etiqueta`

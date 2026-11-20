@@ -1,5 +1,4 @@
-// Mitad visual de las pantallas de acceso: la foto y el eslogan.
-// La marca ya está en el encabezado; aquí solo habla el alojamiento.
+// Panel de marca
 function PanelMarca() {
   return (
     <aside className="panel-marca">

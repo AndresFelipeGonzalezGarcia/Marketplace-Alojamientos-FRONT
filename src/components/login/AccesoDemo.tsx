@@ -9,8 +9,7 @@ const ROLES_DEMO: { rol: RolUsuario; descripcion: string }[] = [
   { rol: 'ADMINISTRADOR', descripcion: 'Moderación' },
 ]
 
-// Solo se monta con modoDemoActivo(). Crea la sesión en el navegador,
-// sin llamar al backend.
+// Acceso de prueba
 function AccesoDemo() {
   const [abierto, setAbierto] = useState(false)
 

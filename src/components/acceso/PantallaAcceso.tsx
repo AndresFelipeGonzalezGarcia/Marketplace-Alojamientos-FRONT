@@ -6,8 +6,7 @@ interface PantallaAccesoProps {
   children: ReactNode
 }
 
-// Pantalla partida de login y registro: formulario a un lado, panel de
-// marca al otro. En móvil el panel queda arriba como franja.
+// Pantalla de acceso
 function PantallaAcceso({ children }: PantallaAccesoProps) {
   return (
     <main className="acceso">

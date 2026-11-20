@@ -1,6 +1,6 @@
 /* ---------- Insignia de estado ---------- */
 
-/* Cada estado combina nombre, icono y estilo (relleno, borde, trazo). */
+/* Estilos por estado */
 .insignia-reserva {
   display: inline-flex;
   align-items: center;
@@ -145,7 +145,7 @@
   box-shadow: var(--elevacion-interactiva);
 }
 
-/* Lo que pide una acción o salió mal se marca también en el borde. */
+/* Borde de alerta */
 .tarjeta-reserva--accion {
   border-color: var(--color-marca);
 }
@@ -204,7 +204,7 @@
   outline: none;
 }
 
-/* Toda la tarjeta responde al clic; el enlace sigue siendo uno solo. */
+/* Tarjeta clicable */
 .tarjeta-reserva__enlace::after {
   content: '';
   position: absolute;
@@ -259,7 +259,7 @@
   font-weight: var(--peso-cuerpo);
 }
 
-/* Queda por encima del enlace que cubre la tarjeta. */
+/* Enlace de pago */
 .tarjeta-reserva__pagar {
   position: relative;
   z-index: 1;
@@ -469,7 +469,7 @@
   border-radius: var(--radio-mediano);
 }
 
-/* El estado, protagonista: borde y fondo según el tono de la insignia. */
+/* Estado */
 .estado-reserva {
   display: flex;
   flex-direction: column;

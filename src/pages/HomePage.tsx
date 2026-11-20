@@ -35,7 +35,7 @@ const INTRODUCCION: Record<RolUsuario | "INVITADO", string> = {
 interface Portada {
   src: string;
   alt: string;
-  // Qué parte de la foto se conserva al recortarla a lo ancho.
+  // Encuadre de la foto
   encuadre: string;
 }
 
@@ -71,7 +71,7 @@ function HomePage() {
 
   return (
     <main className="inicio">
-      {/* La foto es el contenido principal: ocupa todo el ancho. */}
+      {/* Portada */}
       <section className="inicio__portada">
         <img
           className="inicio__foto"

@@ -32,7 +32,7 @@
   list-style: none;
 }
 
-/* Cada periodo se separa por el fondo, sin borde. */
+/* Periodo */
 .fila-periodo {
   display: flex;
   flex-wrap: wrap;

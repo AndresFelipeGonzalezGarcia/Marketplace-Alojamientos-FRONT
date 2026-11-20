@@ -17,8 +17,7 @@ interface CambiosSesion {
   usuario?: Partial<UsuarioSesion>
 }
 
-// Construye una sesión como la que devuelve POST /api/auth/login,
-// vigente durante una hora salvo que se indique otra cosa.
+// Sesión de prueba
 export function crearSesionDePrueba(
   rol: RolUsuario = 'ANFITRION',
   cambios: CambiosSesion = {},
@@ -37,7 +36,7 @@ export function crearSesionDePrueba(
   }
 }
 
-// Deja una sesión iniciada. src/test/setup.ts la limpia tras cada prueba.
+// Iniciar sesión de prueba
 export function iniciarSesionDePrueba(
   rol: RolUsuario = 'ANFITRION',
   cambios: CambiosSesion = {},

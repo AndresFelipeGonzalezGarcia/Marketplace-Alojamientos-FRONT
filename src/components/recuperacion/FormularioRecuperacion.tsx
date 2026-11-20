@@ -67,7 +67,7 @@ function FormularioRecuperacion() {
   }
 
   if (enviado) {
-    // Mensaje neutro: la respuesta es la misma exista o no la cuenta.
+    // Mensaje enviado
     return (
       <section className="acceso__tarjeta">
         <h1 className="acceso__titulo">Revisa tu correo</h1>

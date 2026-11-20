@@ -5,11 +5,11 @@ export type RolDia = 'llegada' | 'noche' | 'salida' | null
 export interface EstadoDia {
   fecha: string
   pasado: boolean
-  // undefined mientras no se ha cargado.
+  // Disponibilidad
   libre: boolean | undefined
   habilitado: boolean
   rol: RolDia
-  // Ocupado, pero vale como salida: la noche de ese día no se usa.
+  // Día de salida
   soloSalida: boolean
 }
 
@@ -32,8 +32,7 @@ function textoDisponibilidad({ pasado, libre, soloSalida }: EstadoDia) {
   return libre ? 'disponible' : 'no disponible'
 }
 
-// Un día es un botón. Los que no se pueden elegir siguen siendo enfocables
-// (aria-disabled) para que el teclado recorra el mes sin saltos.
+// Día del calendario
 function DiaCalendario({ dia, enfocable, onElegir }: DiaCalendarioProps) {
   const { fecha, pasado, libre, habilitado, rol, soloSalida } = dia
   const clases = [

@@ -6,13 +6,11 @@ import type {
   TipoAlojamiento,
 } from './publicaciones'
 
-// Búsqueda pública. En docs/contrato-api-marketplace.yaml está marcada como
-// PROPUESTA. No se envía el token: el endpoint es público y un token vencido
-// no debe cerrar la sesión de quien solo está mirando.
+// Búsqueda pública
 
 export const TAMANO_PAGINA = 12
 
-// AlojamientoResumen del contrato.
+// Resumen de alojamiento
 export interface AlojamientoResumen {
   id: string
   titulo: string
@@ -24,7 +22,7 @@ export interface AlojamientoResumen {
   modoReserva: ModoReserva
 }
 
-// PaginaAlojamientos del contrato. `pagina` empieza en 0.
+// Página de alojamientos
 export interface PaginaAlojamientos {
   contenido: AlojamientoResumen[]
   pagina: number
@@ -33,11 +31,11 @@ export interface PaginaAlojamientos {
   totalPaginas: number
 }
 
-// Parámetros de GET /api/alojamientos, ya validados.
+// Filtros de búsqueda
 export interface ConsultaAlojamientos {
   ciudad?: string
   fechaLlegada?: string
-  // Exclusiva: es el día de salida, esa noche no se cuenta.
+  // Fecha de salida
   fechaSalida?: string
   huespedes?: number
   precioMin?: number
@@ -53,7 +51,7 @@ export function construirConsulta(consulta: ConsultaAlojamientos): string {
   for (const [clave, valor] of Object.entries(consulta)) {
     if (valor === undefined || valor === '') continue
     if (Array.isArray(valor)) {
-      // style: form, explode: false → serviciosIds=a,b
+      // Servicios separados por coma
       if (valor.length > 0) parametros.set(clave, valor.join(','))
     } else {
       parametros.set(clave, String(valor))
@@ -71,7 +69,7 @@ export function buscarAlojamientos(consulta: ConsultaAlojamientos) {
   })
 }
 
-// Catálogo público (GET /api/servicios), para nombrar el filtro de servicios.
+// Catálogo público de servicios
 export function listarServiciosPublicos() {
   return solicitarApi<Servicio[]>({
     ruta: '/api/servicios',
@@ -80,8 +78,7 @@ export function listarServiciosPublicos() {
   })
 }
 
-// AlojamientoDetalle del contrato (PROPUESTA): la vista pública, sin datos
-// internos del anfitrión ni estado. La primera imagen es la portada.
+// Detalle de alojamiento
 export interface AlojamientoDetalle {
   id: string
   titulo: string
@@ -101,8 +98,7 @@ export interface AlojamientoDetalle {
   imagenes?: string[]
 }
 
-// GET /api/alojamientos/{alojamientoId}. Público, como la búsqueda. Responde
-// 404 ALOJAMIENTO_NO_ENCONTRADO si no existe o si no está ACTIVA.
+// Obtener alojamiento
 export function obtenerAlojamiento(id: string) {
   return solicitarApi<AlojamientoDetalle>({
     ruta: `/api/alojamientos/${encodeURIComponent(id)}`,
@@ -111,18 +107,17 @@ export function obtenerAlojamiento(id: string) {
   })
 }
 
-// DiaCalendario del contrato (PROPUESTA).
+// Día del calendario
 export interface DiaCalendario {
-  // yyyy-MM-dd
+  // Fecha
   fecha: string
   disponible: boolean
 }
 
-// El contrato admite como máximo 365 días por consulta.
+// Máximo de días por consulta
 export const MAXIMO_DIAS_CALENDARIO = 365
 
-// GET /api/alojamientos/{alojamientoId}/calendario. Público. Un elemento por
-// día del rango; `hasta` se incluye. 400 FECHAS_INVALIDAS o RANGO_EXCESIVO.
+// Calendario del alojamiento
 export function obtenerCalendario(id: string, desde: string, hasta: string) {
   const consulta = new URLSearchParams({ desde, hasta })
   return solicitarApi<DiaCalendario[]>({

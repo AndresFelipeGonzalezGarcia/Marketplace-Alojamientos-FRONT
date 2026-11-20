@@ -2,14 +2,14 @@ import { Link, type To } from 'react-router'
 import { paginasVisibles } from './filtrosBusqueda'
 
 interface PaginacionProps {
-  // Empieza en 1.
+  // Página actual
   pagina: number
   totalPaginas: number
   enlaceA: (pagina: number) => To
   onNavegar?: () => void
 }
 
-// Enlaces, no botones: cada página tiene su URL y se puede abrir o compartir.
+// Paginación
 function Paginacion({
   pagina,
   totalPaginas,

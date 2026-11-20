@@ -60,7 +60,7 @@ function esEnteroPositivo(texto: string) {
   return /^\d+$/.test(limpio) && Number(limpio) > 0
 }
 
-// Acepta coma o punto decimal. "200.000" se rechaza para no leerlo como 200.
+// Leer precio
 function aDecimal(texto: string) {
   return texto.trim().replace(',', '.')
 }
@@ -229,7 +229,7 @@ export function evaluarRequisitos(valores: ValoresPublicacion) {
   ]
 }
 
-// Solo se llama con valores que ya pasaron validarPublicacion.
+// Datos validados
 export function aDatosPublicacion(
   valores: ValoresPublicacion,
 ): DatosPublicacion {

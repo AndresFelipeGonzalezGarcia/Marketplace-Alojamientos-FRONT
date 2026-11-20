@@ -1,6 +1,6 @@
 import type { ErrorApi } from '../../api/errores'
 
-// Errores que impiden seguir revisando una publicación.
+// Bloqueos de revisión
 export type BloqueoRevision = 'acceso_denegado' | 'no_encontrada' | 'ya_revisada'
 
 export function bloqueoDe(error: ErrorApi): BloqueoRevision | null {

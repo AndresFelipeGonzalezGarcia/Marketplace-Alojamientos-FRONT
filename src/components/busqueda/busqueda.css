@@ -1,5 +1,4 @@
-/* Búsqueda pública de alojamientos: la cara del producto. Las fotos mandan;
-   todo lo demás usa los tokens de index.css. */
+/* Búsqueda pública */
 
 main.busqueda-pagina {
   padding: 0 0 var(--espacio-8);
@@ -16,7 +15,7 @@ main.busqueda-pagina {
   min-height: 420px;
   padding: var(--espacio-8) var(--espacio-7) 0;
   box-sizing: border-box;
-  /* El degradado oscurece solo lo necesario para leer el texto blanco. */
+  /* Degradado */
   background:
     linear-gradient(
       180deg,
@@ -45,7 +44,7 @@ main.busqueda-pagina {
   line-height: var(--linea-entrada);
 }
 
-/* La tarjeta del buscador se apoya sobre el borde inferior de la foto. */
+/* Tarjeta del buscador */
 .buscador {
   display: grid;
   grid-template-columns: minmax(180px, 1.3fr) minmax(300px, 2fr) minmax(120px, 0.8fr) auto;
@@ -130,7 +129,7 @@ main.busqueda-pagina {
   font-weight: var(--peso-etiqueta);
 }
 
-/* Alineado con los controles, no con las etiquetas. */
+/* Botón buscar */
 .buscador__boton {
   align-self: start;
   min-height: 48px;
@@ -174,7 +173,7 @@ main.busqueda-pagina {
   font-weight: var(--peso-fuerte);
 }
 
-/* En escritorio el panel siempre está a la vista. */
+/* Panel de filtros */
 .busqueda-filtros__alternar {
   display: none;
 }
@@ -416,7 +415,7 @@ main.busqueda-pagina {
   text-decoration: none;
 }
 
-/* Toda la tarjeta responde al clic; sigue habiendo un solo enlace. */
+/* Tarjeta clicable */
 .tarjeta-alojamiento__enlace::after {
   content: '';
   position: absolute;
@@ -456,7 +455,7 @@ main.busqueda-pagina {
   font-size: var(--texto-pequeno);
 }
 
-/* ---------- Esqueletos de carga (la base está en index.css) ---------- */
+/* ---------- Esqueletos de carga ---------- */
 
 .tarjeta-alojamiento--esqueleto .tarjeta-alojamiento__cuerpo {
   gap: var(--espacio-2);
@@ -563,7 +562,7 @@ main.busqueda-pagina {
     padding: var(--espacio-2) var(--espacio-4);
   }
 
-  /* En pantallas estrechas los filtros se abren a pedido. */
+  /* Filtros en móvil */
   .busqueda-filtros__panel {
     display: none;
   }

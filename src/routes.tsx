@@ -24,10 +24,10 @@ export const routes: RouteObject[] = [
     children: [
       { path: '/', element: <HomePage /> },
       { path: '/registro', element: <RegistroPage /> },
-      // Públicas: sin sesión y para cualquier rol.
+      // Rutas públicas
       { path: '/alojamientos', element: <AlojamientosPage /> },
       { path: '/alojamientos/:id', element: <AlojamientoDetallePage /> },
-      // Marcador de posición hasta la historia de inicio de sesión.
+      // Próximamente
       { path: '/login', element: <LoginPage /> },
       { path: '/recuperar-contrasena', element: <RecuperarContrasenaPage /> },
       {
@@ -38,7 +38,7 @@ export const routes: RouteObject[] = [
         element: <RutaProtegida rolesPermitidos={['ANFITRION']} />,
         children: [
           {
-            // Marcador de posición hasta la historia del listado.
+            // Próximamente
             path: '/publicaciones',
             element: (
               <ProximamentePage

@@ -23,7 +23,7 @@ function describirPolitica(politica: PoliticaCancelacion) {
   return `Devuelve el ${porcentaje} % si se cancela hasta ${horas} horas antes de la llegada.`
 }
 
-// Todo lo que llenó el anfitrión, en solo lectura, para decidir.
+// Ficha de la publicación
 function FichaPublicacion({
   publicacion,
   servicios,

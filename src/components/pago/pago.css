@@ -83,7 +83,7 @@
   width: 100%;
 }
 
-/* ---------- Selector de escenario (solo demostración) ---------- */
+/* ---------- Selector de escenario ---------- */
 
 .selector-escenario {
   margin: 0;
@@ -279,7 +279,7 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  /* En móvil la acción va primero: es lo que se viene a hacer. */
+  /* Móvil */
   .pago__lateral {
     position: static;
     order: -1;

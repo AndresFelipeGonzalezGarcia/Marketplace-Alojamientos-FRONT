@@ -55,7 +55,7 @@ describe('bandeja de aprobación', () => {
     listar.mockReturnValue(new Promise(() => {}))
     renderizarApp('/admin')
 
-    // La sección de tarifa anuncia su propia carga en la misma pantalla.
+    // Carga de la tarifa
     expect(
       screen.getByText('Cargando publicaciones pendientes…'),
     ).toHaveAttribute('role', 'status')
@@ -65,7 +65,7 @@ describe('bandeja de aprobación', () => {
   })
 
   it('lista de la más antigua a la más reciente con los datos de cada fila', async () => {
-    // Llegan desordenadas para comprobar que la bandeja respeta el orden.
+    // Publicaciones desordenadas
     listar.mockResolvedValue({
       estado: 'ok',
       datos: [
@@ -113,7 +113,7 @@ describe('bandeja de aprobación', () => {
     expect(primera).toHaveTextContent(/\$\s?320\.000/)
     expect(primera).toHaveTextContent('/ noche')
     expect(primera).toHaveTextContent('Anfitrión: Carlos Mejía')
-    // 15:00 UTC son las 10:00 en Bogotá.
+    // Hora de Bogotá
     const envio = within(primera).getByText(/12 de nov de 2026/)
     expect(envio).toHaveAttribute('datetime', '2026-11-12T15:00:00Z')
     expect(envio).toHaveTextContent(/10:00/)
@@ -190,7 +190,7 @@ describe('bandeja de aprobación', () => {
   it('tras una decisión anuncia el resultado y no muestra esa publicación', async () => {
     listar.mockResolvedValue({
       estado: 'ok',
-      // El backend todavía la devuelve: la bandeja igual la oculta.
+      // Publicación ya decidida
       datos: [fila({}), fila({ id: 'p-2', titulo: 'Otra' })],
     })
     renderizarApp({

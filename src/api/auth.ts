@@ -6,7 +6,7 @@ export interface DatosLogin {
   contrasena: string
 }
 
-// LoginResponse del contrato.
+// Respuesta del login
 export interface RespuestaLogin {
   token: string
   tipo: string

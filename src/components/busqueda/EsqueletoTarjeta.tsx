@@ -1,5 +1,4 @@
-// Silueta de una tarjeta mientras llegan los resultados. Es decorativa:
-// el estado de carga se anuncia aparte con texto.
+// Esqueleto de tarjeta
 function EsqueletoTarjeta() {
   return (
     <li

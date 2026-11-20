@@ -22,7 +22,7 @@ type Carga =
 
 interface DetalleRevisionProps {
   publicacionId: string
-  // Viene de la bandeja; si se entra por URL directa no está.
+  // Fila de la bandeja
   fila?: PublicacionRevision
 }
 
@@ -33,7 +33,7 @@ function DetalleRevision({ publicacionId, fila }: DetalleRevisionProps) {
   const { servicios, politicas } = useCatalogos()
   const [carga, setCarga] = useState<Carga>({ fase: 'cargando' })
   const [intento, setIntento] = useState(0)
-  // Bloqueo surgido al decidir (409 o 404): la ficha sigue a la vista.
+  // Bloqueo al decidir
   const [bloqueo, setBloqueo] = useState<BloqueoRevision | null>(null)
 
   useEffect(() => {
@@ -123,7 +123,7 @@ function DetalleRevision({ publicacionId, fila }: DetalleRevisionProps) {
       break
   }
 
-  // Un 403 al decidir equivale a no tener acceso a la pantalla.
+  // Acceso denegado
   if (bloqueo === 'acceso_denegado') {
     return (
       <MensajePantalla

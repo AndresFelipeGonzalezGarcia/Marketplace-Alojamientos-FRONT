@@ -31,7 +31,7 @@ main.publicacion-pagina {
 
 /* ---------- Estado de la publicación ---------- */
 
-/* El punto refuerza el tono; el texto es lo que informa. */
+/* Punto de estado */
 .insignia-estado {
   display: inline-flex;
   align-items: center;
@@ -153,7 +153,7 @@ main.publicacion-pagina {
   border: 0;
 }
 
-/* Solo lectura: una sola columna y sin controles para añadir o quitar. */
+/* Solo lectura */
 .publicacion-layout--lectura {
   grid-template-columns: minmax(0, 960px);
 }
@@ -165,9 +165,7 @@ main.publicacion-pagina {
   display: none;
 }
 
-/* En solo lectura los valores son el contenido: color pleno, sin la
-   atenuación que el navegador aplica a los controles deshabilitados.
-   El fondo gris basta para indicar que no se editan. */
+/* Valores de solo lectura */
 .publicacion-columna:disabled .campo__control {
   color: var(--color-texto);
   -webkit-text-fill-color: var(--color-texto);
@@ -175,7 +173,7 @@ main.publicacion-pagina {
   cursor: default;
 }
 
-/* Sin borde: la elevación de reposo basta para separarla de la página. */
+/* Tarjeta */
 .publicacion-tarjeta {
   padding: var(--espacio-5);
   background: var(--color-superficie);
@@ -234,7 +232,6 @@ main.publicacion-pagina {
 }
 
 /* ---------- Chips y opciones seleccionables ---------- */
-/* Sin borde en reposo: el borde aparece solo para decir "elegido". */
 
 .chips {
   display: flex;
@@ -355,7 +352,7 @@ label.chip:has(input:focus-visible) {
   line-height: var(--linea-pequeno);
 }
 
-/* ---------- Fotos: el contenido manda ---------- */
+/* ---------- Fotos ---------- */
 
 .imagenes {
   display: grid;
@@ -370,7 +367,7 @@ label.chip:has(input:focus-visible) {
   gap: var(--espacio-2);
 }
 
-/* La portada ocupa la fila completa: es lo primero que ve un huésped. */
+/* Portada */
 .imagen-fila--portada {
   grid-column: 1 / -1;
 }
@@ -548,7 +545,7 @@ label.chip:has(input:focus-visible) {
   gap: var(--espacio-3);
 }
 
-/* Alinea "Quitar" con el centro del campo, bajo la etiqueta. */
+/* Botón quitar */
 .adicional-fila__quitar {
   margin-top: calc(var(--linea-etiqueta) + var(--espacio-2) + var(--espacio-3));
 }

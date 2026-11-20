@@ -21,12 +21,12 @@ function leerGuardada(): unknown {
   return crudo ? JSON.parse(crudo) : null
 }
 
-// Prototipo real del localStorage en uso (jsdom o el de src/test).
+// Prototipo de localStorage
 function prototipoAlmacenamiento(): Storage {
   return Object.getPrototypeOf(localStorage) as Storage
 }
 
-// Importa una copia nueva del módulo, como si la página se recargara.
+// Recargar módulo
 async function recargarModulo() {
   vi.resetModules()
   return import('./sesion')

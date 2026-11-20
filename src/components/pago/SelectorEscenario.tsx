@@ -12,8 +12,7 @@ const OPCIONES: { valor: EscenarioPago; etiqueta: string; ayuda: string }[] = [
   { valor: 'CAER', etiqueta: 'Caer', ayuda: 'El circuit breaker se abre: servicio no disponible (503).' },
 ]
 
-// Solo con VITE_SESION_DEMO activo: fuerza el desenlace del proveedor
-// simulado para poder demostrar los cuatro. En uso normal no se monta.
+// Selector de escenario
 function SelectorEscenario({ valor, onCambiar }: SelectorEscenarioProps) {
   return (
     <fieldset className="selector-escenario">

@@ -2,7 +2,7 @@ import { obtenerTokenSesion } from '../auth/sesion'
 import { solicitarApi } from './cliente'
 import type { Cotizacion, CotizacionRequest } from './cotizaciones'
 
-// /api/huesped/reservas. PROPUESTA en el contrato, rol HUESPED.
+// Reservas del huésped
 
 export const ESTADOS_RESERVA = [
   'PENDIENTE_PAGO',
@@ -20,12 +20,11 @@ export function esEstadoReserva(valor: unknown): valor is EstadoReserva {
   return ESTADOS_RESERVA.includes(valor as EstadoReserva)
 }
 
-// ReservaResumen del contrato tal como llega en «mis reservas»: con los
-// datos del alojamiento. No trae noches: se cuentan con las fechas.
+// Resumen de reserva
 export interface ReservaResumen {
   id: string
   fechaLlegada: string
-  // Exclusiva: es el día de salida.
+  // Fecha de salida
   fechaSalida: string
   numeroHuespedes: number
   estado: EstadoReserva
@@ -36,7 +35,7 @@ export interface ReservaResumen {
   total: number
 }
 
-// Sin `estado`, todas las del huésped autenticado.
+// Listar reservas
 export function listarMisReservas(estado?: EstadoReserva) {
   const consulta = estado ? `?estado=${encodeURIComponent(estado)}` : ''
   return solicitarApi<ReservaResumen[]>({
@@ -47,16 +46,14 @@ export function listarMisReservas(estado?: EstadoReserva) {
   })
 }
 
-// El contrato ya pide este orden; se reordena por si acaso. Las fechas son
-// yyyy-MM-dd, así que se comparan como texto.
+// Orden de reservas
 export function ordenarPorLlegada(reservas: ReservaResumen[]) {
   return [...reservas].sort((a, b) =>
     b.fechaLlegada.localeCompare(a.fechaLlegada),
   )
 }
 
-// ReservaRequest del contrato: los mismos datos que la cotización. El precio
-// lo recalcula el backend, no se manda.
+// Datos de la reserva
 export type ReservaRequest = CotizacionRequest
 
 export interface Reserva {
@@ -67,19 +64,16 @@ export interface Reserva {
   imagenPortada?: string | null
   huespedId?: string
   fechaLlegada: string
-  // Exclusiva: es el día de salida.
+  // Fecha de salida
   fechaSalida: string
   numeroHuespedes: number
   estado: EstadoReserva
-  // El desglose con que se creó la reserva, calculado por el backend.
+  // Desglose
   cotizacion?: Cotizacion
   creadaEn?: string
 }
 
-// POST /api/huesped/reservas. `claveIdempotencia` va en la cabecera
-// Idempotency-Key y tiene que ser la misma en cada reintento de la misma
-// reserva: con ella el backend devuelve la ya creada (200) en vez de crear
-// otra (201). Las dos respuestas son un éxito.
+// Crear reserva
 export function crearReserva(
   solicitud: ReservaRequest,
   claveIdempotencia: string,
@@ -94,7 +88,7 @@ export function crearReserva(
   })
 }
 
-// GET /api/huesped/reservas/{reservaId}. Solo las del huésped autenticado.
+// Obtener reserva
 export function obtenerReserva(id: string) {
   return solicitarApi<Reserva>({
     ruta: `/api/huesped/reservas/${encodeURIComponent(id)}`,
@@ -104,17 +98,11 @@ export function obtenerReserva(id: string) {
   })
 }
 
-// POST /api/huesped/reservas/{reservaId}/pago (saga del ADR-004). El
-// frontend no habla con Stripe: solo dispara el cobro y muestra el desenlace.
-// El backend responde en menos de 12 s:
-// 200 aprobado (CONFIRMADA), 202 incierto (PAGO_INCIERTO, lo resuelve la
-// conciliación), 402 rechazado o expirado (PAGO_FALLIDO, fechas liberadas),
-// 503 circuit breaker abierto (se puede reintentar más tarde) y 409 si la
-// reserva no está en PENDIENTE_PAGO.
+// Pagar reserva
 
 export type EstadoPago = 'PENDIENTE' | 'APROBADO' | 'FALLIDO' | 'PAGO_INCIERTO' | 'REEMBOLSADO'
 
-// Solo para demostración y pruebas: fuerza el desenlace del proveedor simulado.
+// Escenario de pago simulado
 export const ESCENARIOS_PAGO = ['APROBAR', 'RECHAZAR', 'DEMORAR', 'CAER'] as const
 export type EscenarioPago = (typeof ESCENARIOS_PAGO)[number]
 
@@ -128,9 +116,7 @@ export interface ResultadoPago {
   procesadoEn?: string
 }
 
-// `claveIdempotencia` es la misma para todos los intentos de pago de una
-// reserva: con ella la conciliación consulta el pago y un reintento no cobra
-// dos veces. Sin escenario no se manda cuerpo (uso normal).
+// Pago
 export function pagarReserva(
   reservaId: string,
   claveIdempotencia: string,

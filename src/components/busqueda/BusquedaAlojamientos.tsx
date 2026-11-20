@@ -24,7 +24,7 @@ import FiltrosSecundarios, { type EstadoServicios } from './FiltrosSecundarios'
 import ResultadosBusqueda, { type EstadoResultados } from './ResultadosBusqueda'
 import './busqueda.css'
 
-// Estado que el detalle recibe para volver a esta misma búsqueda.
+// Estado de la búsqueda
 export interface EstadoVolverBusqueda {
   desde: string
 }
@@ -33,7 +33,7 @@ interface ErroresServidor extends ErroresBusqueda {
   precio?: string
 }
 
-// Un 400 se muestra junto al campo que lo causó, no como error general.
+// Error de validación
 function erroresDeServidor(error: ErrorApi): ErroresServidor | null {
   if (error.codigo === 'FECHAS_INVALIDAS') {
     return { fechas: MENSAJE_FECHAS_INVALIDAS }
@@ -53,7 +53,7 @@ function erroresDeServidor(error: ErrorApi): ErroresServidor | null {
 }
 
 interface Respuesta {
-  // Qué búsqueda (y qué intento) contestó: si no es la actual, se está cargando.
+  // Resultado de la búsqueda
   solicitud: string
   resultado: ResultadoApi<PaginaAlojamientos>
 }
@@ -63,7 +63,7 @@ function BusquedaAlojamientos() {
   const { search } = useLocation()
   const navigate = useNavigate()
   const filtros = leerFiltros(parametros)
-  // Forma canónica de la búsqueda: dos URL equivalentes no consultan dos veces.
+  // Clave de la búsqueda
   const clave = escribirFiltros(filtros).toString()
 
   const [intento, setIntento] = useState(0)
@@ -118,8 +118,7 @@ function BusquedaAlojamientos() {
       : { fase: 'error', error: respuesta.resultado.error }
   }
 
-  // Tras cambiar de página se lleva el foco (y la vista) al inicio de los
-  // resultados, para no quedarse al final de la lista anterior.
+  // Foco al cambiar de página
   useEffect(() => {
     if (estado.fase !== 'cargando' && enfocarAlCargar.current) {
       enfocarAlCargar.current = false
@@ -128,9 +127,7 @@ function BusquedaAlojamientos() {
     }
   })
 
-  // La búsqueda principal y la paginación crean una entrada en el historial;
-  // retocar los filtros secundarios la reemplaza, para que «atrás» no
-  // recorra cada casilla marcada.
+  // Historial
   function aplicar(cambios: Partial<FiltrosBusqueda>, reemplazar: boolean) {
     setParametros(escribirFiltros({ ...filtros, ...cambios, pagina: 1 }), {
       replace: reemplazar,
@@ -150,8 +147,7 @@ function BusquedaAlojamientos() {
     return { pathname: '/alojamientos', search: texto ? `?${texto}` : '' }
   }
 
-  // El detalle recibe las fechas y huéspedes (los usará para cotizar) y
-  // cómo volver a esta búsqueda exacta.
+  // Estado para el detalle
   function enlaceDetalle(id: string) {
     const estadia = escribirFiltros({
       ...FILTROS_VACIOS,

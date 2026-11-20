@@ -19,7 +19,7 @@ export interface BusquedaPrincipal {
 
 interface BuscadorPrincipalProps {
   filtros: FiltrosBusqueda
-  // Errores que devolvió la API (p. ej. FECHAS_INVALIDAS), junto a su campo.
+  // Errores del servidor
   erroresServidor: ErroresBusqueda
   onBuscar: (busqueda: BusquedaPrincipal) => void
 }
@@ -30,8 +30,7 @@ function siguienteDia(fecha: string) {
   return dia.toISOString().slice(0, 10)
 }
 
-// Ciudad, fechas y huéspedes. Quien lo usa le da una `key` con los valores
-// de la URL para que vuelva a leerlos si cambian (atrás, limpiar filtros).
+// Buscador principal
 function BuscadorPrincipal({
   filtros,
   erroresServidor,
@@ -47,13 +46,13 @@ function BuscadorPrincipal({
   const [errores, setErrores] = useState<ErroresBusqueda | null>(null)
   const hoy = hoyEnBogota()
 
-  // Los errores propios mandan después de intentar buscar; si no, los del servidor.
+  // Errores visibles
   const visibles = errores ?? erroresServidor
   const estadia = describirEstadia(borrador.llegada, borrador.salida)
 
   function cambiar(campo: keyof BorradorBusqueda, valor: string) {
     const siguiente = { ...borrador, [campo]: valor }
-    // Una salida que ya no es posterior a la nueva llegada se descarta.
+    // Salida inválida
     if (
       campo === 'llegada' &&
       siguiente.salida &&
@@ -158,7 +157,7 @@ function BuscadorPrincipal({
             onChange={(evento) => cambiar('salida', evento.target.value)}
           />
         </div>
-        {/* La salida es exclusiva: se dice en noches para que no haya dudas. */}
+        {/* Noches */}
         <p
           id={`${id}-fechas-ayuda`}
           className="buscador__ayuda"

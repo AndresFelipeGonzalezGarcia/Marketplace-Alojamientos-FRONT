@@ -6,8 +6,7 @@ interface EnlaceInvalidoProps {
   mensaje: string
 }
 
-// El enlace venció, ya se usó o no existe: no hay nada que corregir en el
-// formulario, solo pedir uno nuevo.
+// Enlace inválido
 function EnlaceInvalido({ mensaje }: EnlaceInvalidoProps) {
   return (
     <section className="acceso__tarjeta">

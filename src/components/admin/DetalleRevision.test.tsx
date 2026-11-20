@@ -97,7 +97,7 @@ const error404 = () =>
 const error403 = () =>
   errorDelServidor({ codigo: 'ACCESO_DENEGADO', mensaje: 'x' }, 403)
 
-// Promesa que la prueba resuelve cuando quiere, para ver el estado «enviando».
+// Promesa diferida
 function diferida<T>() {
   let resolver!: (valor: T) => void
   const promesa = new Promise<T>((r) => {
@@ -115,7 +115,7 @@ async function abrir(datos = publicacion(), estado?: unknown) {
 
 const boton = (nombre: string) => screen.getByRole('button', { name: nombre })
 const panel = () => screen.getByRole('complementary', { name: 'Tu decisión' })
-// Aviso que deja la bandeja tras decidir (convive con su «Cargando…»).
+// Aviso de resultado
 async function resultado(texto: RegExp) {
   const aviso = (await screen.findByText(texto)).closest('[role="status"]')
   expect(aviso).not.toBeNull()
@@ -224,7 +224,7 @@ describe('detalle de revisión', () => {
     expect(
       screen.getByText('No pudimos cargar el nombre de la política elegida.'),
     ).toBeInTheDocument()
-    // Un catálogo sin permiso no bloquea la decisión.
+    // Catálogo sin permiso
     expect(boton('Aprobar')).toBeEnabled()
   })
 
@@ -345,7 +345,7 @@ describe('detalle de revisión', () => {
       const { usuario } = await abrir()
 
       await usuario.click(boton('Rechazar'))
-      // Los espacios de los extremos no cuentan.
+      // Espacios en los extremos
       await usuario.type(campoMotivo(), '   Corto    ')
       await usuario.click(boton('Rechazar publicación'))
 
@@ -453,7 +453,7 @@ describe('detalle de revisión', () => {
       )
       expect(screen.queryByRole('button', { name: 'Aprobar' })).not.toBeInTheDocument()
       expect(screen.queryByRole('button', { name: /Sí, aprobar/ })).not.toBeInTheDocument()
-      // La ficha sigue a la vista y no se navega.
+      // Ficha visible
       expect(screen.getByRole('heading', { level: 1, name: 'Cabaña entre pinos' })).toBeInTheDocument()
       expect(router.state.location.pathname).toBe(RUTA)
     })

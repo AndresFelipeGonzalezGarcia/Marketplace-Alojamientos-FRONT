@@ -7,13 +7,11 @@ import SeccionDetalle from './SeccionDetalle'
 
 interface FichaAlojamientoProps {
   alojamiento: AlojamientoDetalle
-  // Sube cuando la cotización detecta noches ocupadas: el calendario se
-  // vuelve a montar y carga la disponibilidad de nuevo.
+  // Recarga del calendario
   versionCalendario: number
 }
 
-// Toda la información del alojamiento en una sola columna de lectura,
-// en el orden en que se decide: qué es, qué trae, qué reglas tiene.
+// Ficha del alojamiento
 function FichaAlojamiento({ alojamiento, versionCalendario }: FichaAlojamientoProps) {
   const {
     titulo,
@@ -94,7 +92,7 @@ function FichaAlojamiento({ alojamiento, versionCalendario }: FichaAlojamientoPr
           Elige el día de llegada y luego el de salida. El día de salida no se
           cuenta como noche.
         </p>
-        {/* key: otro alojamiento, o noches que se ocuparon, empiezan de cero. */}
+        {/* Calendario */}
         <CalendarioDisponibilidad
           key={`${alojamiento.id}#${versionCalendario}`}
           alojamientoId={alojamiento.id}

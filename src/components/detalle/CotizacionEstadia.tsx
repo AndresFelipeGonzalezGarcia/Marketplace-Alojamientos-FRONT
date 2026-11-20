@@ -18,15 +18,14 @@ interface CotizacionEstadiaProps {
   alojamientoTitulo: string
   capacidad: number
   modoReserva: ModoReserva
-  // Avisa al detalle para que el calendario vuelva a cargar lo ocupado.
+  // Fechas ocupadas
   onFechasOcupadas: () => void
 }
 
 const mismaEstadia = (a: Estadia | null, b: { llegada: string; salida: string } | null) =>
   !!a && !!b && a.llegada === b.llegada && a.salida === b.salida
 
-// La cotización vive en el lateral: lee las fechas del calendario y los
-// huéspedes de la URL, y muestra el desglose que calcula el backend.
+// Cotización
 function CotizacionEstadia({
   alojamientoId,
   alojamientoTitulo,
@@ -39,11 +38,9 @@ function CotizacionEstadia({
   const esHuesped = sesion?.usuario.rol === 'HUESPED'
   const { estadia, huespedes: huespedesUrl, elegirHuespedes } = useEstadia()
   const huespedes = huespedesUrl ?? 1
-  // Las últimas fechas que el backend dijo ocupadas: el aviso sigue a la
-  // vista cuando el calendario, al recargar, las quita.
+  // Fechas ocupadas
   const [ocupadas, setOcupadas] = useState<Estadia | null>(null)
-  // Cuántas veces una reserva chocó con alguien que reservó primero: cada
-  // una lleva al calendario cuando el diálogo ya se cerró.
+  // Conflictos de reserva
   const [choques, setChoques] = useState(0)
 
   const { estado, reintentar } = useCotizacion({

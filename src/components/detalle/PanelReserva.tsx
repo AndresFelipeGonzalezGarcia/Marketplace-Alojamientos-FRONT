@@ -7,9 +7,7 @@ interface PanelReservaProps {
   onFechasOcupadas: () => void
 }
 
-// Lateral fijo al hacer scroll en pantallas anchas; en móvil va al final del
-// contenido. El precio por noche es el de la publicación; el total, solo el
-// que devuelve la cotización.
+// Panel de reserva
 function PanelReserva({ alojamiento, onFechasOcupadas }: PanelReservaProps) {
   const { id, titulo, precioNoche, tarifaLimpieza = 0, modoReserva, capacidad } = alojamiento
 

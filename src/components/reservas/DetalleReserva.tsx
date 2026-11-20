@@ -21,7 +21,7 @@ interface DetalleReservaProps {
 }
 
 interface Respuesta {
-  // Qué reserva (y qué intento) contestó: si no es la actual, se carga.
+  // Resultado de la reserva
   solicitud: string
   resultado: ResultadoApi<Reserva>
 }

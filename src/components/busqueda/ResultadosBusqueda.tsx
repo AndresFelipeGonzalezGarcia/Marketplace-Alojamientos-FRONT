@@ -15,7 +15,7 @@ import TarjetaAlojamiento from './TarjetaAlojamiento'
 export type EstadoResultados =
   | { fase: 'cargando' }
   | { fase: 'lista'; pagina: PaginaAlojamientos }
-  // 400 con el campo señalado en el buscador: no hay nada que reintentar.
+  // Error de validación
   | { fase: 'filtros_invalidos' }
   | { fase: 'error'; error: ErrorApi }
 
@@ -29,7 +29,7 @@ interface ResultadosBusquedaProps {
   onLimpiar: () => void
   onReintentar: () => void
   onCambiarPagina: () => void
-  // El contenedor lleva el foco aquí tras cambiar de página.
+  // Contenedor de resultados
   refTitulo?: Ref<HTMLHeadingElement>
 }
 
@@ -155,7 +155,7 @@ function ResultadosBusqueda({
     )
   }
 
-  // Un enlace viejo puede apuntar a una página que ya no existe.
+  // Página inexistente
   if (contenido.length === 0) {
     return (
       <section className="resultados">

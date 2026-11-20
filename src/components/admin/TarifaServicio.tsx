@@ -17,8 +17,7 @@ type Carga =
 
 const ID_CAMPO = 'tarifa-servicio-porcentaje'
 
-// Sección de la pantalla de administración: el porcentaje que se cobra
-// sobre el subtotal de cada estadía.
+// Tarifa de servicio
 function TarifaServicio() {
   const [carga, setCarga] = useState<Carga>({ fase: 'cargando' })
   const [intento, setIntento] = useState(0)

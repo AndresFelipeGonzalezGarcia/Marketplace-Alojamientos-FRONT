@@ -5,11 +5,11 @@ export interface Destino {
   etiqueta: string
   ruta: string
   descripcion: string
-  // Texto del botón en las tarjetas del inicio.
+  // Texto del botón
   accion: string
-  // false mientras la pantalla real no exista: se muestra «Próximamente».
+  // Disponible
   disponible: boolean
-  // Rutas en las que esta sección se marca como activa.
+  // Rutas activas
   activaEn: string[]
 }
 
@@ -102,14 +102,14 @@ export const PUBLICACIONES_PENDIENTES: Destino = {
   activaEn: ['/admin', '/admin/*'],
 }
 
-// La búsqueda es pública: la ven todos, también quien no tiene cuenta.
+// Búsqueda
 const SECCIONES_POR_ROL: Record<RolUsuario, Destino[]> = {
   HUESPED: [BUSCAR_ALOJAMIENTOS, MIS_RESERVAS],
   ANFITRION: [BUSCAR_ALOJAMIENTOS, MIS_PUBLICACIONES, NUEVA_PUBLICACION],
   ADMINISTRADOR: [BUSCAR_ALOJAMIENTOS, PUBLICACIONES_PENDIENTES],
 }
 
-// Secciones del menú principal (además de Inicio) para un rol.
+// Secciones del menú
 export function seccionesDelRol(rol: RolUsuario | null): Destino[] {
   return rol ? SECCIONES_POR_ROL[rol] : [BUSCAR_ALOJAMIENTOS]
 }
@@ -120,8 +120,7 @@ export function estaActivo(destino: Destino, ruta: string): boolean {
   )
 }
 
-// Pantalla principal de cada rol. Mientras esa pantalla no exista,
-// el rol aterriza en el inicio, que ya muestra sus accesos.
+// Pantalla principal
 const PRINCIPAL_POR_ROL: Record<RolUsuario, Destino> = {
   HUESPED: INICIO,
   ANFITRION: MIS_PUBLICACIONES,

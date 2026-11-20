@@ -8,8 +8,7 @@ import AccesoDemo from '../components/login/AccesoDemo'
 import FormularioLogin from '../components/login/FormularioLogin'
 import { inicioDelRol } from '../components/navegacion/destinos'
 
-// `desde` llega del estado de navegación, que también puede escribirse a
-// mano: solo se aceptan rutas internas (no "//otro-sitio") y nunca /login.
+// Ruta de origen
 function destinoSeguro(desde: string | undefined): string | undefined {
   if (!desde || desde.startsWith('//') || desde.startsWith('/\\')) {
     return undefined
@@ -24,7 +23,7 @@ function LoginPage() {
   const { desde, motivo, aviso } = leerEstadoRedireccion(location.state)
   const destino = destinoSeguro(desde)
 
-  // Al iniciar sesión (o si ya había una) se sale del login.
+  // Redirección
   if (sesion) {
     return (
       <Navigate to={destino ?? inicioDelRol(sesion.usuario.rol)} replace />

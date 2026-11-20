@@ -6,12 +6,11 @@ import { etiquetaTipo, formatearPrecio } from '../formato/formato'
 interface TarjetaAlojamientoProps {
   alojamiento: AlojamientoResumen
   destino: To
-  // Lo que el detalle necesita para volver a esta misma búsqueda.
+  // Búsqueda de origen
   estadoNavegacion: unknown
 }
 
-// La foto manda: ocupa la parte alta de la tarjeta y toda la tarjeta es
-// un único enlace al detalle.
+// Tarjeta de alojamiento
 function TarjetaAlojamiento({
   alojamiento,
   destino,

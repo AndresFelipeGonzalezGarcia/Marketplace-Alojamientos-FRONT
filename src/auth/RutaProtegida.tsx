@@ -12,13 +12,13 @@ interface RutaProtegidaProps {
 function RutaProtegida({ rolesPermitidos }: RutaProtegidaProps) {
   const sesion = useSesion()
   const location = useLocation()
-  // Distingue "llegó sin sesión" de "la sesión terminó estando aquí".
+  // Sesión anterior
   const [entroConSesion] = useState(() => sesion !== null)
 
   if (!sesion) {
     const motivo = obtenerMotivoUltimoCierre()
 
-    // Quien cierra sesión a propósito va al inicio, no al login.
+    // Cierre manual
     if (entroConSesion && motivo === 'manual') {
       return <Navigate to="/" replace />
     }

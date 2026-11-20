@@ -70,7 +70,7 @@ beforeEach(() => {
   buscar.mockReset()
   servicios.mockReset()
   servicios.mockResolvedValue({ estado: 'ok', datos: [] })
-  // El calendario tiene sus propias pruebas; aquí basta con que responda.
+  // Calendario
   vi.mocked(obtenerCalendario).mockResolvedValue({ estado: 'ok', datos: [] })
 })
 
@@ -144,7 +144,7 @@ describe('Detalle del alojamiento', () => {
 
       await usuario.keyboard('{ArrowRight}')
       expect(foto()).toHaveAttribute('src', 'http://fotos.prueba/3.jpg')
-      // Al final vuelve a empezar.
+      // Vuelta a la primera foto
       await usuario.click(galeria().getByRole('button', { name: 'Foto siguiente' }))
       expect(foto()).toHaveAttribute('src', 'http://fotos.prueba/1.jpg')
       await usuario.keyboard('{ArrowLeft}')

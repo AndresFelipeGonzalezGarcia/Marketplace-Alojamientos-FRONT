@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-// El backend puede tardar hasta 12 s (10 s de timeout con el procesador más
-// margen). La espera se explica con palabras: qué pasa, cuánto puede tardar
-// y que no hay que cerrar la ventana. El segundero no se anuncia cada
-// segundo: el lector de pantalla solo lee el mensaje al aparecer.
+// Procesando pago
 function ProcesandoPago() {
   const [segundos, setSegundos] = useState(0)
   const titulo = useRef<HTMLHeadingElement>(null)

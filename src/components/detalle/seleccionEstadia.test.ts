@@ -3,13 +3,13 @@ import { leerEstadia } from './estadia'
 import { nombreMes, semanasDelMes, sumarMeses, ultimoDia } from './fechasCalendario'
 import { nochesLibres, puedeLlegar, puedeSalir, salidaMaxima } from './seleccionEstadia'
 
-// Libres del 10 al 14 de abril; el 15 ocupado; lo demás sin cargar.
+// Disponibilidad de prueba
 const disponible = (fecha: string) =>
   fecha >= '2030-04-10' && fecha <= '2030-04-14' ? true : fecha === '2030-04-15' ? false : undefined
 
 describe('fechas del calendario', () => {
   it('arma las semanas de lunes a domingo', () => {
-    // El 1 de marzo de 2030 es viernes.
+    // Fecha de prueba
     const semanas = semanasDelMes('2030-03')
     expect(semanas[0]).toEqual([null, null, null, null, '2030-03-01', '2030-03-02', '2030-03-03'])
     expect(semanas.at(-1)).toEqual(['2030-03-25', '2030-03-26', '2030-03-27', '2030-03-28', '2030-03-29', '2030-03-30', '2030-03-31'])

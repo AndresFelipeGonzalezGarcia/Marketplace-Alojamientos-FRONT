@@ -47,7 +47,7 @@ function enfocar(campo: keyof Valores) {
     ?.focus()
 }
 
-// Al guardar la sesión, LoginPage redirige sola porque observa useSesion.
+// Redirección
 function FormularioLogin() {
   const [valores, setValores] = useState<Valores>({
     correo: '',
@@ -79,7 +79,7 @@ function FormularioLogin() {
 
     setErrorGeneral(mensajeConReferencia(error))
     if (error.codigo === 'CREDENCIALES_INVALIDAS') {
-      // Se conserva el correo y se pide de nuevo solo la contraseña.
+      // Credenciales inválidas
       setValores((actuales) => ({ ...actuales, contrasena: '' }))
       enfocar('contrasena')
     }

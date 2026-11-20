@@ -6,15 +6,14 @@ import type {
   TipoAlojamiento,
 } from './publicaciones'
 
-// Endpoints de moderación. En docs/contrato-api-marketplace.yaml están
-// marcados como PROPUESTA: el backend aún no los implementa.
+// Endpoints de moderación
 const RUTA_ADMIN = '/api/admin/publicaciones'
 
-// Límites de RechazoRequest.motivo en el contrato.
+// Límites del motivo de rechazo
 export const MOTIVO_MINIMO = 10
 export const MOTIVO_MAXIMO = 500
 
-// PublicacionRevision del contrato: una fila de la bandeja.
+// Fila de la bandeja
 export interface PublicacionRevision {
   id: string
   titulo: string
@@ -33,7 +32,7 @@ function rutaPublicacion(id: string) {
   return `${RUTA_ADMIN}/${encodeURIComponent(id)}`
 }
 
-// Sin `estado`, el backend devuelve las PENDIENTE_REVISION, la más antigua primero.
+// Publicaciones pendientes
 export function listarPendientes() {
   return solicitarApi<PublicacionRevision[]>({
     ruta: RUTA_ADMIN,
@@ -71,8 +70,7 @@ export function rechazarPublicacion(id: string, motivo: string) {
   })
 }
 
-// La lista llega ordenada del backend; se reordena por si acaso, ya que
-// atender por orden de llegada es la regla de la bandeja.
+// Orden por fecha de envío
 export function ordenarPorEnvio(publicaciones: PublicacionRevision[]) {
   return [...publicaciones].sort(
     (a, b) => Date.parse(a.fechaEnvio) - Date.parse(b.fechaEnvio),

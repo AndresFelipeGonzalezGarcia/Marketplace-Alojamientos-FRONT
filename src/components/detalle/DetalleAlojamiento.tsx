@@ -16,12 +16,12 @@ import './detalle.css'
 
 interface DetalleAlojamientoProps {
   id: string
-  // A dónde lleva «volver»: la búsqueda con los filtros con que se llegó.
+  // Volver a la búsqueda
   rutaVolver: string
 }
 
 interface Respuesta {
-  // Qué alojamiento (y qué intento) contestó: si no es el actual, se carga.
+  // Resultado del detalle
   solicitud: string
   resultado: ResultadoApi<AlojamientoDetalle>
 }
@@ -99,7 +99,7 @@ function DetalleAlojamiento({ id, rutaVolver }: DetalleAlojamientoProps) {
   return (
     <article className="detalle">
       {volver}
-      {/* key: al pasar a otro alojamiento la galería vuelve a la portada. */}
+      {/* Galería */}
       <GaleriaAlojamiento
         key={alojamiento.id}
         titulo={alojamiento.titulo}

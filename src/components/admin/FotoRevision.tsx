@@ -3,14 +3,12 @@ import { useState } from 'react'
 interface FotoRevisionProps {
   url?: string | null
   alt: string
-  // Texto del recuadro cuando no hay foto o no carga.
+  // Texto sin foto
   textoSinFoto: string
   className?: string
 }
 
-// Foto de una publicación en revisión. Si falta o no carga se dice, para
-// que el administrador lo tenga en cuenta al decidir. Quien la usa le da
-// `key={url}` para que un fallo no se arrastre a otra dirección.
+// Foto de revisión
 function FotoRevision({ url, alt, textoSinFoto, className = '' }: FotoRevisionProps) {
   const [fallo, setFallo] = useState(false)
   const limpia = url?.trim() ?? ''

@@ -6,7 +6,7 @@ interface MensajeDetalleProps {
   alerta?: boolean
 }
 
-// Pantalla completa del detalle cuando no hay alojamiento que mostrar.
+// Mensaje del detalle
 function MensajeDetalle({ titulo, children, alerta = false }: MensajeDetalleProps) {
   return (
     <section className="detalle-mensaje" role={alerta ? 'alert' : undefined}>

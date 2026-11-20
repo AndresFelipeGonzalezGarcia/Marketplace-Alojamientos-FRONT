@@ -2,8 +2,7 @@ interface EnlaceSimuladoProps {
   enlace: string
 }
 
-// Solo se aceptan enlaces http(s): el valor viene del servidor y no debe
-// poder convertirse en un `javascript:` u otro esquema.
+// Validar enlace
 function enlaceSeguro(enlace: string): string | null {
   try {
     const url = new URL(enlace, window.location.origin)
@@ -15,8 +14,7 @@ function enlaceSeguro(enlace: string): string | null {
   }
 }
 
-// El backend en perfil de desarrollo devuelve el enlace que habría enviado
-// por correo; se muestra para poder probar el flujo completo.
+// Enlace simulado
 function EnlaceSimulado({ enlace }: EnlaceSimuladoProps) {
   const href = enlaceSeguro(enlace)
   if (!href) return null
