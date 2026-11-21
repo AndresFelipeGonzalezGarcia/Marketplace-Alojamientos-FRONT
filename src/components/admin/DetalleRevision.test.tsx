@@ -28,6 +28,10 @@ vi.mock('../../api/catalogos', () => ({
   listarPoliticasCancelacion: vi.fn(),
   listarServicios: vi.fn(),
 }))
+vi.mock('../../api/configuracion', () => ({
+  obtenerTarifaServicio: vi.fn(() => new Promise(() => {})),
+  actualizarTarifaServicio: vi.fn(),
+}))
 
 const obtener = vi.mocked(obtenerPublicacionRevision)
 const aprobar = vi.mocked(aprobarPublicacion)
