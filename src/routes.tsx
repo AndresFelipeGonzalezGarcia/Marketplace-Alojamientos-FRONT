@@ -9,10 +9,10 @@ import DetalleReservaPage from './pages/DetalleReservaPage'
 import DisponibilidadPage from './pages/DisponibilidadPage'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
+import MisPublicacionesPage from './pages/MisPublicacionesPage'
 import MisReservasPage from './pages/MisReservasPage'
 import NotFoundPage from './pages/NotFoundPage'
 import PagoReservaPage from './pages/PagoReservaPage'
-import ProximamentePage from './pages/ProximamentePage'
 import PublicacionFormularioPage from './pages/PublicacionFormularioPage'
 import RecuperarContrasenaPage from './pages/RecuperarContrasenaPage'
 import RegistroPage from './pages/RegistroPage'
@@ -38,14 +38,8 @@ export const routes: RouteObject[] = [
         element: <RutaProtegida rolesPermitidos={['ANFITRION']} />,
         children: [
           {
-            // Próximamente
             path: '/publicaciones',
-            element: (
-              <ProximamentePage
-                titulo="Mis publicaciones"
-                mensaje="Aquí verás tus alojamientos para editarlos y gestionar su disponibilidad."
-              />
-            ),
+            element: <MisPublicacionesPage />,
           },
           {
             path: '/publicaciones/nueva',

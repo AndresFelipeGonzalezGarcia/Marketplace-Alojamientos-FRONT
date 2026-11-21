@@ -12,15 +12,6 @@ function menu() {
   return within(screen.getByRole('navigation', { name: 'Principal' }))
 }
 
-// Destino deshabilitado
-function deshabilitado(texto: string) {
-  const elemento = encabezado().getByText(texto)
-  expect(elemento).toHaveAttribute('aria-disabled', 'true')
-  expect(elemento).toHaveTextContent('Próximamente')
-  expect(elemento.closest('a')).toBeNull()
-  return elemento
-}
-
 function textosDelMenu() {
   return menu()
     .getAllByRole('listitem')
@@ -76,7 +67,9 @@ describe('EncabezadoApp', () => {
       expect(
         menu().getByRole('link', { name: 'Nueva publicación' }),
       ).toHaveAttribute('href', '/publicaciones/nueva')
-      deshabilitado('Mis publicaciones')
+      expect(
+        menu().getByRole('link', { name: 'Mis publicaciones' }),
+      ).toHaveAttribute('href', '/publicaciones')
       expect(encabezado().getByText('Laura Ríos')).toBeInTheDocument()
       expect(encabezado().getByText('Anfitrión')).toBeInTheDocument()
       expect(

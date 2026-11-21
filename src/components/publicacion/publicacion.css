@@ -591,3 +591,43 @@ label.chip:has(input:focus-visible) {
     margin-top: 0;
   }
 }
+
+/* ---------- Mis publicaciones ---------- */
+
+.fila-revision.fila-publicacion {
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: var(--espacio-4) var(--espacio-5);
+}
+
+.fila-publicacion__titulo {
+  margin-top: var(--espacio-2);
+}
+
+.fila-publicacion__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--espacio-2);
+  margin-top: var(--espacio-3);
+}
+
+@media (max-width: 720px) {
+  .fila-revision.fila-publicacion {
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--espacio-4);
+  }
+
+  .fila-revision__lateral.fila-publicacion__lateral {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .fila-publicacion__acciones {
+    justify-content: stretch;
+    margin-top: 0;
+  }
+
+  .fila-publicacion__acciones .boton-enlace {
+    flex: 1;
+  }
+}

@@ -66,7 +66,7 @@ export const MIS_PUBLICACIONES: Destino = {
   descripcion:
     'Consulta tus alojamientos, edítalos y gestiona su disponibilidad.',
   accion: 'Ver mis publicaciones',
-  disponible: false,
+  disponible: true,
   activaEn: [
     '/publicaciones',
     '/publicaciones/:id/editar',

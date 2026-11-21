@@ -69,9 +69,9 @@ describe('LoginPage', () => {
       await llenarYEnviar(usuario, '  laura@correo.com ')
 
       expect(
-        await screen.findByRole('heading', { name: 'Hola, Laura Ríos' }),
+        await screen.findByRole('heading', { level: 1, name: 'Mis publicaciones' }),
       ).toBeInTheDocument()
-      expect(router.state.location.pathname).toBe('/')
+      expect(router.state.location.pathname).toBe('/publicaciones')
       expect(fetchSimulado).toHaveBeenCalledWith(`${API}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -318,7 +318,12 @@ describe('LoginPage', () => {
 
     // Pantalla principal por rol
     it.each<[RolUsuario, string, string, string]>([
-      ['ANFITRION', 'Entrar como anfitrión de prueba', 'Anfitrión de prueba', '/'],
+      [
+        'ANFITRION',
+        'Entrar como anfitrión de prueba',
+        'Anfitrión de prueba',
+        '/publicaciones',
+      ],
       ['HUESPED', 'Entrar como huésped de prueba', 'Huésped de prueba', '/'],
       [
         'ADMINISTRADOR',
