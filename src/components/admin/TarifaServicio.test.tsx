@@ -114,6 +114,22 @@ describe('tarifa de servicio', () => {
       expect(obtener).toHaveBeenCalledTimes(2)
     })
 
+    it('si la consulta se rechaza muestra el error de conexión y permite reintentar', async () => {
+      obtener.mockRejectedValueOnce(new TypeError('Failed to fetch'))
+      const { usuario } = renderizarApp('/admin')
+
+      const alerta = await seccion().findByRole('alert')
+      expect(alerta).toHaveTextContent('No pudimos cargar la tarifa de servicio.')
+      expect(alerta).toHaveTextContent('No pudimos conectar con el servidor')
+
+      await usuario.click(
+        within(alerta).getByRole('button', { name: 'Reintentar' }),
+      )
+
+      expect(await seccion().findByText(/Tarifa vigente/)).toBeInTheDocument()
+      expect(obtener).toHaveBeenCalledTimes(2)
+    })
+
     it('no aparece para otros roles', () => {
       iniciarSesionDePrueba('ANFITRION')
       renderizarApp('/admin')

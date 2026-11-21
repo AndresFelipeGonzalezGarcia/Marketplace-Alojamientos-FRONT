@@ -285,6 +285,25 @@ describe('mis reservas', () => {
       expect(listar).toHaveBeenLastCalledWith(undefined)
     })
 
+    it('si la consulta se rechaza muestra el error de conexión y permite reintentar', async () => {
+      listar.mockRejectedValueOnce(new TypeError('Failed to fetch'))
+      const { usuario } = renderizarApp('/reservas')
+
+      const alerta = await screen.findByRole('alert')
+      expect(
+        within(alerta).getByRole('heading', { name: 'No pudimos cargar tus reservas' }),
+      ).toBeInTheDocument()
+      expect(alerta).toHaveTextContent('No pudimos conectar con el servidor')
+
+      listar.mockResolvedValueOnce(ok([reserva({})]))
+      await usuario.click(within(alerta).getByRole('button', { name: 'Reintentar' }))
+
+      expect(
+        await screen.findByRole('link', { name: 'Cabaña en Minca' }),
+      ).toBeInTheDocument()
+      expect(listar).toHaveBeenCalledTimes(2)
+    })
+
     it('error con reintento', async () => {
       listar.mockResolvedValueOnce(await errorDelServidor())
       const { usuario } = renderizarApp('/reservas')

@@ -184,6 +184,20 @@ describe('Detalle del alojamiento', () => {
       )
     })
 
+    it('si la consulta se rechaza muestra el error de conexión y permite reintentar', async () => {
+      obtener.mockRejectedValueOnce(new TypeError('Failed to fetch'))
+      obtener.mockResolvedValueOnce(ok())
+      const { usuario } = renderizarApp(`/alojamientos/${ID}`)
+
+      const alerta = await screen.findByRole('alert')
+      expect(alerta).toHaveTextContent('No pudimos cargar el alojamiento')
+      expect(alerta).toHaveTextContent('No pudimos conectar con el servidor')
+      await usuario.click(within(alerta).getByRole('button', { name: 'Reintentar' }))
+
+      expect(await titulo()).toBeInTheDocument()
+      expect(obtener).toHaveBeenCalledTimes(2)
+    })
+
     it('un error de conexión ofrece reintentar', async () => {
       obtener.mockResolvedValueOnce({ estado: 'error', error: errorDeConexion() })
       obtener.mockResolvedValueOnce(ok())

@@ -143,6 +143,22 @@ describe('disponibilidad', () => {
       expect(listar).toHaveBeenCalledTimes(2)
     })
 
+    it('si la consulta se rechaza muestra el error de conexión y permite reintentar', async () => {
+      listar.mockRejectedValueOnce(new TypeError('Failed to fetch'))
+      const usuario = renderPantalla()
+
+      const encabezado = await screen.findByRole('heading', {
+        name: 'No pudimos cargar la disponibilidad',
+      })
+      const seccion = within(encabezado.closest('section') as HTMLElement)
+      expect(seccion.getByText(/No pudimos conectar con el servidor/)).toBeInTheDocument()
+
+      await usuario.click(seccion.getByRole('button', { name: 'Reintentar' }))
+
+      await esperarLista()
+      expect(listar).toHaveBeenCalledTimes(2)
+    })
+
     it('muestra Acceso denegado si la publicación no es del anfitrión', async () => {
       listar.mockResolvedValue(fallo({ codigo: 'ACCESO_DENEGADO' }))
       renderPantalla()

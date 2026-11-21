@@ -127,6 +127,21 @@ describe('Calendario de disponibilidad', () => {
       expect(dia('2030-03-20')).toHaveAccessibleName(/, disponible$/)
     })
 
+    it('si la consulta se rechaza muestra el error de conexión y permite reintentar', async () => {
+      calendario.mockRejectedValueOnce(new TypeError('Failed to fetch'))
+      const { usuario } = renderizarApp(`/alojamientos/${ID}`)
+      await screen.findByRole('heading', { level: 1, name: ALOJAMIENTO.titulo })
+
+      const alerta = await calendarioVisible().findByRole('alert')
+      expect(alerta).toHaveTextContent('No pudimos cargar la disponibilidad')
+      expect(alerta).toHaveTextContent('No pudimos conectar con el servidor')
+
+      await usuario.click(within(alerta).getByRole('button', { name: 'Reintentar' }))
+      await vi.waitFor(() => expect(calendarioVisible().queryByRole('alert')).not.toBeInTheDocument())
+      expect(calendario).toHaveBeenCalledTimes(2)
+      expect(dia('2030-03-20')).toHaveAccessibleName(/, disponible$/)
+    })
+
     it('un 400 por rango inválido lo explica y ofrece volver al mes actual, no reintentar', async () => {
       calendario.mockImplementation(conOcupados())
       const { usuario } = await abrir()

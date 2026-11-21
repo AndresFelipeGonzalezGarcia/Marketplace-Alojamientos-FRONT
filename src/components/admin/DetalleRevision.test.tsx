@@ -261,6 +261,24 @@ describe('detalle de revisión', () => {
       expect(await screen.findByRole('heading', { name: 'Acceso denegado' })).toBeInTheDocument()
     })
 
+    it('si la consulta se rechaza muestra el error de conexión y permite reintentar', async () => {
+      obtener.mockRejectedValueOnce(new TypeError('Failed to fetch'))
+      obtener.mockResolvedValueOnce({ estado: 'ok', datos: publicacion() })
+      const { usuario } = renderizarApp(RUTA)
+
+      const encabezado = await screen.findByRole('heading', {
+        name: 'No pudimos cargar la publicación',
+      })
+      const seccion = within(encabezado.closest('section') as HTMLElement)
+      expect(seccion.getByText(/No pudimos conectar con el servidor/)).toBeInTheDocument()
+
+      await usuario.click(seccion.getByRole('button', { name: 'Reintentar' }))
+
+      expect(
+        await screen.findByRole('heading', { level: 1, name: 'Cabaña entre pinos' }),
+      ).toBeInTheDocument()
+    })
+
     it('otro error permite reintentar', async () => {
       obtener.mockResolvedValueOnce(
         await errorDelServidor({ codigo: 'ERROR_INTERNO', mensaje: 'x' }, 500),

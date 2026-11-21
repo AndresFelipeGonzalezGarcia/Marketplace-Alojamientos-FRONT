@@ -316,6 +316,21 @@ describe('pago de la reserva', () => {
     })
   })
 
+  it('si la consulta de la reserva se rechaza muestra el error de conexión y permite reintentar', async () => {
+    ver.mockRejectedValueOnce(new TypeError('Failed to fetch'))
+    const { usuario } = renderizarApp(RUTA)
+
+    const alerta = await screen.findByRole('alert')
+    expect(alerta).toHaveTextContent('No pudimos cargar la reserva')
+    expect(alerta).toHaveTextContent('No pudimos conectar con el servidor')
+    await usuario.click(within(alerta).getByRole('button', { name: 'Reintentar' }))
+
+    expect(
+      await screen.findByRole('heading', { level: 2, name: 'Cabaña en Minca' }),
+    ).toBeInTheDocument()
+    expect(ver).toHaveBeenCalledTimes(2)
+  })
+
   it('se llega desde el detalle de la reserva', async () => {
     const { usuario, router } = renderizarApp(`/reservas/${ID}`)
     await usuario.click(await screen.findByRole('link', { name: 'Pagar ahora' }))

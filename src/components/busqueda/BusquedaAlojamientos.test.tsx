@@ -201,6 +201,20 @@ describe('búsqueda de alojamientos', () => {
       expect(screen.queryByRole('button', { name: 'Limpiar filtros' })).not.toBeInTheDocument()
     })
 
+    it('si la búsqueda se rechaza muestra el error de conexión y permite reintentar', async () => {
+      buscar.mockRejectedValueOnce(new TypeError('Failed to fetch'))
+      const { usuario } = await abrir()
+
+      const alerta = await screen.findByRole('alert')
+      expect(alerta).toHaveTextContent('No pudimos cargar los alojamientos')
+      expect(alerta).toHaveTextContent('No pudimos conectar con el servidor')
+
+      await usuario.click(within(alerta).getByRole('button', { name: 'Reintentar' }))
+
+      await esperarResultados()
+      expect(buscar).toHaveBeenCalledTimes(2)
+    })
+
     it('si falla permite reintentar', async () => {
       buscar.mockResolvedValueOnce(
         await errorDelServidor({ codigo: 'ERROR_INTERNO', mensaje: 'x', correlationId: 'ref-7' }, 500),
@@ -384,6 +398,18 @@ describe('búsqueda de alojamientos', () => {
         /El precio mínimo no puede ser mayor que el máximo\./,
       )
       expect(router.state.location.search).toBe('')
+    })
+
+    it('si el catálogo de servicios se rechaza, los oculta y la búsqueda sigue', async () => {
+      servicios.mockRejectedValue(new TypeError('Failed to fetch'))
+      await abrir()
+      await esperarResultados()
+
+      await vi.waitFor(() =>
+        expect(screen.queryByText('Cargando servicios…')).not.toBeInTheDocument(),
+      )
+      expect(screen.queryByRole('group', { name: 'Servicios' })).not.toBeInTheDocument()
+      expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
     })
 
     it('si el catálogo de servicios falla, los oculta y lo demás sigue funcionando', async () => {

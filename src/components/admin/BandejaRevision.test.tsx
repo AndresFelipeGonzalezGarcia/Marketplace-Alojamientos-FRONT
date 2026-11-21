@@ -183,6 +183,22 @@ describe('bandeja de aprobación', () => {
     expect(listar).toHaveBeenCalledTimes(2)
   })
 
+  it('si la consulta se rechaza muestra el error de conexión y permite reintentar', async () => {
+    listar.mockRejectedValueOnce(new TypeError('Failed to fetch'))
+    listar.mockResolvedValueOnce({ estado: 'ok', datos: [fila({})] })
+    const { usuario } = renderizarApp('/admin')
+
+    const bandeja = await seccionBandeja(
+      'No pudimos cargar las publicaciones pendientes',
+    )
+    expect(bandeja.getByText(/No pudimos conectar con el servidor/)).toBeInTheDocument()
+
+    await usuario.click(bandeja.getByRole('button', { name: 'Reintentar' }))
+
+    expect(await screen.findByRole('link', { name: 'Cabaña en Guatapé' })).toBeInTheDocument()
+    expect(listar).toHaveBeenCalledTimes(2)
+  })
+
   it('un 403 se muestra como acceso denegado', async () => {
     listar.mockResolvedValue(
       await errorDelServidor({ codigo: 'ACCESO_DENEGADO', mensaje: 'x' }, 403),
