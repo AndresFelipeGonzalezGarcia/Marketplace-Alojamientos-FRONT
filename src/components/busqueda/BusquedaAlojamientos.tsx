@@ -6,7 +6,7 @@ import {
   type PaginaAlojamientos,
 } from '../../api/alojamientos'
 import type { ResultadoApi } from '../../api/cliente'
-import type { ErrorApi } from '../../api/errores'
+import { errorDeConexion, type ErrorApi } from '../../api/errores'
 import '../formulario/formulario.css'
 import '../publicacion/publicacion.css'
 import BuscadorPrincipal, { type BusquedaPrincipal } from './BuscadorPrincipal'
@@ -78,12 +78,18 @@ function BusquedaAlojamientos() {
 
   useEffect(() => {
     let vigente = true
-    buscarAlojamientos(aConsulta(leerFiltros(new URLSearchParams(clave)))).then(
-      (resultado) => {
+    const solicitudActual = `${clave}#${intento}`
+    buscarAlojamientos(aConsulta(leerFiltros(new URLSearchParams(clave))))
+      .then((resultado) => {
+        if (vigente) setRespuesta({ solicitud: solicitudActual, resultado })
+      })
+      .catch(() => {
         if (vigente)
-          setRespuesta({ solicitud: `${clave}#${intento}`, resultado })
-      },
-    )
+          setRespuesta({
+            solicitud: solicitudActual,
+            resultado: { estado: 'error', error: errorDeConexion() },
+          })
+      })
     return () => {
       vigente = false
     }
@@ -91,14 +97,18 @@ function BusquedaAlojamientos() {
 
   useEffect(() => {
     let vigente = true
-    listarServiciosPublicos().then((resultado) => {
-      if (!vigente) return
-      setServicios(
-        resultado.estado === 'ok'
-          ? { fase: 'lista', servicios: resultado.datos }
-          : { fase: 'error' },
-      )
-    })
+    listarServiciosPublicos()
+      .then((resultado) => {
+        if (!vigente) return
+        setServicios(
+          resultado.estado === 'ok'
+            ? { fase: 'lista', servicios: resultado.datos }
+            : { fase: 'error' },
+        )
+      })
+      .catch(() => {
+        if (vigente) setServicios({ fase: 'error' })
+      })
     return () => {
       vigente = false
     }
