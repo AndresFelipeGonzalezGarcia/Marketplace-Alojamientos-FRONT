@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { mensajeConReferencia, type ErrorApi } from '../api/errores'
+import {
+  errorDeConexion,
+  mensajeConReferencia,
+  type ErrorApi,
+} from '../api/errores'
 import { listarPublicaciones, type PublicacionResumen } from '../api/publicaciones'
 import '../components/admin/admin.css'
 import '../components/formulario/formulario.css'
@@ -19,14 +23,19 @@ function MisPublicacionesPage() {
 
   useEffect(() => {
     let vigente = true
-    listarPublicaciones().then((respuesta) => {
-      if (!vigente) return
-      setCarga(
-        respuesta.estado === 'ok'
-          ? { fase: 'lista', publicaciones: respuesta.datos }
-          : { fase: 'error', error: respuesta.error },
-      )
-    })
+    listarPublicaciones()
+      .then((respuesta) => {
+        if (!vigente) return
+        setCarga(
+          respuesta.estado === 'ok'
+            ? { fase: 'lista', publicaciones: respuesta.datos }
+            : { fase: 'error', error: respuesta.error },
+        )
+      })
+      .catch(() => {
+        if (!vigente) return
+        setCarga({ fase: 'error', error: errorDeConexion() })
+      })
     return () => {
       vigente = false
     }

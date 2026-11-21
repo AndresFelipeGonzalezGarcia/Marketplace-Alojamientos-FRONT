@@ -179,6 +179,26 @@ describe('mis publicaciones', () => {
     expect(listar).toHaveBeenCalledTimes(2)
   })
 
+  it('si la consulta se rechaza muestra el error de conexión y permite reintentar', async () => {
+    listar.mockRejectedValueOnce(new TypeError('Failed to fetch'))
+    listar.mockResolvedValueOnce({ estado: 'ok', datos: [publicacion({})] })
+    const { usuario } = renderizarApp('/publicaciones')
+
+    const error = await seccionMensaje('No pudimos cargar tus publicaciones')
+    expect(
+      error.getByText(
+        'No pudimos conectar con el servidor. Inténtalo de nuevo en unos minutos.',
+      ),
+    ).toBeInTheDocument()
+
+    await usuario.click(error.getByRole('button', { name: 'Reintentar' }))
+
+    expect(
+      await screen.findByRole('heading', { name: 'Cabaña en Guatapé' }),
+    ).toBeInTheDocument()
+    expect(listar).toHaveBeenCalledTimes(2)
+  })
+
   it.each(['HUESPED', 'ADMINISTRADOR'] as const)('niega la pantalla a %s', (rol) => {
     iniciarSesionDePrueba(rol)
     renderizarApp('/publicaciones')
