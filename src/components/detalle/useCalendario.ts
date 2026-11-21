@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { obtenerCalendario, type DiaCalendario } from '../../api/alojamientos'
 import type { ResultadoApi } from '../../api/cliente'
-import type { ErrorApi } from '../../api/errores'
+import { errorDeConexion, type ErrorApi } from '../../api/errores'
 import { mesDe, primerDia, ultimoDia } from './fechasCalendario'
 import type { Disponibilidad } from './seleccionEstadia'
 
@@ -47,7 +47,8 @@ export function useCalendario(alojamientoId: string, meses: string[]) {
     // Rango de meses
     const desde = primerDia(pendientes[0])
     const hasta = ultimoDia(pendientes[pendientes.length - 1])
-    obtenerCalendario(alojamientoId, desde, hasta).then((resultado) => {
+    // Guardar resultado
+    const guardar = (resultado: ResultadoApi<DiaCalendario[]>) => {
       pendientes.forEach((mes) => enCurso.current.delete(mes))
       if (!montado.current) return
       setCargas((anteriores) => {
@@ -66,7 +67,10 @@ export function useCalendario(alojamientoId: string, meses: string[]) {
         }
         return siguientes
       })
-    })
+    }
+    obtenerCalendario(alojamientoId, desde, hasta)
+      .then(guardar)
+      .catch(() => guardar({ estado: 'error', error: errorDeConexion() }))
   }, [alojamientoId, clave, intento, cargas])
 
   const dias = useMemo(() => {

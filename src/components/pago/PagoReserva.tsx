@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { modoDemoActivo } from '../../auth/sesionDemo'
 import type { ResultadoApi } from '../../api/cliente'
-import { mensajeConReferencia } from '../../api/errores'
+import { errorDeConexion, mensajeConReferencia } from '../../api/errores'
 import {
   obtenerReserva,
   type EscenarioPago,
@@ -42,9 +42,18 @@ function PagoReserva({ reservaId }: PagoReservaProps) {
 
   useEffect(() => {
     let vigente = true
-    obtenerReserva(reservaId).then((resultado) => {
-      if (vigente) setRespuesta({ solicitud: `${reservaId}#${intento}`, resultado })
-    })
+    const solicitudActual = `${reservaId}#${intento}`
+    obtenerReserva(reservaId)
+      .then((resultado) => {
+        if (vigente) setRespuesta({ solicitud: solicitudActual, resultado })
+      })
+      .catch(() => {
+        if (vigente)
+          setRespuesta({
+            solicitud: solicitudActual,
+            resultado: { estado: 'error', error: errorDeConexion() },
+          })
+      })
     return () => {
       vigente = false
     }

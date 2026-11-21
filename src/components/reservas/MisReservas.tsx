@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
-import { mensajeConReferencia, type ErrorApi } from '../../api/errores'
+import {
+  errorDeConexion,
+  mensajeConReferencia,
+  type ErrorApi,
+} from '../../api/errores'
 import {
   esEstadoReserva,
   listarMisReservas,
@@ -32,14 +36,18 @@ function MisReservas() {
 
   useEffect(() => {
     let vigente = true
-    listarMisReservas(estado ?? undefined).then((respuesta) => {
-      if (!vigente) return
-      setCarga(
-        respuesta.estado === 'ok'
-          ? { clave, fase: 'lista', reservas: ordenarPorLlegada(respuesta.datos) }
-          : { clave, fase: 'error', error: respuesta.error },
-      )
-    })
+    listarMisReservas(estado ?? undefined)
+      .then((respuesta) => {
+        if (!vigente) return
+        setCarga(
+          respuesta.estado === 'ok'
+            ? { clave, fase: 'lista', reservas: ordenarPorLlegada(respuesta.datos) }
+            : { clave, fase: 'error', error: respuesta.error },
+        )
+      })
+      .catch(() => {
+        if (vigente) setCarga({ clave, fase: 'error', error: errorDeConexion() })
+      })
     return () => {
       vigente = false
     }

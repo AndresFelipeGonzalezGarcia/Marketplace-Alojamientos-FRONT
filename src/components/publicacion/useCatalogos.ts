@@ -6,7 +6,7 @@ import {
   type PoliticaCancelacion,
   type Servicio,
 } from '../../api/catalogos'
-import type { ErrorApi } from '../../api/errores'
+import { errorDeConexion, type ErrorApi } from '../../api/errores'
 
 export type EstadoCatalogo<T> =
   | { fase: 'cargando' }
@@ -30,16 +30,28 @@ export function useCatalogos() {
 
   useEffect(() => {
     let vigente = true
-    listarPoliticasCancelacion().then((resultado) => {
-      if (vigente) {
-        setPoliticas(aEstado(resultado))
-      }
-    })
-    listarServicios().then((resultado) => {
-      if (vigente) {
-        setServicios(aEstado(resultado))
-      }
-    })
+    listarPoliticasCancelacion()
+      .then((resultado) => {
+        if (vigente) {
+          setPoliticas(aEstado(resultado))
+        }
+      })
+      .catch(() => {
+        if (vigente) {
+          setPoliticas({ fase: 'error', error: errorDeConexion() })
+        }
+      })
+    listarServicios()
+      .then((resultado) => {
+        if (vigente) {
+          setServicios(aEstado(resultado))
+        }
+      })
+      .catch(() => {
+        if (vigente) {
+          setServicios({ fase: 'error', error: errorDeConexion() })
+        }
+      })
     return () => {
       vigente = false
     }

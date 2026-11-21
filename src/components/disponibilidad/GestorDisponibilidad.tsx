@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import type { ErrorApi } from '../../api/errores'
+import { errorDeConexion, type ErrorApi } from '../../api/errores'
 import {
   actualizarPeriodo,
   crearPeriodo,
@@ -53,22 +53,28 @@ function GestorDisponibilidad({ publicacionId }: GestorDisponibilidadProps) {
 
   useEffect(() => {
     let vigente = true
-    listarPeriodos(publicacionId).then((resultado) => {
-      if (!vigente) {
-        return
-      }
-      if (resultado.estado === 'ok') {
-        setCarga({
-          fase: 'lista',
-          periodos: ordenarPorInicio(resultado.datos),
-        })
-      } else if (resultado.error.codigo === 'NO_AUTENTICADO') {
-        setCarga({ fase: 'sesion_invalida' })
-      } else {
-        const fase = faseDeBloqueo(resultado.error)
-        setCarga(fase ? { fase } : { fase: 'error', error: resultado.error })
-      }
-    })
+    listarPeriodos(publicacionId)
+      .then((resultado) => {
+        if (!vigente) {
+          return
+        }
+        if (resultado.estado === 'ok') {
+          setCarga({
+            fase: 'lista',
+            periodos: ordenarPorInicio(resultado.datos),
+          })
+        } else if (resultado.error.codigo === 'NO_AUTENTICADO') {
+          setCarga({ fase: 'sesion_invalida' })
+        } else {
+          const fase = faseDeBloqueo(resultado.error)
+          setCarga(fase ? { fase } : { fase: 'error', error: resultado.error })
+        }
+      })
+      .catch(() => {
+        if (vigente) {
+          setCarga({ fase: 'error', error: errorDeConexion() })
+        }
+      })
     return () => {
       vigente = false
     }

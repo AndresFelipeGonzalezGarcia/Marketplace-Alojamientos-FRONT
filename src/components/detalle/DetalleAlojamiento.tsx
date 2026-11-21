@@ -5,7 +5,7 @@ import {
   type AlojamientoDetalle,
 } from '../../api/alojamientos'
 import type { ResultadoApi } from '../../api/cliente'
-import { mensajeConReferencia } from '../../api/errores'
+import { errorDeConexion, mensajeConReferencia } from '../../api/errores'
 import EsqueletoDetalle from './EsqueletoDetalle'
 import FichaAlojamiento from './FichaAlojamiento'
 import GaleriaAlojamiento from './GaleriaAlojamiento'
@@ -34,9 +34,18 @@ function DetalleAlojamiento({ id, rutaVolver }: DetalleAlojamientoProps) {
 
   useEffect(() => {
     let vigente = true
-    obtenerAlojamiento(id).then((resultado) => {
-      if (vigente) setRespuesta({ solicitud: `${id}#${intento}`, resultado })
-    })
+    const solicitudActual = `${id}#${intento}`
+    obtenerAlojamiento(id)
+      .then((resultado) => {
+        if (vigente) setRespuesta({ solicitud: solicitudActual, resultado })
+      })
+      .catch(() => {
+        if (vigente)
+          setRespuesta({
+            solicitud: solicitudActual,
+            resultado: { estado: 'error', error: errorDeConexion() },
+          })
+      })
     return () => {
       vigente = false
     }

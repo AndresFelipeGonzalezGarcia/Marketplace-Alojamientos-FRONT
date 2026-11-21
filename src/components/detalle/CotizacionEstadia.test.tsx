@@ -229,6 +229,20 @@ describe('Cotización', () => {
       expect(panel().getByRole('group', { name: 'Huéspedes' })).not.toHaveAccessibleDescription(/fecha/)
     })
 
+    it('si la cotización se rechaza muestra el error de conexión y permite reintentar', async () => {
+      iniciarSesionDePrueba('HUESPED')
+      cotizar.mockRejectedValueOnce(new TypeError('Failed to fetch'))
+      const { usuario } = await abrir()
+
+      const alerta = await panel().findByRole('alert')
+      expect(alerta).toHaveTextContent('No pudimos calcular el total')
+      expect(alerta).toHaveTextContent('No pudimos conectar con el servidor')
+      await usuario.click(within(alerta).getByRole('button', { name: 'Reintentar' }))
+
+      expect(await panel().findByLabelText('Desglose del precio')).toBeInTheDocument()
+      expect(cotizar).toHaveBeenCalledTimes(2)
+    })
+
     it('un error de conexión ofrece reintentar', async () => {
       iniciarSesionDePrueba('HUESPED')
       cotizar.mockResolvedValueOnce({ estado: 'error', error: errorDeConexion() })

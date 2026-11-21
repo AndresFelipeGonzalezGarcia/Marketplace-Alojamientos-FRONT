@@ -108,6 +108,19 @@ describe('detalle de la reserva', () => {
     expect(screen.getByRole('link', { name: 'Ver mis reservas' })).toHaveAttribute('href', '/reservas')
   })
 
+  it('si la consulta se rechaza muestra el error de conexión y permite reintentar', async () => {
+    ver.mockRejectedValueOnce(new TypeError('Failed to fetch'))
+    const { usuario } = renderizarApp(RUTA)
+
+    const alerta = await screen.findByRole('alert')
+    expect(alerta).toHaveTextContent('No pudimos cargar la reserva')
+    expect(alerta).toHaveTextContent('No pudimos conectar con el servidor')
+    await usuario.click(within(alerta).getByRole('button', { name: 'Reintentar' }))
+
+    expect(await screen.findByRole('heading', { level: 1, name: 'Cabaña en Minca' })).toBeInTheDocument()
+    expect(ver).toHaveBeenCalledTimes(2)
+  })
+
   it('error con reintento', async () => {
     ver.mockResolvedValueOnce(await error('ERROR_INTERNO', 500))
     const { usuario } = renderizarApp(RUTA)

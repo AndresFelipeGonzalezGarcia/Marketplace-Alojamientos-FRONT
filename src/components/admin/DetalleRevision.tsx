@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { obtenerPublicacionRevision, type PublicacionRevision } from '../../api/admin'
-import { mensajeConReferencia, type ErrorApi } from '../../api/errores'
+import {
+  errorDeConexion,
+  mensajeConReferencia,
+  type ErrorApi,
+} from '../../api/errores'
 import type { Publicacion } from '../../api/publicaciones'
 import '../formulario/formulario.css'
 import InsigniaEstado from '../publicacion/InsigniaEstado'
@@ -38,19 +42,23 @@ function DetalleRevision({ publicacionId, fila }: DetalleRevisionProps) {
 
   useEffect(() => {
     let vigente = true
-    obtenerPublicacionRevision(publicacionId).then((respuesta) => {
-      if (!vigente) return
-      if (respuesta.estado === 'ok') {
-        setCarga({ fase: 'lista', publicacion: respuesta.datos })
-        return
-      }
-      const motivo = bloqueoDe(respuesta.error)
-      if (motivo === 'acceso_denegado' || motivo === 'no_encontrada') {
-        setCarga({ fase: motivo })
-      } else {
-        setCarga({ fase: 'error', error: respuesta.error })
-      }
-    })
+    obtenerPublicacionRevision(publicacionId)
+      .then((respuesta) => {
+        if (!vigente) return
+        if (respuesta.estado === 'ok') {
+          setCarga({ fase: 'lista', publicacion: respuesta.datos })
+          return
+        }
+        const motivo = bloqueoDe(respuesta.error)
+        if (motivo === 'acceso_denegado' || motivo === 'no_encontrada') {
+          setCarga({ fase: motivo })
+        } else {
+          setCarga({ fase: 'error', error: respuesta.error })
+        }
+      })
+      .catch(() => {
+        if (vigente) setCarga({ fase: 'error', error: errorDeConexion() })
+      })
     return () => {
       vigente = false
     }

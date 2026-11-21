@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { errorDeConexion } from '../../api/errores'
 import {
   obtenerPublicacion,
   type Publicacion,
@@ -53,11 +54,17 @@ function EditorPublicacion({
       return
     }
     let vigente = true
-    obtenerPublicacion(id).then((resultado) => {
-      if (vigente) {
-        setCarga(traducirCarga(resultado))
-      }
-    })
+    obtenerPublicacion(id)
+      .then((resultado) => {
+        if (vigente) {
+          setCarga(traducirCarga(resultado))
+        }
+      })
+      .catch(() => {
+        if (vigente) {
+          setCarga(traducirCarga({ estado: 'error', error: errorDeConexion() }))
+        }
+      })
     return () => {
       vigente = false
     }

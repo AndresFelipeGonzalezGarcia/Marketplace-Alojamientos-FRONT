@@ -3,7 +3,11 @@ import {
   actualizarTarifaServicio,
   obtenerTarifaServicio,
 } from '../../api/configuracion'
-import { mensajeConReferencia, type ErrorApi } from '../../api/errores'
+import {
+  errorDeConexion,
+  mensajeConReferencia,
+  type ErrorApi,
+} from '../../api/errores'
 import {
   aTextoPorcentaje,
   formatearPorcentaje,
@@ -29,15 +33,19 @@ function TarifaServicio() {
 
   useEffect(() => {
     let vigente = true
-    obtenerTarifaServicio().then((respuesta) => {
-      if (!vigente) return
-      if (respuesta.estado === 'ok') {
-        setCarga({ fase: 'lista', vigente: respuesta.datos.porcentaje })
-        setTexto(aTextoPorcentaje(respuesta.datos.porcentaje))
-      } else {
-        setCarga({ fase: 'error', error: respuesta.error })
-      }
-    })
+    obtenerTarifaServicio()
+      .then((respuesta) => {
+        if (!vigente) return
+        if (respuesta.estado === 'ok') {
+          setCarga({ fase: 'lista', vigente: respuesta.datos.porcentaje })
+          setTexto(aTextoPorcentaje(respuesta.datos.porcentaje))
+        } else {
+          setCarga({ fase: 'error', error: respuesta.error })
+        }
+      })
+      .catch(() => {
+        if (vigente) setCarga({ fase: 'error', error: errorDeConexion() })
+      })
     return () => {
       vigente = false
     }

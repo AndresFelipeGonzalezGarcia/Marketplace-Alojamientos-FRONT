@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import type { ResultadoApi } from '../../api/cliente'
-import { mensajeConReferencia } from '../../api/errores'
+import { errorDeConexion, mensajeConReferencia } from '../../api/errores'
 import { obtenerReserva, type Reserva } from '../../api/reservas'
 import FotoRevision from '../admin/FotoRevision'
 import DesgloseCotizacion from '../detalle/DesgloseCotizacion'
@@ -39,9 +39,18 @@ function DetalleReserva({ id, aviso }: DetalleReservaProps) {
 
   useEffect(() => {
     let vigente = true
-    obtenerReserva(id).then((resultado) => {
-      if (vigente) setRespuesta({ solicitud: `${id}#${intento}`, resultado })
-    })
+    const solicitudActual = `${id}#${intento}`
+    obtenerReserva(id)
+      .then((resultado) => {
+        if (vigente) setRespuesta({ solicitud: solicitudActual, resultado })
+      })
+      .catch(() => {
+        if (vigente)
+          setRespuesta({
+            solicitud: solicitudActual,
+            resultado: { estado: 'error', error: errorDeConexion() },
+          })
+      })
     return () => {
       vigente = false
     }

@@ -461,6 +461,35 @@ describe('condiciones comerciales', () => {
     ).toBeInTheDocument()
   })
 
+  it('si el catálogo de políticas se rechaza muestra el error de conexión y permite reintentar', async () => {
+    politicas.mockRejectedValueOnce(new TypeError('Failed to fetch'))
+    const usuario = renderEn('/publicaciones/nueva')
+
+    const alerta = await screen.findByRole('alert')
+    expect(alerta).toHaveTextContent('No pudimos conectar con el servidor')
+    expect(campo.titulo()).toBeEnabled()
+
+    await usuario.click(within(alerta).getByRole('button', { name: 'Reintentar' }))
+
+    expect(
+      await screen.findByRole('option', { name: 'Flexible' }),
+    ).toBeInTheDocument()
+  })
+
+  it('si el catálogo de servicios se rechaza muestra el error de conexión y permite reintentar', async () => {
+    servicios.mockRejectedValueOnce(new TypeError('Failed to fetch'))
+    const usuario = renderEn('/publicaciones/nueva')
+
+    const alerta = await screen.findByRole('alert')
+    expect(alerta).toHaveTextContent('No pudimos conectar con el servidor')
+
+    await usuario.click(within(alerta).getByRole('button', { name: 'Reintentar' }))
+
+    expect(
+      await screen.findByRole('checkbox', { name: 'Wi-Fi' }),
+    ).toBeInTheDocument()
+  })
+
   it('permite reintentar si falla un catálogo y mantiene el formulario', async () => {
     servicios.mockResolvedValueOnce({
       estado: 'error',
@@ -866,6 +895,24 @@ describe('editar publicación', () => {
     expect(
       await screen.findByRole('heading', { name: 'Publicación no encontrada' }),
     ).toBeInTheDocument()
+  })
+
+  it('si la carga se rechaza muestra el error y permite reintentar', async () => {
+    obtener.mockRejectedValueOnce(new TypeError('Failed to fetch'))
+    obtener.mockResolvedValueOnce(ok)
+    const usuario = renderEn('/publicaciones/7/editar')
+
+    const encabezado = await screen.findByRole('heading', {
+      name: 'No pudimos cargar la publicación',
+    })
+    const seccion = within(encabezado.closest('section') as HTMLElement)
+    expect(seccion.getByText('Inténtalo de nuevo en unos minutos.')).toBeInTheDocument()
+
+    await usuario.click(seccion.getByRole('button', { name: 'Reintentar' }))
+
+    expect(await screen.findByLabelText(ETIQUETAS.titulo)).toHaveValue(
+      'Casa de campo',
+    )
   })
 
   it('permite reintentar si falla la carga', async () => {

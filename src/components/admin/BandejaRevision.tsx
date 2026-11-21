@@ -4,7 +4,11 @@ import {
   ordenarPorEnvio,
   type PublicacionRevision,
 } from '../../api/admin'
-import { mensajeConReferencia, type ErrorApi } from '../../api/errores'
+import {
+  errorDeConexion,
+  mensajeConReferencia,
+  type ErrorApi,
+} from '../../api/errores'
 import '../formulario/formulario.css'
 import MensajePantalla from '../publicacion/MensajePantalla'
 import { MENSAJE_BLOQUEO } from './errorRevision'
@@ -44,20 +48,24 @@ function BandejaRevision({ resultado }: BandejaRevisionProps) {
 
   useEffect(() => {
     let vigente = true
-    listarPendientes().then((respuesta) => {
-      if (!vigente) return
-      if (respuesta.estado === 'ok') {
-        // Ocultar publicación decidida
-        const publicaciones = ordenarPorEnvio(respuesta.datos).filter(
-          (publicacion) => publicacion.id !== resultado?.id,
-        )
-        setCarga({ fase: 'lista', publicaciones })
-      } else if (respuesta.error.codigo === 'ACCESO_DENEGADO') {
-        setCarga({ fase: 'acceso_denegado' })
-      } else {
-        setCarga({ fase: 'error', error: respuesta.error })
-      }
-    })
+    listarPendientes()
+      .then((respuesta) => {
+        if (!vigente) return
+        if (respuesta.estado === 'ok') {
+          // Ocultar publicación decidida
+          const publicaciones = ordenarPorEnvio(respuesta.datos).filter(
+            (publicacion) => publicacion.id !== resultado?.id,
+          )
+          setCarga({ fase: 'lista', publicaciones })
+        } else if (respuesta.error.codigo === 'ACCESO_DENEGADO') {
+          setCarga({ fase: 'acceso_denegado' })
+        } else {
+          setCarga({ fase: 'error', error: respuesta.error })
+        }
+      })
+      .catch(() => {
+        if (vigente) setCarga({ fase: 'error', error: errorDeConexion() })
+      })
     return () => {
       vigente = false
     }

@@ -1,7 +1,7 @@
 import { useEffect, useEffectEvent, useState } from 'react'
 import type { ResultadoApi } from '../../api/cliente'
 import { cotizarEstadia, type Cotizacion } from '../../api/cotizaciones'
-import type { ErrorApi } from '../../api/errores'
+import { errorDeConexion, type ErrorApi } from '../../api/errores'
 import type { Estadia } from './estadia'
 
 export type EstadoCotizacion =
@@ -55,13 +55,21 @@ export function useCotizacion({
       fechaLlegada: llegada,
       fechaSalida: salida,
       numeroHuespedes: huespedes,
-    }).then((resultado) => {
-      if (!vigente) return
-      setRespuesta({ solicitud: clave, resultado })
-      if (resultado.estado === 'error' && resultado.error.codigo === 'PERIODO_NO_DISPONIBLE') {
-        avisarConflicto({ llegada, salida, noches })
-      }
     })
+      .then((resultado) => {
+        if (!vigente) return
+        setRespuesta({ solicitud: clave, resultado })
+        if (resultado.estado === 'error' && resultado.error.codigo === 'PERIODO_NO_DISPONIBLE') {
+          avisarConflicto({ llegada, salida, noches })
+        }
+      })
+      .catch(() => {
+        if (vigente)
+          setRespuesta({
+            solicitud: clave,
+            resultado: { estado: 'error', error: errorDeConexion() },
+          })
+      })
     return () => {
       vigente = false
     }
