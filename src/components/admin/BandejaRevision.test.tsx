@@ -14,6 +14,10 @@ vi.mock('../../api/catalogos', () => ({
   listarPoliticasCancelacion: vi.fn(() => new Promise(() => {})),
   listarServicios: vi.fn(() => new Promise(() => {})),
 }))
+vi.mock('../../api/configuracion', () => ({
+  obtenerTarifaServicio: vi.fn(() => new Promise(() => {})),
+  actualizarTarifaServicio: vi.fn(),
+}))
 
 const listar = vi.mocked(listarPendientes)
 
@@ -44,6 +48,12 @@ async function errorDelServidor(cuerpo: object, status: number) {
 }
 
 const lista = () => screen.getByRole('list', { name: 'Publicaciones por revisar' })
+
+// Sección de la bandeja
+async function seccionBandeja(titulo: string) {
+  const encabezado = await screen.findByRole('heading', { name: titulo })
+  return within(encabezado.closest('section') as HTMLElement)
+}
 
 beforeEach(() => {
   iniciarSesionDePrueba('ADMINISTRADOR')
@@ -162,14 +172,12 @@ describe('bandeja de aprobación', () => {
     listar.mockResolvedValueOnce({ estado: 'ok', datos: [fila({})] })
     const { usuario } = renderizarApp('/admin')
 
-    expect(
-      await screen.findByRole('heading', {
-        name: 'No pudimos cargar las publicaciones pendientes',
-      }),
-    ).toBeInTheDocument()
-    expect(screen.getByText(/Código de referencia: ref-1/)).toBeInTheDocument()
+    const bandeja = await seccionBandeja(
+      'No pudimos cargar las publicaciones pendientes',
+    )
+    expect(bandeja.getByText(/Código de referencia: ref-1/)).toBeInTheDocument()
 
-    await usuario.click(screen.getByRole('button', { name: 'Reintentar' }))
+    await usuario.click(bandeja.getByRole('button', { name: 'Reintentar' }))
 
     expect(await screen.findByRole('link', { name: 'Cabaña en Guatapé' })).toBeInTheDocument()
     expect(listar).toHaveBeenCalledTimes(2)
@@ -181,10 +189,9 @@ describe('bandeja de aprobación', () => {
     )
     renderizarApp('/admin')
 
-    expect(
-      await screen.findByRole('heading', { name: 'Acceso denegado' }),
-    ).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Reintentar' })).not.toBeInTheDocument()
+    const bandeja = await seccionBandeja('Acceso denegado')
+    expect(bandeja.getByText(/no tiene permiso/)).toBeInTheDocument()
+    expect(bandeja.queryByRole('button', { name: 'Reintentar' })).not.toBeInTheDocument()
   })
 
   it('tras una decisión anuncia el resultado y no muestra esa publicación', async () => {
